@@ -1,67 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-  ChevronRight, 
-  BarChart3, 
-  Building2, 
-  Menu,
-  Sun,
-  Moon
+import {
+  ChevronRight,
+  BarChart3,
+  Building2,
+
 } from 'lucide-react';
-import Logo from '../assets/logo.svg';
 import Sidebar from '@/components/Sidebar';
-
-// Header Component
-interface HeaderProps {
-  isSidebarOpen: boolean; 
-  setIsSidebarOpen: (open: boolean) => void;
-  isDarkMode: boolean;
-  setIsDarkMode: (mode: boolean) => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode }) => {
-  return (
-    <header className="h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
-      <div className="h-full px-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}  // Now correctly toggling the state
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
-          <div className="flex items-center space-x-2">
-            <img
-              src={Logo}
-              alt="Company Logo"
-              className="h-32 w-32"
-            />
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsDarkMode(!isDarkMode)}
-        >
-          {isDarkMode ? 
-            <Sun className="h-5 w-5" /> : 
-            <Moon className="h-5 w-5" />
-          }
-        </Button>
-      </div>
-    </header>
-  );
-};
+import Header from '@/components/Header';
+import { useNavigate } from 'react-router-dom';
 
 // Main Dashboard Component
 const Dashboard = () => {
   const [currentRole, setCurrentRole] = useState('employee');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  
+  const navigate = useNavigate();
+
   const systems = [
     {
       title: 'Performance Management System',
@@ -70,6 +25,7 @@ const Dashboard = () => {
       roles: ['admin', 'employee', 'approver', 'sm_dept'],
       iconColor: '#4CAF50', // Warna ikon untuk sistem ini
       titleColor: '#2E7D32', // Warna judul untuk sistem ini
+      url: '/performance-management/bcs/dashboard'
     },
     {
       title: 'Company Profile CMS',
@@ -77,38 +33,38 @@ const Dashboard = () => {
       icon: Building2,
       roles: ['admin'],
       iconColor: '#FFA000', // Warna ikon untuk sistem ini
-      titleColor: '#E65100', // Warna judul untuk sistem ini
+      titleColor: '#E65100', // Warna judul untuk sistem ini,
+      url: '#'
     }
   ];
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+  const handleClick = (url: string) => {
+    navigate(url);
+  };
+
+
 
   return (
-    <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300`}>
-      <Header 
+    <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 lg:ml-64 `}>
+      <Header
         isSidebarOpen={isSidebarOpen}  // Added this prop
-        setIsSidebarOpen={setIsSidebarOpen} 
+        setIsSidebarOpen={setIsSidebarOpen}
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
+        currentRole={currentRole}
+        setCurrentRole={setCurrentRole}
       />
-      
+
       <div className="pt-16 flex">
         <Sidebar
-          currentRole={currentRole} 
-          setCurrentRole={setCurrentRole}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
+          role={currentRole}
         />
 
         {/* Overlay for mobile when sidebar is open */}
         {isSidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
@@ -128,23 +84,24 @@ const Dashboard = () => {
                 .map((system, index) => {
                   const Icon = system.icon;
                   return (
-                    <Card 
+                    <Card
                       key={index}
+                      onClick={() => handleClick(system.url)}
                       className="group hover:shadow-lg transition-all duration-300 bg-white dark:bg-gray-800"
                     >
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                          <Icon 
-                            className="h-6 w-6" 
+                          <Icon
+                            className="h-6 w-6"
                             style={{ color: system.iconColor }} // Menggunakan warna ikon yang berbeda
                           />
-                          <ChevronRight 
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" 
+                          <ChevronRight
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                           />
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <h3 
+                        <h3
                           className="text-xl font-semibold mb-2"
                           style={{ color: system.titleColor }} // Menggunakan warna judul yang berbeda
                         >
@@ -156,7 +113,7 @@ const Dashboard = () => {
                       </CardContent>
                     </Card>
                   );
-              })}
+                })}
             </div>
           </div>
         </div>
