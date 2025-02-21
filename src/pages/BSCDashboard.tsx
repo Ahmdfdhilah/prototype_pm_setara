@@ -338,6 +338,7 @@ const BSCDashboard = () => {
                 setIsDarkMode={setIsDarkMode}
                 currentRole={currentRole}
                 setCurrentRole={setCurrentRole}
+                currentSystem='Performance Management System'
             />
 
             <div className="flex">
@@ -348,8 +349,7 @@ const BSCDashboard = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-8 pt-20 lg:ml-64 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-24' : 'ml-0'
-                    }`}>
+                <main className={`flex-1 overflow-x-scroll px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6">
                         {/* Header Section with Toggle Button */}
                         <div className="flex items-center justify-between mb-6 mt-4">

@@ -25,7 +25,7 @@ const Dashboard = () => {
       roles: ['admin', 'employee', 'approver', 'sm_dept'],
       iconColor: '#4CAF50', // Warna ikon untuk sistem ini
       titleColor: '#2E7D32', // Warna judul untuk sistem ini
-      url: '/performance-management/bcs/dashboard'
+      url: '/performance-management/bsc/dashboard'
     },
     {
       title: 'Company Profile CMS',
@@ -45,7 +45,7 @@ const Dashboard = () => {
 
 
   return (
-    <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300 lg:ml-64 `}>
+    <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
       <Header
         isSidebarOpen={isSidebarOpen}  // Added this prop
         setIsSidebarOpen={setIsSidebarOpen}
@@ -53,13 +53,15 @@ const Dashboard = () => {
         setIsDarkMode={setIsDarkMode}
         currentRole={currentRole}
         setCurrentRole={setCurrentRole}
+        currentSystem='Dashboard'
       />
 
-      <div className="pt-16 flex">
+      <div className="md:pt-16 flex">
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
           role={currentRole}
+          system='gateway'
         />
 
         {/* Overlay for mobile when sidebar is open */}
