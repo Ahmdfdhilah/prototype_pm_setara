@@ -70,14 +70,19 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'approver', 'sm_dept'],
         subMenus: [
             {
+                title: 'Action Plan MPM',
+                path: '/performance-management/mpm/action-plan',
+                roles: ['admin', 'approver', 'sm_dept']
+            },
+            {
                 title: 'Actual Input MPM',
                 path: '/performance-management/mpm/actual-input',
-                roles: ['admin', 'employee', 'approver', 'sm_dept']
+                roles: ['admin','approver', 'sm_dept']
             },
             {
                 title: 'Target Input MPM',
                 path: '/performance-management/mpm/target-input',
-                roles: ['admin', 'employee']
+                roles: ['admin','approver', 'sm_dept']
             }
         ]
     },

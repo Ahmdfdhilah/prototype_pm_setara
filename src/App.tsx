@@ -11,6 +11,7 @@ import MPMInputActual from './pages/MPMInputAktual';
 import MPMInfoTarget from "./pages/MPMInputTarget";
 import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboard";
 import LandingPage from "./pages/LandingPage";
+import MPMActionPlan from "./pages/MPMActionPlan";
 
 function App() {
   return (
@@ -39,10 +40,10 @@ function App() {
             path="/performance-management/mpm/actual-input"
             element={<MPMInputActual />}
           />
-          {/* <Route
+          <Route
             path="/performance-management/mpm/action-plan"
             element={<MPMActionPlan />}
-          /> */}
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
