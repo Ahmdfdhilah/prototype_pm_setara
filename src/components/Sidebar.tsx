@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, User, BarChart3, Building2, LineChart, Target, Rocket, Trophy, ChevronDown, ChevronRight, Home, Calendar } from 'lucide-react';
+import { LogOut, User, BarChart3, Building2, LineChart, Target, Rocket, Trophy, ChevronDown, ChevronRight, Home, Calendar, SquareKanban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
@@ -28,6 +28,12 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'approver', 'sm_dept', 'employee'],
     },
     {
+        title: 'Dashboard',
+        path: '/performance-management/dashboard',
+        icon: SquareKanban,
+        roles: ['admin', 'approver', 'sm_dept'],
+    },
+    {
         title: 'Period Master',
         path: '/performance-management/period-master',
         icon: Calendar,
@@ -48,11 +54,6 @@ const performanceMenus: MenuItem[] = [
                 title: 'Input',
                 path: '/performance-management/bsc/input',
                 roles: ['admin', 'approver']
-            },
-            {
-                title: 'Report',
-                path: '/performance-management/bsc/report',
-                roles: ['admin', 'approver', 'sm_dept']
             }
         ]
     },
