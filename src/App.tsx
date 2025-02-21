@@ -10,12 +10,14 @@ import MPMInputActual from './pages/MPMInputAktual';
 // import MPMActionPlan from './pages/MPMActionPlan';
 import MPMInfoTarget from "./pages/MPMInputTarget";
 import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboard";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage/>} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/performance-management/bsc/dashboard" element={<BSCDashboard/>} />
           <Route path="/performance-management/dashboard" element={<PerformanceManagementDashboard/>} />
