@@ -64,40 +64,29 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'employee', 'approver', 'sm_dept'],
     },
     {
-        title: 'Management Performance', //FIX ME
+        title: 'Management Performance', 
         path: '/performance-management/mpm/dashboard',
         icon: Target,
         roles: ['admin', 'approver', 'sm_dept'],
         subMenus: [
             {
-                title: 'Dashboard',
-                path: '/performance-management/ipm/dashboard',
+                title: 'Actual Input MPM',
+                path: '/performance-management/mpm/actual-input',
                 roles: ['admin', 'employee', 'approver', 'sm_dept']
             },
             {
-                title: 'Input',
-                path: '/performance-management/ipm/input',
+                title: 'Target Input MPM',
+                path: '/performance-management/mpm/target-input',
                 roles: ['admin', 'employee']
             }
         ]
     },
     {
         title: 'Strategic Initiative', //FIX ME
-        path: '/performance-management/strategic/dashboard',
+        path: '#',
         icon: Rocket,
         roles: ['admin', 'approver', 'sm_dept'],
-        subMenus: [
-            {
-                title: 'Dashboard',
-                path: '/performance-management/ipm/dashboard',
-                roles: ['admin', 'employee', 'approver', 'sm_dept']
-            },
-            {
-                title: 'Input',
-                path: '/performance-management/ipm/input',
-                roles: ['admin', 'employee']
-            }
-        ]
+        
     }
 ];
 
@@ -227,7 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                                                 variant="ghost"
                                                 onClick={() => {
                                                     navigate(submenu.path);
-                                                    if (window.innerWidth < 1024) {
+                                                    if (window.innerWidth < 640) {
                                                         setIsSidebarOpen(false);
                                                     }
                                                 }}

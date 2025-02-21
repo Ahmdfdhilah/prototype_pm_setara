@@ -30,11 +30,11 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/performance-management/mpm/input-target"
+            path="/performance-management/mpm/target-input"
             element={<MPMInfoTarget />}
           />
           <Route
-            path="/performance-management/mpm/input-aktual"
+            path="/performance-management/mpm/actual-input"
             element={<MPMInputActual />}
           />
           {/* <Route

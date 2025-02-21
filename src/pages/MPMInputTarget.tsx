@@ -352,9 +352,7 @@ const MPMInfoTarget = () => {
         />
 
         <main
-          className={`flex-1 px-8 pt-20 lg:ml-64 transition-all duration-300 ease-in-out ${
-            isSidebarOpen ? 'ml-24' : 'ml-0'
-          }`}
+          className={`flex-1 px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}
         >
           <div className="space-y-6">
             {/* Header Section */}

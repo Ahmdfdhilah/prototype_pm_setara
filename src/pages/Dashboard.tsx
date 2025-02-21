@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
   BarChart3,
   Building2,
-  Users,
-  Eye
 } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
@@ -16,35 +14,7 @@ const Dashboard = () => {
   const [currentRole, setCurrentRole] = useState('employee');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeUsers, setActiveUsers] = useState(0);
-  const [activeVisitors, setActiveVisitors] = useState(0);
   const navigate = useNavigate();
-
-  // Simulate loading stats
-  useEffect(() => {
-    const userTarget = 156;
-    const visitorTarget = 423;
-    const increment = Math.ceil(Math.max(userTarget, visitorTarget) / 30);
-
-    const timer = setInterval(() => {
-      setActiveUsers(prev => {
-        if (prev + increment >= userTarget) {
-          return userTarget;
-        }
-        return prev + increment;
-      });
-
-      setActiveVisitors(prev => {
-        if (prev + increment >= visitorTarget) {
-          clearInterval(timer);
-          return visitorTarget;
-        }
-        return prev + increment;
-      });
-    }, 50);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const systems = [
     {
@@ -54,7 +24,7 @@ const Dashboard = () => {
       roles: ['admin', 'employee', 'approver', 'sm_dept'],
       iconColor: '#4CAF50',
       titleColor: '#2E7D32',
-      url: '/performance-management/bsc/dashboard',
+      url: '/performance-management/dashboard',
       imageUrl: Performance,
       stats: {
         users: '2.4k',
@@ -81,49 +51,6 @@ const Dashboard = () => {
 
   const handleClick = (url: To) => {
     navigate(url);
-  };
-
-  const QuickStats: React.FC<{ role: string }> = ({ role }) => {
-    // Define which stats to show based on role
-    const stats = [];
-
-    stats.push(
-      <Card key="users" className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm opacity-80">Active Users</p>
-              <h3 className="text-2xl font-bold">{activeUsers}</h3>
-            </div>
-            <Users className="h-8 w-8 opacity-80" />
-          </div>
-        </CardContent>
-      </Card>
-    );
-
-
-    // Show visitors stat for CMS system (admin only)
-    if (role === 'admin') {
-      stats.push(
-        <Card key="visitors" className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-80">Active Visitors</p>
-                <h3 className="text-2xl font-bold">{activeVisitors}</h3>
-              </div>
-              <Eye className="h-8 w-8 opacity-80" />
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {stats}
-      </div>
-    );
   };
 
   return (
@@ -163,8 +90,6 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-
-            <QuickStats role={currentRole} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {systems
