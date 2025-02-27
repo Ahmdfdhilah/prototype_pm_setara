@@ -21,6 +21,7 @@ import { Label } from '@/components/ui/label';
 import Sidebar from '@/components/Sidebar';
 import { Edit, Send } from 'lucide-react';
 import Header from '@/components/Header';
+import { useNavigate } from 'react-router-dom';
 
 // Types
 type Perspective =
@@ -31,6 +32,12 @@ type Perspective =
 type Category = 'Max' | 'Min' | 'On Target';
 type YTDCalculation = 'Accumulative' | 'Average' | 'Last Value';
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria';
+type ActionPlan = {
+  id: string;
+  description: string;
+  responsiblePerson: string;
+  deadline: string;
+};
 
 type MPMEntry = {
   perspective: Perspective;
@@ -46,6 +53,7 @@ type MPMEntry = {
     'Feb-25': number;
     'Mar-25': number;
   };
+  actionPlans: ActionPlan[];
 };
 
 // Definisi tipe untuk approver
@@ -90,6 +98,14 @@ const MPMInfoTarget = () => {
         'Feb-25': 5,
         'Mar-25': 5,
       },
+      actionPlans: [
+        {
+          id: 'ap1',
+          description: 'Meningkatkan penjualan produk A',
+          responsiblePerson: 'Budi Santoso',
+          deadline: '2025-01-31',
+        },
+      ],
     },
     {
       perspective: 'Financial',
@@ -105,6 +121,14 @@ const MPMInfoTarget = () => {
         'Feb-25': 10,
         'Mar-25': 10,
       },
+      actionPlans: [
+        {
+          id: 'ap1',
+          description: 'Meningkatkan penjualan produk B',
+          responsiblePerson: 'Budi Santoso',
+          deadline: '2025-01-31',
+        },
+      ],
     },
     {
       perspective: 'Customer',
@@ -120,6 +144,14 @@ const MPMInfoTarget = () => {
         'Feb-25': 10,
         'Mar-25': 10,
       },
+      actionPlans: [
+        {
+          id: 'ap1',
+          description: 'Meningkatkan penjualan produk C',
+          responsiblePerson: 'Budi Santoso',
+          deadline: '2025-01-31',
+        },
+      ],
     },
     {
       perspective: 'Internal Business Process',
@@ -135,6 +167,14 @@ const MPMInfoTarget = () => {
         'Feb-25': 10,
         'Mar-25': 10,
       },
+      actionPlans: [
+        {
+          id: 'ap1',
+          description: 'Meningkatkan penjualan produk D',
+          responsiblePerson: 'Budi Santoso',
+          deadline: '2025-01-31',
+        },
+      ],
     },
     {
       perspective: 'Learning & Growth',
@@ -150,16 +190,52 @@ const MPMInfoTarget = () => {
         'Feb-25': 5,
         'Mar-25': 5,
       },
+      actionPlans: [
+        {
+          id: 'ap1',
+          description: 'Meningkatkan penjualan produk E',
+          responsiblePerson: 'Budi Santoso',
+          deadline: '2025-01-31',
+        },
+      ],
     },
   ]);
 
   // Edit Dialog Component
   const EditKPIDialog = () => {
     if (!selectedKPI) return null;
+    const [newActionPlan, setNewActionPlan] = useState<Partial<ActionPlan>>({});
+
+    const handleAddActionPlan = () => {
+      if (newActionPlan.description && newActionPlan.responsiblePerson && newActionPlan.deadline) {
+        const updatedKPI = {
+          ...selectedKPI,
+          actionPlans: [
+            ...selectedKPI.actionPlans,
+            {
+              id: `ap${selectedKPI.actionPlans.length + 1}`,
+              description: newActionPlan.description,
+              responsiblePerson: newActionPlan.responsiblePerson,
+              deadline: newActionPlan.deadline,
+            } as ActionPlan,
+          ],
+        };
+        setMpmData((prev) =>
+          prev.map((item) =>
+            item.kpiNumber === selectedKPI.kpiNumber &&
+              item.perspective === selectedKPI.perspective
+              ? updatedKPI
+              : item
+          )
+        );
+        setSelectedKPI(updatedKPI);
+        setNewActionPlan({});
+      }
+    };
 
     return (
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl  overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Edit KPI</DialogTitle>
             <DialogDescription>
@@ -226,6 +302,53 @@ const MPMInfoTarget = () => {
             </div>
           </div>
 
+          <div className="mt-6">
+            <h3 className="text-lg font-medium text-[#1B6131] dark:text-[#46B749]">
+              Action Plans
+            </h3>
+            <div className="space-y-4 mt-2">
+              {selectedKPI.actionPlans.map((actionPlan) => (
+                <div key={actionPlan.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <p className="text-sm">{actionPlan.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Responsible: {actionPlan.responsiblePerson}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Deadline: {actionPlan.deadline}
+                  </p>
+                </div>
+              ))}
+              <div className="space-y-2">
+                <Label>New Action Plan</Label>
+                <Input
+                  placeholder="Description"
+                  value={newActionPlan.description || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, description: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="Responsible Person"
+                  value={newActionPlan.responsiblePerson || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, responsiblePerson: e.target.value })
+                  }
+                />
+                <Input
+                  type="date"
+                  placeholder="Deadline"
+                  value={newActionPlan.deadline || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, deadline: e.target.value })
+                  }
+                />
+                <Button onClick={handleAddActionPlan} className="mt-2">
+                  Add Action Plan
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <DialogFooter>
             <Button
               variant="outline"
@@ -249,7 +372,7 @@ const MPMInfoTarget = () => {
             Select an approver and send this MPM target for approval
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-2">
           <div className="space-y-2">
             <Label htmlFor="approver-select">Select Approver</Label>
@@ -275,13 +398,13 @@ const MPMInfoTarget = () => {
               <p className="font-medium text-[#1B6131]">Selected Approver:</p>
               <p>{approvers.find(a => a.id === selectedApprover)?.name}</p>
               <p className="text-sm text-gray-600">
-                {approvers.find(a => a.id === selectedApprover)?.position}, 
+                {approvers.find(a => a.id === selectedApprover)?.position},
                 {approvers.find(a => a.id === selectedApprover)?.department}
               </p>
             </div>
           )}
         </div>
-        
+
         <DialogFooter>
           <Button
             variant="outline"
@@ -312,11 +435,29 @@ const MPMInfoTarget = () => {
       </DialogContent>
     </Dialog>
   );
-
-  // Create KPI Dialog
   const CreateKPIDialog = () => {
-    const [newKPI, setNewKPI] = useState<Partial<MPMEntry>>({});
-    const [approverForNewKPI, setApproverForNewKPI] = useState<string>('');
+    const [newKPI, setNewKPI] = useState<Partial<MPMEntry>>({
+      actionPlans: [], // Inisialisasi actionPlans
+    });
+    const [newActionPlan, setNewActionPlan] = useState<Partial<ActionPlan>>({});
+
+    const handleAddActionPlan = () => {
+      if (newActionPlan.description && newActionPlan.responsiblePerson && newActionPlan.deadline) {
+        setNewKPI((prev) => ({
+          ...prev,
+          actionPlans: [
+            ...(prev.actionPlans || []),
+            {
+              id: `ap${(prev.actionPlans?.length || 0) + 1}`, // Generate ID unik
+              description: newActionPlan.description,
+              responsiblePerson: newActionPlan.responsiblePerson,
+              deadline: newActionPlan.deadline,
+            } as ActionPlan,
+          ],
+        }));
+        setNewActionPlan({}); // Reset form input
+      }
+    };
 
     const handleSave = () => {
       if (newKPI.perspective && newKPI.kpi) {
@@ -328,15 +469,19 @@ const MPMInfoTarget = () => {
               prev.filter((item) => item.perspective === newKPI.perspective)
                 .length + 1,
             targets: { 'Jan-25': 0, 'Feb-25': 0, 'Mar-25': 0 },
+            actionPlans: newKPI.actionPlans || [], // Pastikan actionPlans disimpan
           } as MPMEntry,
         ]);
-        setIsCreateKPIOpen(false);
+        setIsCreateKPIOpen(false); // Tutup dialog
       }
     };
+    
+    // Create KPI Dialog
+    const [approverForNewKPI, setApproverForNewKPI] = useState<string>('');
 
     return (
       <Dialog open={isCreateKPIOpen} onOpenChange={setIsCreateKPIOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Create KPI</DialogTitle>
             <DialogDescription>
@@ -369,15 +514,15 @@ const MPMInfoTarget = () => {
 
             <div className="space-y-2">
               <Label>KPI</Label>
-              <Input 
-                placeholder="Enter KPI name" 
+              <Input
+                placeholder="Enter KPI name"
                 onChange={(e) => setNewKPI({ ...newKPI, kpi: e.target.value })}
               />
             </div>
 
             <div className="space-y-2">
               <Label>KPI Definition</Label>
-              <Input 
+              <Input
                 placeholder="Enter KPI definition"
                 onChange={(e) => setNewKPI({ ...newKPI, kpiDefinition: e.target.value })}
               />
@@ -385,7 +530,7 @@ const MPMInfoTarget = () => {
 
             <div className="space-y-2">
               <Label>Weight (%)</Label>
-              <Input 
+              <Input
                 type="number"
                 placeholder="Enter weight"
                 onChange={(e) => setNewKPI({ ...newKPI, weight: Number(e.target.value) })}
@@ -470,16 +615,16 @@ const MPMInfoTarget = () => {
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="space-y-2">
               <Label>Jan-25 Target</Label>
-              <Input 
+              <Input
                 type="number"
                 placeholder="Enter target"
-                onChange={(e) => 
-                  setNewKPI({ 
-                    ...newKPI, 
-                    targets: { 
-                      ...newKPI.targets as any, 
-                      'Jan-25': Number(e.target.value) 
-                    } 
+                onChange={(e) =>
+                  setNewKPI({
+                    ...newKPI,
+                    targets: {
+                      ...newKPI.targets as any,
+                      'Jan-25': Number(e.target.value)
+                    }
                   })
                 }
               />
@@ -487,16 +632,16 @@ const MPMInfoTarget = () => {
 
             <div className="space-y-2">
               <Label>Feb-25 Target</Label>
-              <Input 
+              <Input
                 type="number"
                 placeholder="Enter target"
-                onChange={(e) => 
-                  setNewKPI({ 
-                    ...newKPI, 
-                    targets: { 
-                      ...newKPI.targets as any, 
-                      'Feb-25': Number(e.target.value) 
-                    } 
+                onChange={(e) =>
+                  setNewKPI({
+                    ...newKPI,
+                    targets: {
+                      ...newKPI.targets as any,
+                      'Feb-25': Number(e.target.value)
+                    }
                   })
                 }
               />
@@ -504,19 +649,66 @@ const MPMInfoTarget = () => {
 
             <div className="space-y-2">
               <Label>Mar-25 Target</Label>
-              <Input 
+              <Input
                 type="number"
                 placeholder="Enter target"
-                onChange={(e) => 
-                  setNewKPI({ 
-                    ...newKPI, 
-                    targets: { 
-                      ...newKPI.targets as any, 
-                      'Mar-25': Number(e.target.value) 
-                    } 
+                onChange={(e) =>
+                  setNewKPI({
+                    ...newKPI,
+                    targets: {
+                      ...newKPI.targets as any,
+                      'Mar-25': Number(e.target.value)
+                    }
                   })
                 }
               />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-lg font-medium text-[#1B6131] dark:text-[#46B749]">
+              Action Plans
+            </h3>
+            <div className="space-y-4 mt-2">
+              {newKPI.actionPlans?.map((actionPlan) => (
+                <div key={actionPlan.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <p className="text-sm">{actionPlan.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Responsible: {actionPlan.responsiblePerson}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Deadline: {actionPlan.deadline}
+                  </p>
+                </div>
+              ))}
+              <div className="space-y-2">
+                <Label>New Action Plan</Label>
+                <Input
+                  placeholder="Description"
+                  value={newActionPlan.description || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, description: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="Responsible Person"
+                  value={newActionPlan.responsiblePerson || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, responsiblePerson: e.target.value })
+                  }
+                />
+                <Input
+                  type="date"
+                  placeholder="Deadline"
+                  value={newActionPlan.deadline || ''}
+                  onChange={(e) =>
+                    setNewActionPlan({ ...newActionPlan, deadline: e.target.value })
+                  }
+                />
+                <Button onClick={handleAddActionPlan} className="mt-2">
+                  Add Action Plan
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -524,12 +716,16 @@ const MPMInfoTarget = () => {
             <Button variant="outline" onClick={() => setIsCreateKPIOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave} className="bg-[#1B6131] hover:bg-[#46B749]">Save KPI</Button>
+            <Button onClick={handleSave} className="bg-[#1B6131] hover:bg-[#46B749]">
+              Save KPI
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     );
   };
+
+  const navigate = useNavigate();
 
   // Group data by perspective
   const groupedData = useMemo(() => {
@@ -579,6 +775,12 @@ const MPMInfoTarget = () => {
               </h1>
               <div className="space-x-4">
                 <Button
+                  onClick={() => navigate('/performance-management/mpm/action-plan')}
+                  className="bg-[#1B6131] hover:bg-[#46B749]"
+                >
+                  Create Action Plan
+                </Button>
+                <Button
                   onClick={() => setIsCreateKPIOpen(true)}
                   className="bg-[#1B6131] hover:bg-[#46B749]"
                 >
@@ -620,25 +822,16 @@ const MPMInfoTarget = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.entries(groupedData).map(
-                        ([perspective, items]) => (
-                          <>
-                            <tr
-                              key={perspective}
-                              className="bg-[#E4EFCF] dark:bg-[#1B6131]/30"
-                            >
-                              <td
-                                colSpan={10}
-                                className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]"
-                              >
-                                {perspective}
-                              </td>
-                            </tr>
-                            {items.map((item) => (
-                              <tr
-                                key={`${item.perspective}-${item.kpiNumber}`}
-                                className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                              >
+                      {Object.entries(groupedData).map(([perspective, items]) => (
+                        <>
+                          <tr key={perspective} className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
+                            <td colSpan={10} className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]">
+                              {perspective}
+                            </td>
+                          </tr>
+                          {items.map((item) => (
+                            <>
+                              <tr key={`${item.perspective}-${item.kpiNumber}`} className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
                                 <td className="p-4 text-center">
                                   <Button
                                     variant="ghost"
@@ -651,30 +844,32 @@ const MPMInfoTarget = () => {
                                 </td>
                                 <td className="p-4">{item.kpi}</td>
                                 <td className="p-4">{item.kpiDefinition}</td>
-                                <td className="p-4 text-center">
-                                  {item.weight}%
-                                </td>
+                                <td className="p-4 text-center">{item.weight}%</td>
                                 <td className="p-4 text-center">{item.uom}</td>
-                                <td className="p-4 text-center">
-                                  {item.category}
-                                </td>
-                                <td className="p-4 text-center">
-                                  {item.ytdCalculation}
-                                </td>
-                                <td className="p-4 text-center">
-                                  {item.targets['Jan-25']}
-                                </td>
-                                <td className="p-4 text-center">
-                                  {item.targets['Feb-25']}
-                                </td>
-                                <td className="p-4 text-center">
-                                  {item.targets['Mar-25']}
-                                </td>
+                                <td className="p-4 text-center">{item.category}</td>
+                                <td className="p-4 text-center">{item.ytdCalculation}</td>
+                                <td className="p-4 text-center">{item.targets['Jan-25']}</td>
+                                <td className="p-4 text-center">{item.targets['Feb-25']}</td>
+                                <td className="p-4 text-center">{item.targets['Mar-25']}</td>
                               </tr>
-                            ))}
-                          </>
-                        )
-                      )}
+                              {item.actionPlans.map((actionPlan) => (
+                                <tr key={actionPlan.id} className="bg-gray-50 dark:bg-gray-800">
+                                  <td colSpan={10} className="p-4 pl-8">
+                                    <div className="flex items-center space-x-4">
+                                      <span className="text-sm text-gray-600 dark:text-gray-400">Action Plan:</span>
+                                      <span className="text-sm">{actionPlan.description}</span>
+                                      <span className="text-sm text-gray-600 dark:text-gray-400">Responsible:</span>
+                                      <span className="text-sm">{actionPlan.responsiblePerson}</span>
+                                      <span className="text-sm text-gray-600 dark:text-gray-400">Deadline:</span>
+                                      <span className="text-sm">{actionPlan.deadline}</span>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </>
+                          ))}
+                        </>
+                      ))}
                     </tbody>
                   </table>
                 </div>

@@ -7,7 +7,6 @@ import BSCInputPage from "./pages/BSCInput";
 import IPMPage from "./pages/IPM";
 import PeriodMaster from "./pages/PeriodMaster";
 import MPMInputActual from './pages/MPMInputAktual';
-// import MPMActionPlan from './pages/MPMActionPlan';
 import MPMInfoTarget from "./pages/MPMInputTarget";
 import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboard";
 import LandingPage from "./pages/LandingPage";
