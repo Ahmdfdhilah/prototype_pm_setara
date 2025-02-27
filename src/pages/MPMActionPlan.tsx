@@ -312,7 +312,7 @@ const MPMActionPlan = () => {
                           type="number"
                           value={
                             formData[
-                              `${quarter}Target` as keyof typeof formData
+                            `${quarter}Target` as keyof typeof formData
                             ] || 0
                           }
                           onChange={(e) =>
@@ -329,7 +329,7 @@ const MPMActionPlan = () => {
                           type="number"
                           value={
                             formData[
-                              `${quarter}Actual` as keyof typeof formData
+                            `${quarter}Actual` as keyof typeof formData
                             ] || 0
                           }
                           onChange={(e) =>
@@ -479,7 +479,7 @@ const MPMActionPlan = () => {
                           type="number"
                           value={
                             selectedActionPlan[
-                              `${quarter}Target` as keyof typeof selectedActionPlan
+                            `${quarter}Target` as keyof typeof selectedActionPlan
                             ]
                           }
                           onChange={(e) =>
@@ -496,7 +496,7 @@ const MPMActionPlan = () => {
                           type="number"
                           value={
                             selectedActionPlan[
-                              `${quarter}Actual` as keyof typeof selectedActionPlan
+                            `${quarter}Actual` as keyof typeof selectedActionPlan
                             ]
                           }
                           onChange={(e) =>
@@ -585,22 +585,21 @@ const MPMActionPlan = () => {
                       </div>
                       // Replace the comparison logic in the table body with:
                       <div
-                        className={`text-center ${
-                          Number(
+                        className={`text-center ${Number(
+                          item[`${quarter}Actual` as keyof typeof item]
+                        ) >=
+                          Number(item[`${quarter}Target` as keyof typeof item])
+                          ? 'text-green-600'
+                          : Number(
                             item[`${quarter}Actual` as keyof typeof item]
                           ) >=
-                          Number(item[`${quarter}Target` as keyof typeof item])
-                            ? 'text-green-600'
-                            : Number(
-                                item[`${quarter}Actual` as keyof typeof item]
-                              ) >=
-                              Number(
-                                item[`${quarter}Target` as keyof typeof item]
-                              ) *
-                                0.8
+                            Number(
+                              item[`${quarter}Target` as keyof typeof item]
+                            ) *
+                            0.8
                             ? 'text-amber-500'
                             : 'text-red-500'
-                        }`}
+                          }`}
                       >
                         {item[`${quarter}Actual` as keyof typeof item] || '-'}
                       </div>
@@ -609,13 +608,12 @@ const MPMActionPlan = () => {
                 ))}
                 <td className="p-3 text-center">
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      item.status === 'On Track'
-                        ? 'bg-green-100 text-green-800'
-                        : item.status === 'At Risk'
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${item.status === 'On Track'
+                      ? 'bg-green-100 text-green-800'
+                      : item.status === 'At Risk'
                         ? 'bg-amber-100 text-amber-800'
                         : 'bg-red-100 text-red-800'
-                    }`}
+                      }`}
                   >
                     {item.status}
                   </span>
@@ -634,7 +632,7 @@ const MPMActionPlan = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -672,26 +670,26 @@ const MPMActionPlan = () => {
             </div>
 
             {/* Main Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131]">
-              <CardHeader>
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                   Action Plan Management
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className='mt-4'>
                 <CustomTable data={actionPlanData} />
               </CardContent>
             </Card>
 
             {/* Quarterly Progress Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131]">
-              <CardHeader>
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                   Quarterly Performance Overview
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4  mt-4">
                   {(['Q1', 'Q2', 'Q3', 'Q4'] as const).map((quarter, index) => (
                     <Card key={quarter} className="shadow-sm">
                       <CardHeader className="pb-2">

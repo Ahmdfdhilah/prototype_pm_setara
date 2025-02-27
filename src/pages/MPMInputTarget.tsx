@@ -48,6 +48,14 @@ type MPMEntry = {
   };
 };
 
+// Definisi tipe untuk approver
+type Approver = {
+  id: string;
+  name: string;
+  position: string;
+  department: string;
+};
+
 const MPMInfoTarget = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -56,6 +64,15 @@ const MPMInfoTarget = () => {
   const [sendToApproverOpen, setSendToApproverOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedKPI, setSelectedKPI] = useState<MPMEntry | null>(null);
+  const [selectedApprover, setSelectedApprover] = useState<string>('');
+
+  // Sample data untuk approvers
+  const approvers: Approver[] = [
+    { id: 'app1', name: 'Budi Santoso', position: 'Manager', department: 'Performance Management' },
+    { id: 'app2', name: 'Rina Wijaya', position: 'Senior Manager', department: 'Operations' },
+    { id: 'app3', name: 'Agus Purnomo', position: 'Director', department: 'Business Development' },
+    { id: 'app4', name: 'Dewi Kartika', position: 'VP', department: 'Human Resources' },
+  ];
 
   // Sample data structure matching the image
   const [mpmData, setMpmData] = useState<MPMEntry[]>([
@@ -229,23 +246,67 @@ const MPMInfoTarget = () => {
         <DialogHeader>
           <DialogTitle>Send to Approver</DialogTitle>
           <DialogDescription>
-            Are you sure you want to send this MPM target for approval?
+            Select an approver and send this MPM target for approval
           </DialogDescription>
         </DialogHeader>
+        
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <Label htmlFor="approver-select">Select Approver</Label>
+            <Select
+              value={selectedApprover}
+              onValueChange={setSelectedApprover}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select an approver" />
+              </SelectTrigger>
+              <SelectContent>
+                {approvers.map((approver) => (
+                  <SelectItem key={approver.id} value={approver.id}>
+                    {approver.name} - {approver.position}, {approver.department}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedApprover && (
+            <div className="p-4 bg-[#E4EFCF]/50 rounded-md">
+              <p className="font-medium text-[#1B6131]">Selected Approver:</p>
+              <p>{approvers.find(a => a.id === selectedApprover)?.name}</p>
+              <p className="text-sm text-gray-600">
+                {approvers.find(a => a.id === selectedApprover)?.position}, 
+                {approvers.find(a => a.id === selectedApprover)?.department}
+              </p>
+            </div>
+          )}
+        </div>
+        
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => setSendToApproverOpen(false)}
+            onClick={() => {
+              setSendToApproverOpen(false);
+              setSelectedApprover('');
+            }}
           >
             Cancel
           </Button>
           <Button
             onClick={() => {
               // Handle send to approver logic here
-              setSendToApproverOpen(false);
+              if (selectedApprover) {
+                // Process the submission with the selected approver
+                console.log(`Sending to approver: ${selectedApprover}`);
+                setSendToApproverOpen(false);
+                setSelectedApprover('');
+              }
             }}
+            disabled={!selectedApprover}
+            className="bg-[#1B6131] hover:bg-[#46B749]"
           >
-            Send
+            <Send className="mr-2 h-4 w-4" />
+            Send for Approval
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -255,6 +316,7 @@ const MPMInfoTarget = () => {
   // Create KPI Dialog
   const CreateKPIDialog = () => {
     const [newKPI, setNewKPI] = useState<Partial<MPMEntry>>({});
+    const [approverForNewKPI, setApproverForNewKPI] = useState<string>('');
 
     const handleSave = () => {
       if (newKPI.perspective && newKPI.kpi) {
@@ -274,40 +336,195 @@ const MPMInfoTarget = () => {
 
     return (
       <Dialog open={isCreateKPIOpen} onOpenChange={setIsCreateKPIOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Create KPI</DialogTitle>
             <DialogDescription>
               Add a new KPI to the MPM system
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <Select
-              onValueChange={(value) =>
-                setNewKPI({ ...newKPI, perspective: value as Perspective })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Perspective" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Financial">Financial</SelectItem>
-                <SelectItem value="Customer">Customer</SelectItem>
-                <SelectItem value="Internal Business Process">
-                  Internal Business Process
-                </SelectItem>
-                <SelectItem value="Learning & Growth">
-                  Learning & Growth
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {/* Add more form fields for KPI creation */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Perspective</Label>
+              <Select
+                onValueChange={(value) =>
+                  setNewKPI({ ...newKPI, perspective: value as Perspective })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Perspective" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Financial">Financial</SelectItem>
+                  <SelectItem value="Customer">Customer</SelectItem>
+                  <SelectItem value="Internal Business Process">
+                    Internal Business Process
+                  </SelectItem>
+                  <SelectItem value="Learning & Growth">
+                    Learning & Growth
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>KPI</Label>
+              <Input 
+                placeholder="Enter KPI name" 
+                onChange={(e) => setNewKPI({ ...newKPI, kpi: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>KPI Definition</Label>
+              <Input 
+                placeholder="Enter KPI definition"
+                onChange={(e) => setNewKPI({ ...newKPI, kpiDefinition: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Weight (%)</Label>
+              <Input 
+                type="number"
+                placeholder="Enter weight"
+                onChange={(e) => setNewKPI({ ...newKPI, weight: Number(e.target.value) })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>UOM</Label>
+              <Select
+                onValueChange={(value) =>
+                  setNewKPI({ ...newKPI, uom: value as UOMType })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select UOM" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Number">Number</SelectItem>
+                  <SelectItem value="%">%</SelectItem>
+                  <SelectItem value="Days">Days</SelectItem>
+                  <SelectItem value="Kriteria">Kriteria</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Select
+                onValueChange={(value) =>
+                  setNewKPI({ ...newKPI, category: value as Category })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Max">Max</SelectItem>
+                  <SelectItem value="Min">Min</SelectItem>
+                  <SelectItem value="On Target">On Target</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>YTD Calculation</Label>
+              <Select
+                onValueChange={(value) =>
+                  setNewKPI({ ...newKPI, ytdCalculation: value as YTDCalculation })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select YTD Calculation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Accumulative">Accumulative</SelectItem>
+                  <SelectItem value="Average">Average</SelectItem>
+                  <SelectItem value="Last Value">Last Value</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Approver (Optional)</Label>
+              <Select
+                value={approverForNewKPI}
+                onValueChange={setApproverForNewKPI}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Approver (Optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {approvers.map((approver) => (
+                    <SelectItem key={approver.id} value={approver.id}>
+                      {approver.name} - {approver.position}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="space-y-2">
+              <Label>Jan-25 Target</Label>
+              <Input 
+                type="number"
+                placeholder="Enter target"
+                onChange={(e) => 
+                  setNewKPI({ 
+                    ...newKPI, 
+                    targets: { 
+                      ...newKPI.targets as any, 
+                      'Jan-25': Number(e.target.value) 
+                    } 
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Feb-25 Target</Label>
+              <Input 
+                type="number"
+                placeholder="Enter target"
+                onChange={(e) => 
+                  setNewKPI({ 
+                    ...newKPI, 
+                    targets: { 
+                      ...newKPI.targets as any, 
+                      'Feb-25': Number(e.target.value) 
+                    } 
+                  })
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Mar-25 Target</Label>
+              <Input 
+                type="number"
+                placeholder="Enter target"
+                onChange={(e) => 
+                  setNewKPI({ 
+                    ...newKPI, 
+                    targets: { 
+                      ...newKPI.targets as any, 
+                      'Mar-25': Number(e.target.value) 
+                    } 
+                  })
+                }
+              />
+            </div>
+          </div>
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateKPIOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>Save KPI</Button>
+            <Button onClick={handleSave} className="bg-[#1B6131] hover:bg-[#46B749]">Save KPI</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -332,7 +549,7 @@ const MPMInfoTarget = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -379,13 +596,13 @@ const MPMInfoTarget = () => {
             </div>
 
             {/* Main Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131]">
-              <CardHeader>
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                   KPI Targets
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className='mt-4'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">

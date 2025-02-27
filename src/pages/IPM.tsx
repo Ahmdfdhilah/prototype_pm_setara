@@ -34,17 +34,17 @@ interface IPMEntry {
 }
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     error?: string;
-  }
-  
-  const TextArea: React.FC<TextAreaProps> = ({ 
-    className = '', 
-    error, 
-    ...props 
-  }) => {
+}
+
+const TextArea: React.FC<TextAreaProps> = ({
+    className = '',
+    error,
+    ...props
+}) => {
     return (
-      <div className="relative w-full">
-        <textarea
-          className={`
+        <div className="relative w-full">
+            <textarea
+                className={`
             w-full
             min-h-[80px]
             px-3 
@@ -67,16 +67,16 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
             ${error ? 'border-red-500' : ''}
             ${className}
           `}
-          {...props}
-        />
-        {error && (
-          <span className="text-xs text-red-500 mt-1">
-            {error}
-          </span>
-        )}
-      </div>
+                {...props}
+            />
+            {error && (
+                <span className="text-xs text-red-500 mt-1">
+                    {error}
+                </span>
+            )}
+        </div>
     );
-  };
+};
 
 const IPMPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -120,32 +120,32 @@ const IPMPage = () => {
     };
 
     const handleSubmitToApprover = (entryId: string) => {
-        setEntries(prev => prev.map(entry => 
-            entry.id === entryId 
+        setEntries(prev => prev.map(entry =>
+            entry.id === entryId
                 ? { ...entry, status: 'Sent to Approver' }
                 : entry
         ));
     };
 
     const handleApprove = (entryId: string) => {
-        setEntries(prev => prev.map(entry => 
-            entry.id === entryId 
+        setEntries(prev => prev.map(entry =>
+            entry.id === entryId
                 ? { ...entry, status: 'Sent to SM' }
                 : entry
         ));
     };
 
     const handleValidate = (entryId: string) => {
-        setEntries(prev => prev.map(entry => 
-            entry.id === entryId 
+        setEntries(prev => prev.map(entry =>
+            entry.id === entryId
                 ? { ...entry, status: 'Validate by SM' }
                 : entry
         ));
     };
 
     const handleRecall = (entryId: string) => {
-        setEntries(prev => prev.map(entry => 
-            entry.id === entryId 
+        setEntries(prev => prev.map(entry =>
+            entry.id === entryId
                 ? { ...entry, status: 'Draft' }
                 : entry
         ));
@@ -167,7 +167,7 @@ const IPMPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900">
+        <div className="min-h-screen bg-white dark:bg-gray-900 font-proxima">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -193,13 +193,13 @@ const IPMPage = () => {
                         </h1>
 
                         {currentRole === 'employee' && (
-                            <Card className="border-[#46B749] dark:border-[#1B6131]">
-                                <CardHeader>
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                         Add New Action Plan
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
+                                <CardContent className="space-y-4 mt-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">Title</label>
@@ -268,14 +268,14 @@ const IPMPage = () => {
                             </Card>
                         )}
 
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     Action Plans
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="overflow-x-auto">
+                                <div className="overflow-x-auto mt-4">
                                     <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>

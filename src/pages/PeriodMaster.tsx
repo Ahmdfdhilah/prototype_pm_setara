@@ -132,9 +132,9 @@ const PeriodMaster = () => {
     };
 
     const handleCreatePeriod = () => {
-        const periodExists = periods.some(p => 
-            p.type === selectedType && 
-            p.year === newPeriod.year && 
+        const periodExists = periods.some(p =>
+            p.type === selectedType &&
+            p.year === newPeriod.year &&
             p.period === newPeriod.period
         );
 
@@ -180,7 +180,7 @@ const PeriodMaster = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900">
+        <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -216,13 +216,13 @@ const PeriodMaster = () => {
                         </div>
 
                         {/* Period Management Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     Period Management
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="dark:bg-gray-900">
+                            <CardContent className="dark:bg-gray-900 mt-4">
                                 <div className="overflow-x-auto">
                                     <table className="w-full border-collapse">
                                         <thead className="bg-[#1B6131] text-white">
@@ -240,8 +240,8 @@ const PeriodMaster = () => {
                                         </thead>
                                         <tbody>
                                             {periods.map((period) => (
-                                                <tr 
-                                                    key={period.id} 
+                                                <tr
+                                                    key={period.id}
                                                     className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
                                                 >
                                                     <td className="p-4">{period.type}</td>

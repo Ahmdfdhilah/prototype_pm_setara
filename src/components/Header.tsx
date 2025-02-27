@@ -5,7 +5,8 @@ import {
     UserCircle,
     ChevronDown
 } from 'lucide-react';
-import Logo from '../assets/logo.svg';
+import LogoLightMode from '../assets/logo_abi_lightmode.png';
+import LogoDarkMode from '../assets/logo_abi_darkmode.png';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState, useRef } from 'react';
 
@@ -101,8 +102,8 @@ const Header: React.FC<HeaderProps> = ({
     );
 
     return (
-        <header className="min-h-[4rem] md:h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
-            <div className="px-4 py-2 md:py-0 md:h-full flex flex-col md:flex-row md:items-center justify-between">
+        <header className="font-proxima md:h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
+            <div className="px-4 py-4 md:h-full flex flex-col md:flex-row md:items-center justify-between">
                 {/* Top section (Logo and Menu) */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -115,20 +116,12 @@ const Header: React.FC<HeaderProps> = ({
                         </Button>
                         
                         {/* Logo container */}
-                        <div className="flex md:items-center">
+                        <div className="flex items-center">
                             <img
-                                src={Logo}
+                                src={isDarkMode ? LogoDarkMode : LogoLightMode}
                                 alt="Company Logo"
-                                className="w-24 md:h-32 md:w-32"
+                                className="w-24 md:w-32"
                             />
-                            
-                            {/* System name - desktop only */}
-                            <div className="hidden md:flex items-center ml-2">
-                                <div className="w-1 h-6 bg-[#46B749]"></div>
-                                <span className="ml-2 font-semibold text-gray-900 dark:text-white text-lg">
-                                    {currentSystem}
-                                </span>
-                            </div>
                         </div>
                     </div>
 
@@ -146,20 +139,15 @@ const Header: React.FC<HeaderProps> = ({
                     </Button>
                 </div>
 
-                {/* Bottom section (System Name and Controls) - mobile only */}
-                <div className="md:hidden flex items-center justify-between mt-1">
-                    <span className="font-medium text-gray-900 dark:text-white text-sm">
-                        {currentSystem}
-                    </span>
-
-                    <div className="flex items-center">
-                        {/* Mobile Role selector */}
-                        <RoleSelector isMobile={true} />
-                    </div>
-                </div>
-
                 {/* Desktop controls */}
                 <div className="hidden md:flex items-center space-x-4">
+                    {/* System name - desktop */}
+                    <div className="bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-md flex items-center">
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                            {currentSystem}
+                        </span>
+                    </div>
+                    
                     {/* Desktop Role selector */}
                     <RoleSelector />
 

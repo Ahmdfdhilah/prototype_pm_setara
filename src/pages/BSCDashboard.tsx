@@ -8,7 +8,7 @@ import {
 import Sidebar from '@/components/Sidebar';
 import {
     ChevronUp, ChevronDown, Minus, ChevronRight, ChevronDown as ExpandMore,
-  
+
 } from 'lucide-react';
 import Header from '@/components/Header';
 import FilterSection from '@/components/Filtering';
@@ -330,7 +330,7 @@ const BSCDashboard = () => {
     );
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900">
+        <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -375,13 +375,13 @@ const BSCDashboard = () => {
                         />
 
                         {/* BSC Table Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     BSC Performance Metrics
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="dark:bg-gray-900">
+                            <CardContent className="dark:bg-gray-900  mt-4">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -396,8 +396,6 @@ const BSCDashboard = () => {
                                             <th className="p-4 text-left font-medium text-white">Achievement</th>
                                             <th className="p-4 text-left font-medium text-white">Status</th>
                                             <th className="p-4 text-left font-medium text-white">Score</th>
-                                            <th className="p-4 text-left font-medium text-white">Active Weight</th>
-                                            <th className="p-4 text-left font-medium text-white">Total Score</th>
                                             <th className="p-4 text-left font-medium text-white">Score Akhir</th>
                                         </TableRow>
                                     </TableHeader>
@@ -438,8 +436,6 @@ const BSCDashboard = () => {
                                                             <StatusIndicator value={item.achievement} />
                                                         </TableCell>
                                                         <TableCell>{item.score.toFixed(2)}</TableCell>
-                                                        <TableCell>{item.activeWeight.toFixed(2)}</TableCell>
-                                                        <TableCell>{item.totalScore.toFixed(2)}</TableCell>
                                                         <TableCell>{item.scoreAkhir.toFixed(2)}</TableCell>
                                                     </TableRow>
                                                     {expandedRow === item.code && (
@@ -458,8 +454,6 @@ const BSCDashboard = () => {
                                             <TableCell>{totals.weight.toFixed(2)}%</TableCell>
                                             <TableCell colSpan={6} children={undefined}></TableCell>
                                             <TableCell>{totals.score.toFixed(2)}</TableCell>
-                                            <TableCell>{totals.activeWeight.toFixed(2)}</TableCell>
-                                            <TableCell>{totals.totalScore.toFixed(2)}</TableCell>
                                             <TableCell>{totals.scoreAkhir.toFixed(2)}</TableCell>
                                         </TableRow>
                                     </TableBody>

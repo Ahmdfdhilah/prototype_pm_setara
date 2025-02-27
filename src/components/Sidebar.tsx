@@ -162,6 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
             )}
 
             <aside className={`
+            font-proxima 
             fixed left-0 top-16 h-[calc(100vh-4rem)] w-72
             bg-white dark:bg-gray-800 
             shadow-lg z-20

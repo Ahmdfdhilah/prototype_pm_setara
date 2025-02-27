@@ -7,7 +7,7 @@ export default {
   theme: {
   	extend: {
 		fontFamily: {
-			poppins: ['Poppins', 'sans-serif'],
+			proxima: ['Proxima Soft', 'sans-serif'],
 		  },
   		borderRadius: {
   			lg: 'var(--radius)',

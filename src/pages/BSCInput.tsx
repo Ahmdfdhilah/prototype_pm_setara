@@ -87,7 +87,7 @@ const BSCInputPage = () => {
         console.log('Saving entries:', entries);
         // Implement your save logic here
     };
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +100,7 @@ const BSCInputPage = () => {
                     const workbook = XLSX.read(data, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                    
+
                     // Transform the Excel data to match KPIEntry format
                     const newEntries = jsonData.map((row: any) => ({
                         perspective: row.Perspective,
@@ -126,7 +126,7 @@ const BSCInputPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900">
+        <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -177,13 +177,13 @@ const BSCInputPage = () => {
                             </div>
                         </div>
 
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     Add New KPI
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-4 mt-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">Perspective</label>
@@ -325,14 +325,14 @@ const BSCInputPage = () => {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     KPI Entries
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="overflow-x-auto">
+                                <div className="overflow-x-auto  mt-4">
                                     <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>

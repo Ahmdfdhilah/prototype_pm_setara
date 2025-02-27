@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   BarChart3,
   Building2,
@@ -26,11 +26,6 @@ const Dashboard = () => {
       titleColor: '#2E7D32',
       url: '/performance-management/dashboard',
       imageUrl: Performance,
-      stats: {
-        users: '2.4k',
-        growth: '+12%',
-        activity: 'High'
-      }
     },
     {
       title: 'Company Profile CMS',
@@ -41,11 +36,6 @@ const Dashboard = () => {
       titleColor: '#E65100',
       url: '#',
       imageUrl: Cms,
-      stats: {
-        visitors: '12.5k',
-        growth: '+5%',
-        activity: 'Medium'
-      }
     }
   ];
 
@@ -54,7 +44,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 font-proxima ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -118,7 +108,7 @@ const Dashboard = () => {
                       <CardContent className="relative z-10 -mt-8">
                         <div className="bg-white dark:bg-gray-800 p-4 rounded-t-xl shadow-lg">
                           <h3
-                            className="text-xl font-semibold mb-2"
+                            className="text-xl font-semibold mb-2 font-proxima"
                             style={{ color: system.titleColor }}
                           >
                             {system.title}
@@ -128,27 +118,6 @@ const Dashboard = () => {
                           </p>
                         </div>
                       </CardContent>
-
-                      <CardFooter className="bg-gray-50 dark:bg-gray-700/50 p-4">
-                        <div className="w-full grid grid-cols-3 gap-4">
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {system.title.includes('CMS') ? 'Visitors' : 'Users'}
-                            </p>
-                            <p className="font-semibold">
-                              {system.title.includes('CMS') ? system.stats.visitors : system.stats.users}
-                            </p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Growth</p>
-                            <p className="font-semibold text-green-500">{system.stats.growth}</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">Activity</p>
-                            <p className="font-semibold">{system.stats.activity}</p>
-                          </div>
-                        </div>
-                      </CardFooter>
                     </Card>
                   );
                 })}

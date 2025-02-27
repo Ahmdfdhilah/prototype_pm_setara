@@ -7,6 +7,8 @@
 @layer base {
   :root {
 
+    --font-sans: 'Proxima Soft', -apple-system, BlinkMacSystemFont, sans-serif;
+    
     --background: 0 0% 100%;
 
     --foreground: 222.2 84% 4.9%;
@@ -116,4 +118,22 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'Proxima Soft';
+  src: url('/fonts/ProximaSoft-Regular.woff2') format('woff2'),
+       url('/fonts/ProximaSoft-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Proxima Soft';
+  src: url('/fonts/ProximaSoft-Bold.woff2') format('woff2'),
+       url('/fonts/ProximaSoft-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
