@@ -162,7 +162,7 @@ const MPMActionPlan = () => {
 
     return (
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl  overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Create New Action Plan</DialogTitle>
             <DialogDescription>
@@ -632,7 +632,7 @@ const MPMActionPlan = () => {
   };
 
   return (
-    <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
+    <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -656,7 +656,7 @@ const MPMActionPlan = () => {
         >
           <div className="space-y-6">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6  mt-4">
               <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
                 MPM Info - Action Plan
               </h1>

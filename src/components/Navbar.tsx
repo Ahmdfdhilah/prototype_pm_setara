@@ -14,7 +14,7 @@ const Navbar = () => {
   }, [isDarkMode]);
 
   return (
-    <header className="font-proxima h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
+    <header className="font-montserrat h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
       <div className="h-full px-6 flex items-center justify-between">
         <div className="flex items-center space-x-2">
         </div>

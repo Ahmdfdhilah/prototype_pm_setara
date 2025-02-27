@@ -44,7 +44,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 font-proxima ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 font-montserrat ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -108,7 +108,7 @@ const Dashboard = () => {
                       <CardContent className="relative z-10 -mt-8">
                         <div className="bg-white dark:bg-gray-800 p-4 rounded-t-xl shadow-lg">
                           <h3
-                            className="text-xl font-semibold mb-2 font-proxima"
+                            className="text-xl font-semibold mb-2 font-montserrat"
                             style={{ color: system.titleColor }}
                           >
                             {system.title}

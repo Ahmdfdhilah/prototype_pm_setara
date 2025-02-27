@@ -102,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({
     );
 
     return (
-        <header className="font-proxima md:h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
+        <header className="font-montserrat md:h-16 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-30">
             <div className="px-4 py-4 md:h-full flex flex-col md:flex-row md:items-center justify-between">
                 {/* Top section (Logo and Menu) */}
                 <div className="flex items-center justify-between">

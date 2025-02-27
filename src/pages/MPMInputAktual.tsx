@@ -8,6 +8,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,6 +42,12 @@ type KPIEntry = {
   problemIdentification: string;
   correctiveAction: string;
 };
+type Approver = {
+  id: string;
+  name: string;
+  position: string;
+  department: string;
+};
 
 const MPMInputActual = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -42,6 +56,14 @@ const MPMInputActual = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedKPI, setSelectedKPI] = useState<KPIEntry | null>(null);
   const [sendToApproverOpen, setSendToApproverOpen] = useState(false);
+  const [selectedApprover, setSelectedApprover] = useState<string>('');
+
+  const approvers: Approver[] = [
+    { id: 'app1', name: 'Budi Santoso', position: 'Manager', department: 'Performance Management' },
+    { id: 'app2', name: 'Rina Wijaya', position: 'Senior Manager', department: 'Operations' },
+    { id: 'app3', name: 'Agus Purnomo', position: 'Director', department: 'Business Development' },
+    { id: 'app4', name: 'Dewi Kartika', position: 'VP', department: 'Human Resources' },
+  ];
 
   // Sample data structure matching the client's image
   const [kpiData, setKpiData] = useState<KPIEntry[]>([
@@ -134,7 +156,7 @@ const MPMInputActual = () => {
 
     return (
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl  overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Edit KPI Actual Data</DialogTitle>
             <DialogDescription>
@@ -216,30 +238,73 @@ const MPMInputActual = () => {
     );
   };
 
-  // Dialog for sending to approver
   const SendToApproverDialog = () => (
     <Dialog open={sendToApproverOpen} onOpenChange={setSendToApproverOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Send to Approver</DialogTitle>
           <DialogDescription>
-            Are you sure you want to send this KPI data for approval?
+            Select an approver and send this MPM target for approval
           </DialogDescription>
         </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <Label htmlFor="approver-select">Select Approver</Label>
+            <Select
+              value={selectedApprover}
+              onValueChange={setSelectedApprover}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select an approver" />
+              </SelectTrigger>
+              <SelectContent>
+                {approvers.map((approver) => (
+                  <SelectItem key={approver.id} value={approver.id}>
+                    {approver.name} - {approver.position}, {approver.department}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedApprover && (
+            <div className="p-4 bg-[#E4EFCF]/50 rounded-md">
+              <p className="font-medium text-[#1B6131]">Selected Approver:</p>
+              <p>{approvers.find(a => a.id === selectedApprover)?.name}</p>
+              <p className="text-sm text-gray-600">
+                {approvers.find(a => a.id === selectedApprover)?.position},
+                {approvers.find(a => a.id === selectedApprover)?.department}
+              </p>
+            </div>
+          )}
+        </div>
+
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => setSendToApproverOpen(false)}
+            onClick={() => {
+              setSendToApproverOpen(false);
+              setSelectedApprover('');
+            }}
           >
             Cancel
           </Button>
           <Button
             onClick={() => {
               // Handle send to approver logic here
-              setSendToApproverOpen(false);
+              if (selectedApprover) {
+                // Process the submission with the selected approver
+                console.log(`Sending to approver: ${selectedApprover}`);
+                setSendToApproverOpen(false);
+                setSelectedApprover('');
+              }
             }}
+            disabled={!selectedApprover}
+            className="bg-[#1B6131] hover:bg-[#46B749]"
           >
-            Send
+            <Send className="mr-2 h-4 w-4" />
+            Send for Approval
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -253,7 +318,7 @@ const MPMInputActual = () => {
   };
 
   return (
-    <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
+    <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -277,7 +342,7 @@ const MPMInputActual = () => {
         >
           <div className="space-y-6">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 mt-4">
               <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
                 MPM Info - KPI Specific (Input Actual)
               </h1>

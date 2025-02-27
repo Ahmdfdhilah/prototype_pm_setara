@@ -7,7 +7,8 @@ export default {
   theme: {
   	extend: {
 		fontFamily: {
-			proxima: ['Proxima Soft', 'sans-serif'],
+			sans: ['Montserrat', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+			montserrat: ['Montserrat', 'sans-serif'],
 		  },
   		borderRadius: {
   			lg: 'var(--radius)',

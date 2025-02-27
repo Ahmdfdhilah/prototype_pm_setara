@@ -9,15 +9,17 @@ import PeriodMaster from "./pages/PeriodMaster";
 import MPMInputActual from './pages/MPMInputAktual';
 import MPMInfoTarget from "./pages/MPMInputTarget";
 import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboard";
-import LandingPage from "./pages/LandingPage";
 import MPMActionPlan from "./pages/MPMActionPlan";
+import PerformanceManagementHome from "./pages/PerformanceManagementHome";
+import UserDetailPage from "./pages/UserDetail";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage/>} />
+          <Route path="/" element={<PerformanceManagementHome/>} />
+          <Route path="/user-profile" element={<UserDetailPage/>} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/performance-management/bsc/dashboard" element={<BSCDashboard/>} />
           <Route path="/performance-management/dashboard" element={<PerformanceManagementDashboard/>} />

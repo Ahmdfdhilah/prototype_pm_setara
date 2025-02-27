@@ -330,7 +330,7 @@ const BSCDashboard = () => {
     );
 
     return (
-        <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
+        <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}

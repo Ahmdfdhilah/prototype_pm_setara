@@ -40,7 +40,7 @@ const Login = () => {
     return (
         <>
             <Navbar/>
-            <div className="font-proxima min-h-screen bg-white dark:bg-gray-900">
+            <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
                 <div className="flex flex-wrap items-center min-h-screen">
                     {/* Left Side - Illustration */}
                     <div className="hidden w-full xl:w-1/2 md:block">

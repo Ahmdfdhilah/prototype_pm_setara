@@ -269,7 +269,7 @@ const PerformanceManagementDashboard = () => {
                 <main className={`flex-1 px-8 pt-20 pb-8 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6">
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
-                            <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
+                            <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
                                 Performance Management Dashboard
                             </h1>
                         </div>

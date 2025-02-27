@@ -167,7 +167,7 @@ const IPMPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 font-proxima">
+        <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -188,7 +188,7 @@ const IPMPage = () => {
 
                 <main className={`flex-1 px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6">
-                        <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
+                        <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
                             Individual Performance Management
                         </h1>
 
