@@ -113,17 +113,17 @@ const EmployeeIPMDetailsPage = () => {
     // const { employeeId } = router.query;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('employee'); // employee, approver, sm_dept
+    const [currentRole, setCurrentRole] = useState('admin'); // employee, approver, sm_dept
     const [evidenceComment, setEvidenceComment] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage, _setItemsPerPage] = useState(5);
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPerspective, setFilterPerspective] = useState('');
     const navigate = useNavigate();
 
     // Mock data for employee - would normally fetch based on employeeId
-    const [employee, setEmployee] = useState<Employee>({
+    const [employee, _setEmployee] = useState<Employee>({
         id: '2',
         name: 'Jane Smith',
         employeeNumber: 'EMP002',
@@ -361,7 +361,7 @@ const EmployeeIPMDetailsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
+        <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat overflow-x-hidden">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -371,7 +371,7 @@ const EmployeeIPMDetailsPage = () => {
                 setCurrentRole={setCurrentRole}
                 currentSystem='Performance Management System'
             />
-
+    
             <div className="flex">
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -379,70 +379,70 @@ const EmployeeIPMDetailsPage = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-
-                <main className={`flex-1 px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
-                    <div className="space-y-6">
+    
+                <main className={`flex-1 w-full px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
+                    <div className="space-y-6 w-full">
                         {/* Back button */}
                         <Button 
                             variant="outline" 
-                            className="text-[#1B6131] border-[#1B6131] hover:bg-[#f0f9f0] dark:text-[#46B749] dark:border-[#46B749] dark:hover:bg-[#0a2e14] mt-4"
+                            className="text-[#1B6131] border-[#1B6131] hover:bg-[#f0f9f0] dark:text-[#46B749] dark:border-[#46B749] dark:hover:bg-[#0a2e14] mt-4 w-full sm:w-auto"
                             onClick={handleBackToList}
                         >
                             <ArrowLeft className="h-4 w-4 mr-2" />
                             Back to Employee List
                         </Button>
-
-                        <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
+    
+                        <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
                             Individual Performance Management
                         </h1>
-
+    
                         {/* Employee Info Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    <User className="h-5 w-5 mr-2" />
+                                <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    <User className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                     Employee Information
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 mt-4">
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                                    <div>
-                                        <h2 className="text-xl font-semibold">{employee.name}</h2>
-                                        <p className="text-gray-600 dark:text-gray-400">{employee.employeeNumber}</p>
-                                        <p className="text-gray-600 dark:text-gray-400">{employee.position}</p>
-                                        <p className="text-gray-600 dark:text-gray-400">{employee.department} • {employee.unit}</p>
+                                    <div className="mb-4 md:mb-0">
+                                        <h2 className="text-lg md:text-xl font-semibold">{employee.name}</h2>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{employee.employeeNumber}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{employee.position}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">{employee.department} • {employee.unit}</p>
                                     </div>
-
-                                    <div className="mt-4 md:mt-0 grid grid-cols-3 gap-2">
-                                        <div className="p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                            <h3 className="font-medium text-[#1B6131] dark:text-[#46B749]">Pending</h3>
-                                            <p className="text-lg font-bold">{pendingCount}</p>
+    
+                                    <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
+                                        <div className="p-2 md:p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                            <h3 className="font-medium text-xs md:text-sm text-[#1B6131] dark:text-[#46B749]">Pending</h3>
+                                            <p className="text-base md:text-lg font-bold">{pendingCount}</p>
                                         </div>
-                                        <div className="p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                            <h3 className="font-medium text-[#1B6131] dark:text-[#46B749]">In Progress</h3>
-                                            <p className="text-lg font-bold">{inProgressCount}</p>
+                                        <div className="p-2 md:p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                            <h3 className="font-medium text-xs md:text-sm text-[#1B6131] dark:text-[#46B749]">In Progress</h3>
+                                            <p className="text-base md:text-lg font-bold">{inProgressCount}</p>
                                         </div>
-                                        <div className="p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                            <h3 className="font-medium text-[#1B6131] dark:text-[#46B749]">Completed</h3>
-                                            <p className="text-lg font-bold">{completedCount}</p>
+                                        <div className="p-2 md:p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                            <h3 className="font-medium text-xs md:text-sm text-[#1B6131] dark:text-[#46B749]">Completed</h3>
+                                            <p className="text-base md:text-lg font-bold">{completedCount}</p>
                                         </div>
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
-
+    
                         {/* IPM Entries */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex justify-between items-center">
-                                    <div className="flex items-center">
-                                        <FileText className="h-5 w-5 mr-2" />
+                                <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex flex-col sm:flex-row justify-between items-center">
+                                    <div className="flex items-center mb-2 sm:mb-0">
+                                        <FileText className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                         Action Plans
                                     </div>
                                     
-                                    <div className="flex space-x-2">
+                                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                                         <Select value={filterStatus} onValueChange={setFilterStatus}>
-                                            <SelectTrigger className="w-36 text-sm h-9">
+                                            <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
                                                 <SelectValue placeholder="Filter Status" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -455,7 +455,7 @@ const EmployeeIPMDetailsPage = () => {
                                         </Select>
                                         
                                         <Select value={filterPerspective} onValueChange={setFilterPerspective}>
-                                            <SelectTrigger className="w-36 text-sm h-9">
+                                            <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
                                                 <SelectValue placeholder="Filter Perspective" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -471,29 +471,29 @@ const EmployeeIPMDetailsPage = () => {
                             </CardHeader>
                             <CardContent>
                                 <div className="overflow-x-auto mt-4">
-                                    <table className="w-full">
+                                    <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
-                                                <th className="p-4 text-left">Title</th>
-                                                <th className="p-4 text-left">Perspective</th>
-                                                <th className="p-4 text-left">Target Date</th>
-                                                <th className="p-4 text-left">Weight</th>
-                                                <th className="p-4 text-left">Status</th>
-                                                <th className="p-4 text-left">Actions</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Title</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Perspective</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Target Date</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Weight</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Status</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {currentEntries.length > 0 ? (
                                                 currentEntries.map((entry) => (
                                                     <tr key={entry.id} className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
-                                                        <td className="p-4">
-                                                            <p className="font-medium">{entry.title}</p>
+                                                        <td className="p-2 md:p-4">
+                                                            <p className="font-medium text-xs md:text-sm">{entry.title}</p>
                                                             <p className="text-xs text-gray-500 mt-1">{entry.description}</p>
                                                         </td>
-                                                        <td className="p-4">{entry.perspective}</td>
-                                                        <td className="p-4">{entry.targetDate}</td>
-                                                        <td className="p-4">{entry.weight}%</td>
-                                                        <td className="p-4">
+                                                        <td className="p-2 md:p-4 text-xs md:text-sm">{entry.perspective}</td>
+                                                        <td className="p-2 md:p-4 text-xs md:text-sm">{entry.targetDate}</td>
+                                                        <td className="p-2 md:p-4 text-xs md:text-sm">{entry.weight}%</td>
+                                                        <td className="p-2 md:p-4">
                                                             <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(entry.status)}`}>
                                                                 {entry.status}
                                                             </span>
@@ -727,11 +727,11 @@ const EmployeeIPMDetailsPage = () => {
                                         </tbody>
                                     </table>
                                 </div>
-
+    
                                 {/* Pagination */}
                                 {filteredEntries.length > 0 && (
-                                    <div className="mt-4 flex justify-between items-center">
-                                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                                    <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                                        <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                                             Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredEntries.length)} of {filteredEntries.length} entries
                                         </div>
                                         <Pagination

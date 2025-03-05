@@ -24,7 +24,7 @@ import { Info, AlertTriangle, CheckCircle2, FileText, Users } from 'lucide-react
 const PerformanceManagementHome = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('employee');
+    const [currentRole, setCurrentRole] = useState('admin');
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
@@ -46,9 +46,10 @@ const PerformanceManagementHome = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-8 pt-20 pb-12 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
+                <main className={`flex-1 px-4 sm:px-6 md:px-8 pt-20 pb-12 transition-all duration-300 ease-in-out 
+                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="mb-8">
-                        <h1 className="text-3xl mt-4 font-bold text-[#1B6131] dark:text-[#46B749]">
+                        <h1 className="text-2xl  md:text-3xl mt-4 font-bold text-[#1B6131] dark:text-[#46B749]">
                             Welcome to Performance Management System
                         </h1>
                         <p className="mt-2 text-gray-600 dark:text-gray-300">
@@ -56,7 +57,7 @@ const PerformanceManagementHome = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 mb-6 md:mb-8">
                         <DashboardCard
                             title="MPM"
                             description="Monthly Performance Management"
@@ -81,14 +82,16 @@ const PerformanceManagementHome = () => {
                                 User Guide
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="pt-6">
-                            <Tabs defaultValue="overview">
-                                <TabsList className="bg-[#e6f3e6] dark:bg-[#0a3419] mb-6">
-                                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                                    <TabsTrigger value="employee">Employee</TabsTrigger>
-                                    <TabsTrigger value="approver">Approver</TabsTrigger>
-                                    <TabsTrigger value="sm_dept">SM Department</TabsTrigger>
-                                    <TabsTrigger value="admin">Admin</TabsTrigger>
+                        <CardContent className="pt-6 p-2 sm:p-6">
+                            <Tabs defaultValue="overview" className="w-full">
+                                <TabsList className="my-6 p-0 bg-transparent md:max-w-2xl md:mx-auto md:justify-between">
+                                    <div className="flex flex-wrap gap-2 w-full md:w-auto p-2 rounded-md bg-[#e6f3e6] dark:bg-[#0a3419]">
+                                        <TabsTrigger value="overview">Overview</TabsTrigger>
+                                        <TabsTrigger value="employee">Employee</TabsTrigger>
+                                        <TabsTrigger value="approver">Approver</TabsTrigger>
+                                        <TabsTrigger value="sm_dept">SM Department</TabsTrigger>
+                                        <TabsTrigger value="admin">Admin</TabsTrigger>
+                                    </div>
                                 </TabsList>
 
                                 <TabsContent value="overview" className="space-y-4">
@@ -494,13 +497,13 @@ interface DashboardCardProps {
 const DashboardCard = ({ title, description, icon }: DashboardCardProps) => {
     return (
         <Card className="border border-[#46B749] dark:border-[#1B6131] shadow-md hover:shadow-lg transition-shadow">
-            <CardContent className="p-6 flex items-start">
-                <div className="p-3 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-full mr-4">
+            <CardContent className="p-4 sm:p-6 flex items-start">
+                <div className="p-2 sm:p-3 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-full mr-3 sm:mr-4">
                     {icon}
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-[#1B6131] dark:text-[#46B749]">{title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm">{description}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-[#1B6131] dark:text-[#46B749]">{title}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{description}</p>
                 </div>
             </CardContent>
         </Card>

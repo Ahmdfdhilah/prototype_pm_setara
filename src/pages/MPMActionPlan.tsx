@@ -643,7 +643,7 @@ const MPMActionPlan = () => {
         setCurrentRole={setCurrentRole}
       />
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
@@ -652,16 +652,21 @@ const MPMActionPlan = () => {
         />
 
         <main
-          className={`flex-1 px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}
+          className={`
+            flex-1 px-4 md:px-8 pt-20 
+            transition-all duration-300 ease-in-out
+            ${isSidebarOpen ? 'md:ml-72' : 'md:ml-0'}
+            w-full
+          `}
         >
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-6  mt-4">
-              <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
                 MPM Info - Action Plan
               </h1>
               <Button
-                className="bg-[#1B6131] hover:bg-[#0D4A1E] text-white"
+                className="w-full sm:w-auto bg-[#1B6131] hover:bg-[#0D4A1E] text-white"
                 onClick={() => setIsCreateDialogOpen(true)}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -689,7 +694,7 @@ const MPMActionPlan = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4  mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                   {(['Q1', 'Q2', 'Q3', 'Q4'] as const).map((quarter, index) => (
                     <Card key={quarter} className="shadow-sm">
                       <CardHeader className="pb-2">
@@ -745,10 +750,11 @@ const MPMActionPlan = () => {
         </main>
       </div>
 
-      <CreateActionPlanDialog />
+      <CreateActionPlanDialog 
+      />
       <EditActionPlanDialog />
     </div>
   );
-};
+}
 
 export default MPMActionPlan;

@@ -202,7 +202,7 @@ const PeriodMaster = () => {
                 <main className={`flex-1 overflow-x-scroll px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6">
                         {/* Header Section */}
-                        <div className="flex items-center justify-between mb-6 mt-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
                             <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
                                 Period Master Management
                             </h1>
@@ -224,7 +224,7 @@ const PeriodMaster = () => {
                             </CardHeader>
                             <CardContent className="dark:bg-gray-900 mt-4">
                                 <div className="overflow-x-auto">
-                                    <table className="w-full border-collapse">
+                                    <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
                                                 <th className="p-4 text-left border-b">Type</th>

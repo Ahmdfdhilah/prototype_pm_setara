@@ -38,14 +38,14 @@ interface Employee {
 const IPMPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('employee'); // employee, approver, sm_dept
+    const [currentRole, setCurrentRole] = useState('admin'); // employee, approver, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [filterUnit, setFilterUnit] = useState('all'); // Changed default value to 'all' instead of empty string
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     // Mock data for employees with action plan counts
-    const [employees, setEmployees] = useState<Employee[]>([
+    const [employees, _setEmployees] = useState<Employee[]>([
         {
             id: '1',
             name: 'John Doe',
@@ -220,7 +220,7 @@ const IPMPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
+        <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat overflow-x-hidden">
             <Header
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
@@ -230,7 +230,7 @@ const IPMPage = () => {
                 setCurrentRole={setCurrentRole}
                 currentSystem='Performance Management System'
             />
-
+    
             <div className="flex">
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -238,95 +238,95 @@ const IPMPage = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-
-                <main className={`flex-1 px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
-                    <div className="space-y-6">
-                        <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
+    
+                <main className={`flex-1 w-full px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
+                    <div className="space-y-6 w-full">
+                        <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
                             Individual Performance Management
                         </h1>
-
+    
                         {/* Dashboard Card - Adapted for each role */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     IPM Dashboard {currentRole === 'employee' ? '- My Performance' : currentRole === 'approver' ? '- Department Overview' : '- Organization Overview'}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 mt-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <div className="p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                        <h3 className="font-medium text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                            <Clock className="h-4 w-4 mr-1" />
+                                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+                                    <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                        <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                                             Pending Items
                                         </h3>
-                                        <p className="text-lg font-bold mt-1">
+                                        <p className="text-sm sm:text-lg font-bold mt-1">
                                             {dashboardMetrics.pending}
                                         </p>
                                     </div>
-                                    <div className="p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                        <h3 className="font-medium text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                            <AlertCircle className="h-4 w-4 mr-1" />
+                                    <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                        <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                                             In Progress
                                         </h3>
-                                        <p className="text-lg font-bold mt-1">
+                                        <p className="text-sm sm:text-lg font-bold mt-1">
                                             {dashboardMetrics.inProgress}
                                         </p>
                                     </div>
-                                    <div className="p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                        <h3 className="font-medium text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                            <CheckCircle2 className="h-4 w-4 mr-1" />
+                                    <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                        <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                                             Completed Items
                                         </h3>
-                                        <p className="text-lg font-bold mt-1">
+                                        <p className="text-sm sm:text-lg font-bold mt-1">
                                             {dashboardMetrics.completed}
                                         </p>
                                     </div>
                                     
                                     {/* Role-specific metrics */}
                                     {currentRole === 'approver' && (
-                                        <div className="p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                            <h3 className="font-medium text-[#1B6131] dark:text-[#46B749]">Needs Review</h3>
-                                            <p className="text-lg font-bold mt-1">{dashboardMetrics.needsReview}</p>
+                                        <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                            <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749]">Needs Review</h3>
+                                            <p className="text-sm sm:text-lg font-bold mt-1">{dashboardMetrics.needsReview}</p>
                                         </div>
                                     )}
                                     
                                     {currentRole === 'sm_dept' && (
-                                        <div className="p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
-                                            <h3 className="font-medium text-[#1B6131] dark:text-[#46B749]">Needs Validation</h3>
-                                            <p className="text-lg font-bold mt-1">{dashboardMetrics.needsValidation}</p>
+                                        <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
+                                            <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749]">Needs Validation</h3>
+                                            <p className="text-sm sm:text-lg font-bold mt-1">{dashboardMetrics.needsValidation}</p>
                                         </div>
                                     )}
                                 </div>
                             </CardContent>
                         </Card>
-
+    
                         {/* Employee List Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     {currentRole === 'employee' ? 'My Performance Plans' : 'Employee Performance Plans'}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="w-full">
                                 {/* Filters - Only visible for approver and SM roles */}
                                 {currentRole !== 'employee' && (
-                                    <div className="mb-6">
-                                        <div className="flex flex-col md:flex-row gap-4">
-                                            <div className="relative flex-1">
+                                    <div className="mb-6 mt-4 w-full">
+                                        <div className="flex flex-col gap-4">
+                                            <div className="relative w-full">
                                                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                                                 <Input
                                                     placeholder="Search employees..."
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                                    className="pl-9"
+                                                    className="pl-9 w-full"
                                                 />
                                             </div>
-                                            <div className="w-full md:w-48">
+                                            <div className="w-full">
                                                 <Select 
                                                     value={filterUnit} 
                                                     onValueChange={setFilterUnit}
                                                 >
-                                                    <SelectTrigger>
+                                                    <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Filter by Unit" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -343,37 +343,37 @@ const IPMPage = () => {
                                         </div>
                                     </div>
                                 )}
-
+    
                                 {/* Employee List */}
-                                <div className="space-y-4">
+                                <div className="space-y-4 w-full">
                                     {currentEmployees.length > 0 ? (
                                         currentEmployees.map((employee) => (
                                             <div 
                                                 key={employee.id}
-                                                className="border rounded-lg p-4 hover:bg-[#f0f9f0] dark:hover:bg-[#0a2e14]/30 cursor-pointer transition-colors"
+                                                className="border rounded-lg p-3 sm:p-4 hover:bg-[#f0f9f0] dark:hover:bg-[#0a2e14]/30 cursor-pointer transition-colors w-full"
                                                 onClick={() => handleEmployeeSelect(employee.id)}
                                             >
-                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className="h-10 w-10 rounded-full bg-[#1B6131] text-white flex items-center justify-center">
-                                                            <User className="h-6 w-6" />
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 w-full">
+                                                    <div className="flex items-center space-x-2 sm:space-x-3 w-full">
+                                                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-[#1B6131] text-white flex items-center justify-center flex-shrink-0">
+                                                            <User className="h-4 w-4 sm:h-6 sm:w-6" />
                                                         </div>
-                                                        <div>
-                                                            <h3 className="font-medium">{employee.name}</h3>
-                                                            <p className="text-sm text-gray-500">{employee.employeeNumber} - {employee.position}</p>
-                                                            <p className="text-xs text-gray-500">{employee.unit} | {employee.department}</p>
+                                                        <div className="flex-grow overflow-hidden">
+                                                            <h3 className="font-medium text-sm sm:text-base truncate">{employee.name}</h3>
+                                                            <p className="text-xs sm:text-sm text-gray-500 truncate">{employee.employeeNumber} - {employee.position}</p>
+                                                            <p className="text-xs text-gray-500 truncate">{employee.unit} | {employee.department}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="flex md:flex-col lg:flex-row gap-3 w-full md:w-auto mt-2 md:mt-0">
-                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
+                                                    <div className="flex flex-wrap sm:flex-col lg:flex-row gap-1 sm:gap-3 w-full sm:w-auto mt-2 sm:mt-0 justify-start sm:justify-center">
+                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-2 py-1">
                                                             <span className="h-2 w-2 rounded-full bg-yellow-500"></span>
                                                             <span className="text-xs font-medium">Pending: {employee.pendingPlans}</span>
                                                         </div>
-                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
+                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-2 py-1">
                                                             <span className="h-2 w-2 rounded-full bg-blue-500"></span>
                                                             <span className="text-xs font-medium">In Progress: {employee.inProgressPlans}</span>
                                                         </div>
-                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1">
+                                                        <div className="flex items-center justify-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-full px-2 py-1">
                                                             <span className="h-2 w-2 rounded-full bg-green-500"></span>
                                                             <span className="text-xs font-medium">Completed: {employee.completedPlans}</span>
                                                         </div>
@@ -387,21 +387,21 @@ const IPMPage = () => {
                                         </div>
                                     )}
                                 </div>
-
+    
                                 {/* Pagination */}
                                 {filteredEmployees.length > 0 && (
-                                    <div className="mt-6">
-                                        <div className="flex items-center justify-between">
-                                            <div className="text-sm text-gray-500">
+                                    <div className="mt-6 w-full">
+                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                            <div className="text-xs sm:text-sm text-gray-500 text-center w-full">
                                                 Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredEmployees.length)} of {filteredEmployees.length} employees
                                             </div>
-                                            <div className="flex items-center space-x-2">
-                                                <label className="text-sm">Items per page:</label>
+                                            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-center">
+                                                <label className="text-xs sm:text-sm">Items per page:</label>
                                                 <Select value={itemsPerPage.toString()} onValueChange={(value) => {
                                                     setItemsPerPage(parseInt(value));
                                                     setCurrentPage(1);
                                                 }}>
-                                                    <SelectTrigger className="w-16">
+                                                    <SelectTrigger className="w-24">
                                                         <SelectValue placeholder="5" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -412,7 +412,7 @@ const IPMPage = () => {
                                                 </Select>
                                             </div>
                                         </div>
-
+    
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}

@@ -329,7 +329,7 @@ const MPMInputActual = () => {
         currentSystem='Performance Management System'
       />
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
@@ -338,17 +338,22 @@ const MPMInputActual = () => {
         />
 
         <main
-          className={`flex-1 px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}
+          className={`
+            flex-1 px-4 md:px-8 pt-20 
+            transition-all duration-300 ease-in-out
+            ${isSidebarOpen ? 'md:ml-72' : 'md:ml-0'}
+            w-full
+          `}
         >
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header Section */}
-            <div className="flex items-center justify-between mb-6 mt-4">
-              <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
                 MPM Info - KPI Specific (Input Actual)
               </h1>
               <Button
                 variant="outline"
-                className="border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
+                className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
                 onClick={() => setSendToApproverOpen(true)}
               >
                 <Send className="mr-2 h-4 w-4" />
@@ -368,21 +373,19 @@ const MPMInputActual = () => {
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">
                       <tr>
-                        <th className="p-4 text-center">Action</th>
-                        <th className="p-4 text-left">KPI</th>
-                        <th className="p-4 text-left">KPI Definition</th>
-                        <th className="p-4 text-center">Weight</th>
-                        <th className="p-4 text-center">UOM</th>
-                        <th className="p-4 text-center">Category</th>
-                        <th className="p-4 text-center">YTD Calculation</th>
-                        <th className="p-4 text-center">Target</th>
-                        <th className="p-4 text-center">Actual</th>
-                        <th className="p-4 text-center">Achievement</th>
-                        <th className="p-4 text-center">Score</th>
-                        <th className="p-4 text-left">
-                          Problem Identification
-                        </th>
-                        <th className="p-4 text-left">Corrective Action</th>
+                        {[
+                          'Action', 'KPI', 'KPI Definition', 'Weight', 'UOM', 
+                          'Category', 'YTD Calculation', 'Target', 'Actual', 
+                          'Achievement', 'Score', 'Problem Identification', 
+                          'Corrective Action'
+                        ].map((header) => (
+                          <th 
+                            key={header} 
+                            className="p-4 text-center whitespace-nowrap"
+                          >
+                            {header}
+                          </th>
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
@@ -432,6 +435,6 @@ const MPMInputActual = () => {
       <SendToApproverDialog />
     </div>
   );
-};
+}
 
 export default MPMInputActual;

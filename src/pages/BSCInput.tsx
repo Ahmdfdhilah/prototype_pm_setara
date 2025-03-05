@@ -145,14 +145,26 @@ const BSCInputPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between mb-6 mt-4">
-                            <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
+                <main className={`
+                    flex-1 
+                    px-2 
+                    sm:px-4 
+                    lg:px-6 
+                    pt-16 
+                    sm:pt-18 
+                    lg:pt-20 
+                    transition-all 
+                    duration-300 
+                    ease-in-out 
+                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
+                    w-full
+                `}>
+                    <div className="space-y-6 max-w-full">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 gap-4">
+                            <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
                                 BSC Input Data
                             </h1>
-                            <div className="flex gap-4">
-                                {/* Add Excel Import Button */}
+                            <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto justify-start sm:justify-end">
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -162,14 +174,16 @@ const BSCInputPage = () => {
                                 />
                                 <Button
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                    size="sm"
                                 >
                                     <FileSpreadsheet className="mr-2 h-4 w-4" />
                                     Import Excel
                                 </Button>
                                 <Button
                                     onClick={handleSaveAll}
-                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                    size="sm"
                                 >
                                     <Save className="mr-2 h-4 w-4" />
                                     Save All
@@ -184,8 +198,8 @@ const BSCInputPage = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 mt-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    <div className="space-y-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 [&>div]:min-w-[200px]">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">Perspective</label>
                                         <Select
                                             value={newEntry.perspective}
@@ -203,7 +217,7 @@ const BSCInputPage = () => {
                                         </Select>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">Code</label>
                                         <Input
                                             value={newEntry.code}
@@ -212,7 +226,7 @@ const BSCInputPage = () => {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">KPI</label>
                                         <Input
                                             value={newEntry.kpi}
@@ -221,7 +235,7 @@ const BSCInputPage = () => {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">KPI Definition</label>
                                         <Input
                                             value={newEntry.kpiDefinition}
@@ -230,7 +244,7 @@ const BSCInputPage = () => {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2  w-full">
                                         <label className="text-sm font-medium">Weight (%)</label>
                                         <Input
                                             type="number"
@@ -240,7 +254,7 @@ const BSCInputPage = () => {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">UOM</label>
                                         <Select
                                             value={newEntry.uom}
@@ -259,7 +273,7 @@ const BSCInputPage = () => {
                                         </Select>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">Category</label>
                                         <Select
                                             value={newEntry.category}
@@ -278,7 +292,7 @@ const BSCInputPage = () => {
                                         </Select>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2  w-full">
                                         <label className="text-sm font-medium">YTD Calculation</label>
                                         <Select
                                             value={newEntry.calculation}
@@ -295,7 +309,7 @@ const BSCInputPage = () => {
                                         </Select>
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">Target</label>
                                         <Input
                                             type="number"
@@ -305,7 +319,7 @@ const BSCInputPage = () => {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 w-full">
                                         <label className="text-sm font-medium">Related PIC</label>
                                         <Input
                                             value={newEntry.relatedPIC}
@@ -332,9 +346,9 @@ const BSCInputPage = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="overflow-x-auto  mt-4">
+                                <div className="mt-4 overflow-x-auto">
                                     <table className="w-full">
-                                        <thead className="bg-[#1B6131] text-white">
+                                    <thead className="bg-[#1B6131] text-white">
                                             <tr>
                                                 <th className="p-4 text-left">Perspective</th>
                                                 <th className="p-4 text-left">Code</th>
@@ -373,6 +387,11 @@ const BSCInputPage = () => {
                                             ))}
                                         </tbody>
                                     </table>
+                                    {entries.length === 0 && (
+                                        <div className="text-center py-8 text-gray-500">
+                                            No KPI entries added yet. Use the form above to add entries.
+                                        </div>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
