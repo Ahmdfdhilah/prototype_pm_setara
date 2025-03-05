@@ -12,6 +12,7 @@ import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboa
 import MPMActionPlan from "./pages/MPMActionPlan";
 import PerformanceManagementHome from "./pages/PerformanceManagementHome";
 import UserDetailPage from "./pages/UserDetail";
+import EmployeeIPMDetailsPage from "./pages/EmployeeIPMDetails";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/performance-management/dashboard" element={<PerformanceManagementDashboard/>} />
           <Route path="/performance-management/bsc/input" element={<BSCInputPage/>} />
           <Route path="/performance-management/ipm" element={<IPMPage/>} />
+          <Route path="/performance-management/ipm/:employeeId/details" element={<EmployeeIPMDetailsPage/>} />
           <Route path="/performance-management/period-master" element={<PeriodMaster/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/dashboard" element={<Dashboard />} />
