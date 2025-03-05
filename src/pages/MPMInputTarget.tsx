@@ -772,7 +772,7 @@ const MPMInfoTarget = () => {
             w-full
           `}
         >
-          <div className="space-y-6 max-w-7xl mx-auto">
+       <div className="space-y-6 w-full">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 mt-4 space-y-4 md:space-y-0">
               <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">

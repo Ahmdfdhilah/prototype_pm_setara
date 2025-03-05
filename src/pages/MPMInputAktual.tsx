@@ -345,7 +345,7 @@ const MPMInputActual = () => {
             w-full
           `}
         >
-          <div className="space-y-6 max-w-7xl mx-auto">
+       <div className="space-y-6 w-full">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
               <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
