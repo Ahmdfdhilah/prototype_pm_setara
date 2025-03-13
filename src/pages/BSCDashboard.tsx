@@ -13,7 +13,7 @@ import {
 import Header from '@/components/Header';
 import FilterSection from '@/components/Filtering';
 
-// Types remain the same as before
+// Types
 type Period = 'Jan-25' | 'Feb-25' | 'Mar-25' | 'Apr-25';
 type BSCType = 'Monthly' | 'Quarterly' | 'Yearly';
 type Perspective = 'Financial' | 'Customer' | 'Internal Business Process' | 'Learning & Growth';

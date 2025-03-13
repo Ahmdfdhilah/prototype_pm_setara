@@ -24,6 +24,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from '@/components/Pagination';
 import { useNavigate } from 'react-router-dom';
+import { Textarea } from '@/components/ui/textarea';
 
 // Types
 type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved by Manager' | 'Validated by SM';
@@ -62,52 +63,6 @@ interface IPMEntry {
     evidence: Evidence[];
 }
 
-interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-    error?: string;
-}
-
-// Custom TextArea component
-const TextArea: React.FC<TextAreaProps> = ({
-    className = '',
-    error,
-    ...props
-}) => {
-    return (
-        <div className="relative w-full">
-            <textarea
-                className={`
-                    w-full
-                    min-h-[80px]
-                    px-3 
-                    py-2 
-                    text-sm
-                    rounded-md
-                    border
-                    border-gray-300
-                    bg-white
-                    dark:bg-gray-800
-                    dark:border-gray-600
-                    placeholder:text-gray-400
-                    dark:placeholder:text-gray-500
-                    focus:outline-none
-                    focus:ring-2
-                    focus:ring-[#46B749]
-                    focus:border-transparent
-                    disabled:cursor-not-allowed
-                    disabled:opacity-50
-                    ${error ? 'border-red-500' : ''}
-                    ${className}
-                `}
-                {...props}
-            />
-            {error && (
-                <span className="text-xs text-red-500 mt-1">
-                    {error}
-                </span>
-            )}
-        </div>
-    );
-};
 
 const EmployeeIPMDetailsPage = () => {
     // const { employeeId } = router.query;
@@ -615,7 +570,7 @@ const EmployeeIPMDetailsPage = () => {
 
                                                                                 <div>
                                                                                     <label className="block text-sm font-medium mb-1">Comments</label>
-                                                                                    <TextArea
+                                                                                    <Textarea
                                                                                         value={evidenceComment}
                                                                                         onChange={(e) => setEvidenceComment(e.target.value)}
                                                                                         placeholder="Provide details about this evidence..."

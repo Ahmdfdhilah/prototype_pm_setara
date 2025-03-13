@@ -18,7 +18,6 @@ interface MenuItem {
     subMenus?: MenuItem[];
 }
 
-
 // Define performance management menus
 const performanceMenus: MenuItem[] = [
     {
@@ -64,8 +63,8 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'employee', 'approver', 'sm_dept'],
     },
     {
-        title: 'Management Performance', 
-        path: '/performance-management/mpm/dashboard',
+        title: 'Monthly Management Performance', 
+        path: '/monthly-performance-management/mpm/dashboard',
         icon: Target,
         roles: ['admin', 'approver', 'sm_dept'],
         subMenus: [
@@ -87,11 +86,10 @@ const performanceMenus: MenuItem[] = [
         ]
     },
     {
-        title: 'Strategic Initiative', //FIX ME
+        title: 'Strategic Initiative',
         path: '#',
         icon: Rocket,
         roles: ['admin', 'approver', 'sm_dept'],
-        
     }
 ];
 
@@ -118,7 +116,6 @@ const systems = [
     }
 ];
 
-
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, system, role }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -141,7 +138,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
     };
 
     const isMenuActive = (menu: MenuItem): boolean => {
-        // Check if current path matches exactly with menu path or any of its submenus
         if (menu.subMenus) {
             return menu.subMenus.some(subMenu => location.pathname === subMenu.path);
         }
@@ -162,15 +158,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
             )}
 
             <aside className={`
-            font-montserrat 
-            fixed left-0 top-16 h-[calc(100vh-4rem)] w-72
-            bg-white dark:bg-gray-800 
-            shadow-lg z-20
-            border-r border-gray-200 dark:border-gray-700
-            transition-transform duration-300 ease-in-out
-            overflow-y-auto
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          `}>
+                font-montserrat 
+                fixed left-0 top-16 h-[calc(100vh-4rem)] w-72
+                bg-white dark:bg-gray-800 
+                shadow-lg z-20
+                border-r border-gray-200 dark:border-gray-700
+                transition-transform duration-300 ease-in-out
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                overflow-y-auto
+            `}>
                 <div className="relative h-full p-6 flex flex-col">
                     {/* Profile Section */}
                     <div className="flex flex-col items-center mt-8 lg:mt-0">
@@ -184,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                     </div>
 
                     {/* Navigation Menu */}
-                    <nav className="mt-8 space-y-2">
+                    <nav className="mt-8 space-y-2 flex-grow overflow-y-auto">
                         {accessibleMenus.map((menu, menuIndex) => (
                             <div key={menuIndex}>
                                 <Button
@@ -199,18 +195,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                                             }
                                         }
                                     }}
-                                    className={`w-full justify-start ${isMenuActive(menu)
+                                    className={`w-full justify-start h-auto min-h-10 py-2 ${
+                                        isMenuActive(menu)
                                             ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                                             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                        }`}
+                                    }`}
                                 >
-                                    {menu.icon && <menu.icon className="mr-2 h-4 w-4" />}
-                                    {menu.title}
-                                    {menu.subMenus && (
-                                        expandedMenus[menu.path]
-                                            ? <ChevronDown className="ml-auto h-4 w-4" />
-                                            : <ChevronRight className="ml-auto h-4 w-4" />
-                                    )}
+                                    <div className="flex items-center w-full">
+                                        {menu.icon && <menu.icon className="mr-2 h-4 w-4 flex-shrink-0" />}
+                                        <span className="truncate">{menu.title}</span>
+                                        {menu.subMenus && (
+                                            <span className="ml-auto flex-shrink-0">
+                                                {expandedMenus[menu.path]
+                                                    ? <ChevronDown className="h-4 w-4" />
+                                                    : <ChevronRight className="h-4 w-4" />
+                                                }
+                                            </span>
+                                        )}
+                                    </div>
                                 </Button>
 
                                 {/* Submenu */}
@@ -226,12 +228,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                                                         setIsSidebarOpen(false);
                                                     }
                                                 }}
-                                                className={`w-full justify-start pl-6 ${isSubmenuActive(submenu.path)
+                                                className={`w-full justify-start pl-6 h-auto min-h-8 py-2 ${
+                                                    isSubmenuActive(submenu.path)
                                                         ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                                                         : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                                    }`}
+                                                }`}
                                             >
-                                                {submenu.title}
+                                                <span className="truncate text-sm">{submenu.title}</span>
                                             </Button>
                                         ))}
                                     </div>
@@ -248,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                             className="w-full justify-start text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                             <User className="mr-2 h-4 w-4" />
-                            User Detail
+                            <span className="truncate">User Detail</span>
                         </Button>
 
                         <Button
@@ -257,7 +260,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                             className="w-full justify-start text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                             <LogOut className="mr-2 h-4 w-4" />
-                            Logout
+                            <span className="truncate">Logout</span>
                         </Button>
                     </div>
                 </div>

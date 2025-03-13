@@ -20,11 +20,7 @@ import {
     MapPin,
     Briefcase,
     Calendar,
-    FileText,
-    CheckCircle2,
-    LineChart,
-    Users,
-    Award,
+    Users
 } from 'lucide-react';
 
 const UserDetailPage = () => {
@@ -102,185 +98,97 @@ const UserDetailPage = () => {
                         </h1>
                         <div className="space-x-3 mt-4 md:mt-0">
                             <Button
-                                variant="outline"
-                                className="border-[#1B6131] text-[#1B6131] hover:bg-[#f0f9f0] dark:border-[#46B749] dark:text-[#46B749] dark:hover:bg-[#0a2e14]"
+                                className="bg-[#1B6131] hover:bg-[#144d27] text-white dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
                             >
                                 Edit User
                             </Button>
-                            <Button
-                                className="bg-[#1B6131] hover:bg-[#144d27] text-white dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
-                            >
-                                Reset Password
-                            </Button>
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                        {/* User Profile Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md lg:col-span-1">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] flex flex-col items-center">
-                                <Avatar className="h-24 w-24 mb-4 border-4 border-white dark:border-gray-800">
-                                    <AvatarFallback className="bg-[#1B6131] text-white dark:bg-[#46B749] text-2xl">
-                                        {userData.name.split(' ').map(name => name[0]).join('')}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <CardTitle className="text-center text-[#1B6131] dark:text-[#46B749]">
-                                    {userData.name}
-                                </CardTitle>
-                                <div className="mt-2 flex flex-wrap justify-center gap-2">
-                                    {userData.roles.map((role, index) => (
-                                        <Badge
-                                            key={index}
-                                            className="bg-[#1B6131] hover:bg-[#1B6131] dark:bg-[#46B749] dark:hover:bg-[#46B749]"
-                                        >
-                                            {role.charAt(0).toUpperCase() + role.slice(1)}
-                                        </Badge>
-                                    ))}
-                                </div>
-                                <div className="mt-4 w-full">
-                                    {renderStatusBadge(userData.status)}
-                                </div>
-                            </CardHeader>
-                            <CardContent className="pt-6">
-                                <div className="space-y-4">
-                                    <div className="flex items-center">
-                                        <Mail className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
-                                            <p className="text-sm">{userData.email}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <Phone className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
-                                            <p className="text-sm">{userData.phone}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <Briefcase className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Department</p>
-                                            <p className="text-sm">{userData.department}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <User className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Position</p>
-                                            <p className="text-sm">{userData.position}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <Users className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Reports to</p>
-                                            <p className="text-sm">{userData.reportTo}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <MapPin className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
-                                            <p className="text-sm">{userData.location}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <Calendar className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Join Date</p>
-                                            <p className="text-sm">{userData.joinDate}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Performance Summary Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md lg:col-span-2">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    <Award className="mr-2 h-5 w-5" />
-                                    Performance Summary
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                                    <div className="bg-[#f0f9f0] dark:bg-[#0a2e14] p-4 rounded-lg border border-[#46B749] dark:border-[#1B6131]">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                            <FileText className="h-4 w-4 mr-1 text-[#1B6131] dark:text-[#46B749]" />
-                                            MPM Completion
-                                        </p>
-                                        <p className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
-                                            {userData.performanceData.mpmCompletionRate}%
-                                        </p>
-                                        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700 mt-1">
-                                            <div
-                                                className="bg-[#1B6131] dark:bg-[#46B749] h-2 rounded-full"
-                                                style={{ width: `${userData.performanceData.mpmCompletionRate}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-[#f0f9f0] dark:bg-[#0a2e14] p-4 rounded-lg border border-[#46B749] dark:border-[#1B6131]">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                            <Users className="h-4 w-4 mr-1 text-[#1B6131] dark:text-[#46B749]" />
-                                            IPM Completion
-                                        </p>
-                                        <p className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
-                                            {userData.performanceData.ipmCompletionRate}%
-                                        </p>
-                                        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700 mt-1">
-                                            <div
-                                                className="bg-[#1B6131] dark:bg-[#46B749] h-2 rounded-full"
-                                                style={{ width: `${userData.performanceData.ipmCompletionRate}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-[#f0f9f0] dark:bg-[#0a2e14] p-4 rounded-lg border border-[#46B749] dark:border-[#1B6131]">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                            <CheckCircle2 className="h-4 w-4 mr-1 text-[#1B6131] dark:text-[#46B749]" />
-                                            Overall Score
-                                        </p>
-                                        <p className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
-                                            {userData.performanceData.overallScore}/4.0
-                                        </p>
-                                        <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700 mt-1">
-                                            <div
-                                                className="bg-[#1B6131] dark:bg-[#46B749] h-2 rounded-full"
-                                                style={{ width: `${(userData.performanceData.overallScore / 4) * 100}%` }}
-                                            ></div>
-                                        </div>
+                    {/* User Profile Card */}
+                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md lg:col-span-1  mb-8">
+                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] flex flex-col">
+                            <Avatar className="h-24 w-24 mb-4 border-4 border-white dark:border-gray-800">
+                                <AvatarFallback className="bg-[#1B6131] text-white dark:bg-[#46B749] text-2xl">
+                                    {userData.name.split(' ').map(name => name[0]).join('')}
+                                </AvatarFallback>
+                            </Avatar>
+                            <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                                {userData.name}
+                            </CardTitle>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                                {userData.roles.map((role, index) => (
+                                    <Badge
+                                        key={index}
+                                        className="bg-[#1B6131] hover:bg-[#1B6131] dark:bg-[#46B749] dark:hover:bg-[#46B749]"
+                                    >
+                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="mt-4 w-full">
+                                {renderStatusBadge(userData.status)}
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <Mail className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
+                                        <p className="text-sm">{userData.email}</p>
                                     </div>
                                 </div>
 
-                                <div className="bg-[#f0f9f0] dark:bg-[#0a2e14] p-4 rounded-lg border border-[#46B749] dark:border-[#1B6131] mb-4">
-                                    <h4 className="font-semibold mb-2 flex items-center text-sm">
-                                        <LineChart className="h-4 w-4 mr-2 text-[#1B6131] dark:text-[#46B749]" />
-                                        Performance Trend (Last 6 Months)
-                                    </h4>
-                                    <div className="h-16 flex items-end space-x-1">
-                                        {userData.performanceData.performanceTrend.map((value, index) => (
-                                            <div key={index} className="flex-1 flex flex-col items-center">
-                                                <div
-                                                    className="w-full bg-[#1B6131] dark:bg-[#46B749] rounded-t"
-                                                    style={{ height: `${(value / 100) * 60}px` }}
-                                                ></div>
-                                                <span className="text-xs mt-1">{index + 1}</span>
-                                            </div>
-                                        ))}
+                                <div className="flex items-center">
+                                    <Phone className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
+                                        <p className="text-sm">{userData.phone}</p>
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+
+                                <div className="flex items-center">
+                                    <Briefcase className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Department</p>
+                                        <p className="text-sm">{userData.department}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <User className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Position</p>
+                                        <p className="text-sm">{userData.position}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <Users className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Reports to</p>
+                                        <p className="text-sm">{userData.reportTo}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <MapPin className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
+                                        <p className="text-sm">{userData.location}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <Calendar className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Join Date</p>
+                                        <p className="text-sm">{userData.joinDate}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </main>
             </div>
         </div>
