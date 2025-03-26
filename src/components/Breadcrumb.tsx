@@ -10,8 +10,6 @@ interface BreadcrumbProps {
   items: BreadcrumbItem[];
   currentPage: string;
   subtitle?: string;
-  bgColor?: string;
-  textColor?: string;
   showHomeIcon?: boolean;
   className?: string;
   isLoading?: boolean;
@@ -25,63 +23,77 @@ const Breadcrumb = ({
   className = "",
   isLoading = false,
 }: BreadcrumbProps) => {
+  // Loading state with improved shimmer effect
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-[#e0f3e4] to-[#c4e6d0] dark:from-[#163b20] dark:to-[#1a4d2a] mb-8 animate-pulse">
+      <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 mb-8 overflow-hidden">
         <div className="mx-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="h-6 w-32 bg-gray-300/20 rounded" />
-          <div className="h-4 w-48 bg-gray-300/20 rounded" />
+          <div className="animate-pulse">
+            <div className="h-8 w-48 bg-green-200/50 dark:bg-green-700/50 rounded-md mb-2" />
+            <div className="h-5 w-36 bg-green-200/50 dark:bg-green-700/50 rounded-md" />
+          </div>
+          <div className="animate-pulse">
+            <div className="h-10 w-64 bg-green-200/50 dark:bg-green-700/50 rounded-md" />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`bg-gradient-to-r from-[#e6f3e6] to-[#d4ebd4] dark:from-[#0c2f16] dark:to-[#0a3a1a] mb-8 ${className}`}>
+    <div className={`bg-gradient-to-r from-[#e6f3e6] to-[#d4ebd4] dark:from-[#0c2f16] dark:to-[#0a3a1a] mb-8 rounded-lg shadow-sm ${className}`}>
       <div className="mx-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-[#0d4d23] dark:text-[#4caf50] tracking-tight">
-            {currentPage}
-          </h2>
-          {subtitle && (
-            <p className="text-sm text-[#2c7a3b] dark:text-[#5bc660] mt-1">
-              {subtitle}
-            </p>
-          )}
+        <div className="flex items-center">
+          <div>
+            <div className="flex items-center">
+              <h2 className="text-xl font-bold text-green-800 dark:text-green-200 tracking-tight">
+                {currentPage}
+              </h2>
+            </div>
+            {subtitle && (
+              <p className="hidden md:flex text-sm text-green-600 dark:text-green-400 mt-1 max-w-md truncate">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
 
-        <nav aria-label="breadcrumb">
-          <ol className="flex items-center gap-2 text-sm">
+        <nav aria-label="breadcrumb" className="w-full sm:w-auto">
+          {/* Desktop & Mobile Breadcrumb */}
+          <ol className="flex items-center flex-wrap sm:flex-nowrap gap-2 text-sm">
             {showHomeIcon && (
-              <li className="flex items-center">
+              <li className="flex items-center shrink-0">
                 <Link
                   to="/"
-                  className="flex items-center text-[#1B6131] dark:text-[#46B749] hover:text-[#0d4d23] dark:hover:text-[#4caf50] transition-colors"
+                  className="flex items-center text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100 transition-colors"
                   aria-label="Home"
                 >
                   <Home className="w-4 h-4" />
                 </Link>
-                <ChevronRight className="w-4 h-4 mx-2 text-[#2c7a3b] dark:text-[#5bc660] opacity-70" />
+                <ChevronRight className="w-4 h-4 mx-2 text-green-500 dark:text-green-600 opacity-70 shrink-0" />
               </li>
             )}
 
             {items.map((item, index) => (
-              <li key={item.path} className="flex items-center">
+              <li key={item.path} className="flex items-center shrink-0">
                 <Link
                   to={item.path}
-                  className="text-[#1B6131] dark:text-[#46B749] hover:text-[#0d4d23] dark:hover:text-[#4caf50] transition-colors"
+                  className={`
+                    text-green-700 dark:text-green-300 
+                    hover:text-green-900 dark:hover:text-green-100 
+                    transition-colors whitespace-nowrap
+                    ${index === items.length - 1 ? 'font-semibold' : ''}
+                  `}
                 >
                   {item.label}
                 </Link>
-                {index < items.length && (
-                  <ChevronRight className="w-4 h-4 mx-2 text-[#2c7a3b] dark:text-[#5bc660] opacity-70" />
-                )}
+                <ChevronRight className="w-4 h-4 mx-2 text-green-500 dark:text-green-600 opacity-70 shrink-0" />
               </li>
             ))}
 
             <li
               aria-current="page"
-              className="text-[#004d40] dark:text-[#46B749] font-semibold tracking-tight"
+              className="text-green-900 dark:text-green-100 font-semibold tracking-tight whitespace-nowrap"
             >
               {currentPage}
             </li>

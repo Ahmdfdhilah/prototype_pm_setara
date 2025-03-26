@@ -291,12 +291,13 @@ const MPMActualList: React.FC = () => {
         />
 
         <main className={`
-            flex-1 
+         flex-1 
             px-2 
             sm:px-4 
             lg:px-6 
             pt-16 
             pb-12
+            mt-4
             sm:pt-18 
             lg:pt-20 
             transition-all 
@@ -322,7 +323,7 @@ const MPMActualList: React.FC = () => {
                   MPM Actuals Table
                 </CardTitle>
               </CardHeader>
-              <CardContent className='mt-2 p-0'>
+              <CardContent className='mt-2 p-0 overflow-x-scroll'>
                 <table className="w-full border-collapse">
                   <thead className="bg-[#1B6131] text-white">
                     <tr>

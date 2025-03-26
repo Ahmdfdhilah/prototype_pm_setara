@@ -204,6 +204,7 @@ const MPMTargetList: React.FC = () => {
             lg:px-6 
             pt-16 
             pb-12
+            mt-4
             sm:pt-18 
             lg:pt-20 
             transition-all 
@@ -229,7 +230,7 @@ const MPMTargetList: React.FC = () => {
                   MPM Targets Table
                 </CardTitle>
               </CardHeader>
-              <CardContent className='mt-2 p-0'>
+              <CardContent className='mt-2 p-0 overflow-x-scroll'>
                 <table className="w-full border-collapse">
                   <thead className="bg-[#1B6131] text-white">
                     <tr>
