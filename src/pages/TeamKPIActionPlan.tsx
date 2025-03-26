@@ -171,7 +171,7 @@ const TeamKPIActionPlans: React.FC = () => {
 
         return (
             <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="sm:max-w-[700px]">
+                <DialogContent className="max-w-md w-[95%] lg:max-w-2xl rounded-lg overflow-y-scroll max-h-[85vh]">
                     <DialogHeader>
                         <DialogTitle>
                             {initialData ? 'Edit' : 'Add'} Team KPI Action Plan

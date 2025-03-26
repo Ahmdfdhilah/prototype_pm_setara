@@ -142,7 +142,7 @@ const UserDetailPage = () => {
                                 className=" w-fit flex items-center justify-center gap-2 bg-[#1B6131] hover:bg-[#144d27] dark:text-black text-white dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
                             >
                                 <Edit className="h-4 w-4" />
-                                Edit {userData.roles.includes('manager') ? 'Approver' : 'Employee'}
+                                Edit Profile
                             </Button>
                         </CardHeader>
                         <CardContent className="pt-6">

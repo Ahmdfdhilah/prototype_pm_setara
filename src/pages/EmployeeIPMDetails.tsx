@@ -277,37 +277,37 @@ const EmployeeIPMDetailsPage = () => {
         ));
     };
 
-// Helper function to get status color classes with dark mode support
-const getStatusColor = (status: IPMStatus) => {
-    switch (status) {
-      case 'Pending':
-        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-      case 'Evidence Submitted':
-        return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
-      case 'Approved by Manager':
-        return 'bg-yellow-200 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200';
-      case 'Validated by SM':
-        return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
-      default:
-        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-    }
-  };
-  
-  // Helper function to get evidence status color classes with dark mode support
-  const getEvidenceStatusColor = (status: EvidenceStatus) => {
-    switch (status) {
-      case 'Not Submitted':
-        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-      case 'Submitted':
-        return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
-      case 'Approved':
-        return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
-      case 'Rejected':
-        return 'bg-red-200 text-red-700 dark:bg-red-900 dark:text-red-200';
-      default:
-        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-    }
-  };
+    // Helper function to get status color classes with dark mode support
+    const getStatusColor = (status: IPMStatus) => {
+        switch (status) {
+            case 'Pending':
+                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+            case 'Evidence Submitted':
+                return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
+            case 'Approved by Manager':
+                return 'bg-yellow-200 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200';
+            case 'Validated by SM':
+                return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
+            default:
+                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+        }
+    };
+
+    // Helper function to get evidence status color classes with dark mode support
+    const getEvidenceStatusColor = (status: EvidenceStatus) => {
+        switch (status) {
+            case 'Not Submitted':
+                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+            case 'Submitted':
+                return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
+            case 'Approved':
+                return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
+            case 'Rejected':
+                return 'bg-red-200 text-red-700 dark:bg-red-900 dark:text-red-200';
+            default:
+                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+        }
+    };
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat overflow-x-hidden">
@@ -432,7 +432,7 @@ const getStatusColor = (status: IPMStatus) => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className='mt-2 p-0'>
-                                <div className="overflow-x-auto mt-4">
+                                <div className="overflow-x-auto">
                                     <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
@@ -473,7 +473,7 @@ const getStatusColor = (status: IPMStatus) => {
                                                                             View
                                                                         </Button>
                                                                     </DialogTrigger>
-                                                                    <DialogContent>
+                                                                    <DialogContent className="max-w-md w-[95%] lg:max-w-2xl rounded-lg overflow-y-scroll max-h-[85vh]">
                                                                         <DialogHeader>
                                                                             <DialogTitle>IPM Details</DialogTitle>
                                                                         </DialogHeader>
@@ -555,7 +555,7 @@ const getStatusColor = (status: IPMStatus) => {
                                                                                 Evidence
                                                                             </Button>
                                                                         </DialogTrigger>
-                                                                        <DialogContent>
+                                                                        <DialogContent className="max-w-md w-[95%] lg:max-w-2xl rounded-lg overflow-y-scroll max-h-[85vh]">
                                                                             <DialogHeader>
                                                                                 <DialogTitle>Upload Evidence</DialogTitle>
                                                                             </DialogHeader>
@@ -612,7 +612,7 @@ const getStatusColor = (status: IPMStatus) => {
                                                                                 Review
                                                                             </Button>
                                                                         </DialogTrigger>
-                                                                        <DialogContent>
+                                                                        <DialogContent className="max-w-md w-[95%] lg:max-w-2xl rounded-lg overflow-y-scroll max-h-[85vh]">
                                                                             <DialogHeader>
                                                                                 <DialogTitle>Review Evidence</DialogTitle>
                                                                             </DialogHeader>

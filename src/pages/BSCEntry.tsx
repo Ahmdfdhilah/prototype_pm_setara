@@ -185,8 +185,8 @@ const BSCEntryPage = () => {
                                 </div>
                             </CardHeader>
                             <CardContent className="dark:bg-gray-900 mt-2 p-0">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full table-fixed">
+                                <div className="overflow-x-scroll">
+                                    <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
                                                 <th className="p-4 text-left">Perspective</th>

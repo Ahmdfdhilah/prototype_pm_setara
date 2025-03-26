@@ -62,9 +62,9 @@ const KPIFormDialog: React.FC<KPIFormDialogProps> = ({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl overflow-y-scroll max-h-[85vh]">
+            <DialogContent className="max-w-md w-[95%] lg:max-w-full rounded-lg overflow-y-scroll max-h-[85vh]">
                 <DialogHeader>
-                    <DialogTitle>{mode === 'create' ? 'Create KPI' : 'Edit KPI'}</DialogTitle>
+                    <DialogTitle className='mt-4 lg:mt-0'>{mode === 'create' ? 'Create KPI' : 'Edit KPI'}</DialogTitle>
                     <DialogDescription>
                         {mode === 'create'
                             ? 'Add a new KPI to the system'
@@ -204,16 +204,18 @@ const KPIFormDialog: React.FC<KPIFormDialogProps> = ({
                     </div>
                 </div>
 
-                <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={handleSave}
-                        className="bg-[#1B6131] hover:bg-[#46B749]"
-                    >
-                        Save KPI
-                    </Button>
+                <DialogFooter className='space-y-4'>
+                    <div className="flex flex-col lg:flex-row gap-4">
+                        <Button variant="outline" onClick={onClose}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSave}
+                        >
+                            Save KPI
+                        </Button>
+                    </div>
+
                 </DialogFooter>
             </DialogContent>
         </Dialog>

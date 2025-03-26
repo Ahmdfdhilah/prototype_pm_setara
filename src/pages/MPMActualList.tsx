@@ -394,7 +394,7 @@ const MPMActualList: React.FC = () => {
 
       {/* Submit Modal - Positioned with absolute positioning */}
       <Dialog open={isSubmitModalOpen} onOpenChange={setIsSubmitModalOpen}>
-        <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-[425px] z-50">
+        <DialogContent className="max-w-md w-[95%] lg:max-w-lg rounded-lg overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Submit MPM Actual</DialogTitle>
             <DialogDescription>
@@ -402,20 +402,22 @@ const MPMActualList: React.FC = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSubmitModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitMpmActual}>
-              Confirm Submission
-            </Button>
+          <DialogFooter className='space-y-4'>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <Button variant="outline" onClick={() => setIsSubmitModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitMpmActual}>
+                Confirm Submission
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Review Modal - Positioned with absolute positioning */}
       <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
-        <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-[425px] z-50">
+        <DialogContent className="max-w-md w-[95%] lg:max-w-lg rounded-lg overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Review MPM Actual</DialogTitle>
             <DialogDescription>
@@ -434,16 +436,18 @@ const MPMActualList: React.FC = () => {
             </div>
           </div>
 
-          <DialogFooter className="flex justify-between">
-            <Button
-              variant="destructive"
-              onClick={() => handleReviewMpmActual('Rejected by Senior Manager')}
-            >
-              Reject
-            </Button>
-            <Button onClick={() => handleReviewMpmActual('Approved by Senior Manager')}>
-              Approve
-            </Button>
+          <DialogFooter className='space-y-4'>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <Button
+                variant="destructive"
+                onClick={() => handleReviewMpmActual('Rejected by Senior Manager')}
+              >
+                Reject
+              </Button>
+              <Button onClick={() => handleReviewMpmActual('Approved by Senior Manager')}>
+                Approve
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -30,7 +30,7 @@ const EditMonthlyTargetDialog: React.FC<EditMonthlyTargetDialogProps> = ({
   useEffect(() => {
     if (kpi) {
       setLocalTargets(prev => ({
-        ...prev, 
+        ...prev,
         ...kpi.targets,
       }));
     }
@@ -59,9 +59,9 @@ const EditMonthlyTargetDialog: React.FC<EditMonthlyTargetDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-md w-[95%] lg:max-w-lg rounded-lg overflow-y-scroll max-h-[85vh]">
         <DialogHeader>
-          <DialogTitle>Edit Monthly Targets for {kpi.kpi}</DialogTitle>
+          <DialogTitle className='mt-4 lg:mt-0'>Edit Monthly Targets for {kpi.kpi}</DialogTitle>
           <DialogDescription>
             Modify the monthly targets for this KPI
           </DialogDescription>
@@ -83,14 +83,15 @@ const EditMonthlyTargetDialog: React.FC<EditMonthlyTargetDialogProps> = ({
             </div>
           ))}
         </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>
-            Save Changes
-          </Button>
+        <DialogFooter className='space-y-4'>
+          <div className="flex flex-col lg:flex-row gap-4">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave}>
+              Save Changes
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
