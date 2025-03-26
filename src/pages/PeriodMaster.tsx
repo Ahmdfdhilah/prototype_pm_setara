@@ -5,13 +5,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,13 +20,12 @@ import {
 import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import Breadcrumb from '@/components/Breadcrumb';
 
-type PeriodType = 'Monthly' | 'Quarterly' | 'Yearly';
 type PeriodStatus = 'Draft' | 'Active' | 'Closed';
 
 interface Period {
     id: string;
-    type: PeriodType;
     year: number;
     period: string;
     startDate: string;
@@ -47,8 +39,7 @@ interface Period {
 const initialPeriods: Period[] = [
     {
         id: '1',
-        type: 'Monthly',
-        year: 2024,
+        year: 2023,
         period: '1',
         startDate: '2024-01-01',
         endDate: '2024-01-31',
@@ -58,7 +49,6 @@ const initialPeriods: Period[] = [
     },
     {
         id: '2',
-        type: 'Monthly',
         year: 2024,
         period: '2',
         startDate: '2024-02-01',
@@ -69,9 +59,8 @@ const initialPeriods: Period[] = [
     },
     {
         id: '3',
-        type: 'Quarterly',
-        year: 2024,
-        period: 'Q1',
+        year: 2025,
+        period: '3',
         startDate: '2024-01-01',
         endDate: '2024-03-31',
         status: 'Draft',
@@ -89,7 +78,6 @@ const PeriodMaster = () => {
     // Period management state
     const [periods, setPeriods] = useState<Period[]>(initialPeriods);
     const [showNewPeriodDialog, setShowNewPeriodDialog] = useState(false);
-    const [selectedType, setSelectedType] = useState<PeriodType>('Monthly');
     const [newPeriod, setNewPeriod] = useState({
         year: new Date().getFullYear(),
         period: '',
@@ -111,29 +99,8 @@ const PeriodMaster = () => {
         }
     };
 
-    const generatePeriodOptions = (type: PeriodType) => {
-        switch (type) {
-            case 'Monthly':
-                return Array.from({ length: 12 }, (_, i) => ({
-                    value: `${i + 1}`,
-                    label: `Month ${i + 1}`
-                }));
-            case 'Quarterly':
-                return Array.from({ length: 4 }, (_, i) => ({
-                    value: `Q${i + 1}`,
-                    label: `Quarter ${i + 1}`
-                }));
-            case 'Yearly':
-                return [{
-                    value: 'FY',
-                    label: 'Full Year'
-                }];
-        }
-    };
-
     const handleCreatePeriod = () => {
         const periodExists = periods.some(p =>
-            p.type === selectedType &&
             p.year === newPeriod.year &&
             p.period === newPeriod.period
         );
@@ -145,7 +112,6 @@ const PeriodMaster = () => {
 
         const newPeriodEntry: Period = {
             id: `${Date.now()}`,
-            type: selectedType,
             year: newPeriod.year,
             period: newPeriod.period,
             startDate: newPeriod.startDate,
@@ -201,33 +167,33 @@ const PeriodMaster = () => {
 
                 <main className={`flex-1 overflow-x-scroll px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6">
-                        {/* Header Section */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
-                            <h1 className="text-2xl font-bold text-[#1B6131] dark:text-[#46B749]">
-                                Period Master Management
-                            </h1>
-                            <Button
-                                onClick={() => setShowNewPeriodDialog(true)}
-                                className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                            >
-                                <Calendar className="mr-2 h-4 w-4" />
-                                Create New Period
-                            </Button>
-                        </div>
+                        <Breadcrumb
+                            items={[]}
+                            currentPage="Period Master Management"
+                            showHomeIcon={true}
+                        />
 
                         {/* Period Management Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    Period Management
-                                </CardTitle>
+                        <Card className="border-[#46B749] dark:border-[#1B6131]">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
+                                        Period Table
+                                    </CardTitle>
+                                    <Button
+                                        onClick={() => setShowNewPeriodDialog(true)}
+                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                    >
+                                        <Calendar className="mr-2 h-4 w-4" />
+                                        Create New Period
+                                    </Button>
+                                </div>
                             </CardHeader>
-                            <CardContent className="dark:bg-gray-900 mt-4">
+                            <CardContent className="dark:bg-gray-900 mt-2 p-0">
                                 <div className="overflow-x-auto">
-                                    <table className="w-full">
+                                    <table className="w-full table-fixed">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
-                                                <th className="p-4 text-left border-b">Type</th>
                                                 <th className="p-4 text-left border-b">Year</th>
                                                 <th className="p-4 text-left border-b">Period</th>
                                                 <th className="p-4 text-left border-b">Start Date</th>
@@ -244,7 +210,6 @@ const PeriodMaster = () => {
                                                     key={period.id}
                                                     className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
                                                 >
-                                                    <td className="p-4">{period.type}</td>
                                                     <td className="p-4">{period.year}</td>
                                                     <td className="p-4">{period.period}</td>
                                                     <td className="p-4">{period.startDate}</td>
@@ -286,6 +251,7 @@ const PeriodMaster = () => {
                             </CardContent>
                         </Card>
                     </div>
+
                 </main>
             </div>
 
@@ -300,22 +266,6 @@ const PeriodMaster = () => {
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <label className="text-right">Type</label>
-                            <Select
-                                value={selectedType}
-                                onValueChange={(value: PeriodType) => setSelectedType(value)}
-                            >
-                                <SelectTrigger className="col-span-3">
-                                    <SelectValue placeholder="Select period type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Monthly">Monthly</SelectItem>
-                                    <SelectItem value="Quarterly">Quarterly</SelectItem>
-                                    <SelectItem value="Yearly">Yearly</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
                             <label className="text-right">Year</label>
                             <Input
                                 type="number"
@@ -323,24 +273,6 @@ const PeriodMaster = () => {
                                 onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
                                 className="col-span-3"
                             />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <label className="text-right">Period</label>
-                            <Select
-                                value={newPeriod.period}
-                                onValueChange={(value) => setNewPeriod(prev => ({ ...prev, period: value }))}
-                            >
-                                <SelectTrigger className="col-span-3">
-                                    <SelectValue placeholder="Select period" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {generatePeriodOptions(selectedType).map(option => (
-                                        <SelectItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <label className="text-right">Start Date</label>

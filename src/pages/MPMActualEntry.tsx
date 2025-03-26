@@ -49,7 +49,7 @@ type Approver = {
   department: string;
 };
 
-const MPMInputActual = () => {
+const MPMActualEntry = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
@@ -437,4 +437,4 @@ const MPMInputActual = () => {
   );
 }
 
-export default MPMInputActual;
+export default MPMActualEntry;

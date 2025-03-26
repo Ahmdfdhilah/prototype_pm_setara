@@ -18,6 +18,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from '@/components/Pagination';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumb from '@/components/Breadcrumb';
 
 // Types
 type Unit = 'IT' | 'Marketing' | 'Sales' | 'Operations' | 'Customer Service' | 'Finance';
@@ -38,7 +39,7 @@ interface Employee {
 const IPMPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('admin'); // employee, approver, sm_dept
+    const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [filterUnit, setFilterUnit] = useState('all'); // Changed default value to 'all' instead of empty string
@@ -143,8 +144,8 @@ const IPMPage = () => {
                 completed: employeeData?.completedPlans || 0,
                 total: employeeData?.totalPlans || 0
             };
-        } else if (currentRole === 'approver') {
-            // For approver - show all employees in their unit (assuming IT department)
+        } else if (currentRole === 'manager') {
+            // For manager - show all employees in their unit (assuming IT department)
             const unitEmployees = employees.filter(emp => emp.unit === 'IT');
             return {
                 pending: unitEmployees.reduce((sum, emp) => sum + emp.pendingPlans, 0),
@@ -170,34 +171,34 @@ const IPMPage = () => {
     // Filter employees based on selected filters and role
     const getFilteredEmployees = () => {
         let filteredList = [...employees];
-        
+
         // Filter by role
         if (currentRole === 'employee') {
             // Employee sees only themselves
             filteredList = filteredList.filter(emp => emp.id === '1');
-        } else if (currentRole === 'approver') {
+        } else if (currentRole === 'manager') {
             // Approver sees employees in their unit (assuming IT unit)
             filteredList = filteredList.filter(emp => emp.unit === 'IT');
         }
         // For sm_dept role, no department filtering is applied - they see all employees
-        
+
         // Additional filters - apply only if a specific unit (not 'all') is selected
         if (filterUnit && filterUnit !== 'all') {
             filteredList = filteredList.filter(emp => emp.unit === filterUnit);
         }
-        
+
         // Search term filter
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
-            filteredList = filteredList.filter(emp => 
-                emp.name.toLowerCase().includes(term) || 
+            filteredList = filteredList.filter(emp =>
+                emp.name.toLowerCase().includes(term) ||
                 emp.employeeNumber.toLowerCase().includes(term) ||
                 emp.position.toLowerCase().includes(term) ||
-                emp.unit.toLowerCase().includes(term) || 
+                emp.unit.toLowerCase().includes(term) ||
                 emp.department.toLowerCase().includes(term)
             );
         }
-        
+
         return filteredList;
     };
 
@@ -216,7 +217,7 @@ const IPMPage = () => {
 
     // Handle employee selection/click
     const handleEmployeeSelect = (employeeId: string) => {
-       navigate(`/performance-management/ipm/${employeeId}/details`)
+        navigate(`/performance-management/ipm/${employeeId}/details`)
     };
 
     return (
@@ -230,7 +231,7 @@ const IPMPage = () => {
                 setCurrentRole={setCurrentRole}
                 currentSystem='Performance Management System'
             />
-    
+
             <div className="flex">
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -238,18 +239,20 @@ const IPMPage = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-    
+
                 <main className={`flex-1 w-full px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6 w-full">
-                        <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
-                            Individual Performance Management
-                        </h1>
-    
+                        <Breadcrumb
+                            items={[]}
+                            currentPage="Individual Performance Management"
+                            showHomeIcon={true}
+                        />
+
                         {/* Dashboard Card - Adapted for each role */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
                                 <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    IPM Dashboard {currentRole === 'employee' ? '- My Performance' : currentRole === 'approver' ? '- Department Overview' : '- Organization Overview'}
+                                    IPM Dashboard {currentRole === 'employee' ? '- My Performance' : currentRole === 'manager' ? '- Department Overview' : '- Organization Overview'}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 mt-4">
@@ -281,15 +284,15 @@ const IPMPage = () => {
                                             {dashboardMetrics.completed}
                                         </p>
                                     </div>
-                                    
+
                                     {/* Role-specific metrics */}
-                                    {currentRole === 'approver' && (
+                                    {currentRole === 'manager' && (
                                         <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
                                             <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749]">Needs Review</h3>
                                             <p className="text-sm sm:text-lg font-bold mt-1">{dashboardMetrics.needsReview}</p>
                                         </div>
                                     )}
-                                    
+
                                     {currentRole === 'sm_dept' && (
                                         <div className="p-2 sm:p-4 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
                                             <h3 className="font-medium text-xs sm:text-sm text-[#1B6131] dark:text-[#46B749]">Needs Validation</h3>
@@ -299,7 +302,7 @@ const IPMPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
-    
+
                         {/* Employee List Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -308,7 +311,7 @@ const IPMPage = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="w-full">
-                                {/* Filters - Only visible for approver and SM roles */}
+                                {/* Filters - Only visible for manager and SM roles */}
                                 {currentRole !== 'employee' && (
                                     <div className="mb-6 mt-4 w-full">
                                         <div className="flex flex-col gap-4">
@@ -322,8 +325,8 @@ const IPMPage = () => {
                                                 />
                                             </div>
                                             <div className="w-full">
-                                                <Select 
-                                                    value={filterUnit} 
+                                                <Select
+                                                    value={filterUnit}
                                                     onValueChange={setFilterUnit}
                                                 >
                                                     <SelectTrigger className="w-full">
@@ -343,12 +346,12 @@ const IPMPage = () => {
                                         </div>
                                     </div>
                                 )}
-    
+
                                 {/* Employee List */}
                                 <div className="space-y-4 w-full">
                                     {currentEmployees.length > 0 ? (
                                         currentEmployees.map((employee) => (
-                                            <div 
+                                            <div
                                                 key={employee.id}
                                                 className="border rounded-lg p-3 sm:p-4 hover:bg-[#f0f9f0] dark:hover:bg-[#0a2e14]/30 cursor-pointer transition-colors w-full"
                                                 onClick={() => handleEmployeeSelect(employee.id)}
@@ -387,7 +390,7 @@ const IPMPage = () => {
                                         </div>
                                     )}
                                 </div>
-    
+
                                 {/* Pagination */}
                                 {filteredEmployees.length > 0 && (
                                     <div className="mt-6 w-full">
@@ -412,7 +415,7 @@ const IPMPage = () => {
                                                 </Select>
                                             </div>
                                         </div>
-    
+
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}

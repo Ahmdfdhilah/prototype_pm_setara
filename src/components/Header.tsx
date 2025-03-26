@@ -35,8 +35,8 @@ const Header: React.FC<HeaderProps> = ({
     const roles = [
         { id: 'admin', label: 'Admin' },
         { id: 'employee', label: 'Employee' },
-        { id: 'approver', label: 'Approver' },
-        { id: 'sm_dept', label: 'SM Department' }
+        { id: 'manager', label: 'Manager' },
+        { id: 'sm_dept', label: 'Senior Manager' }
     ];
 
     useEffect(() => {

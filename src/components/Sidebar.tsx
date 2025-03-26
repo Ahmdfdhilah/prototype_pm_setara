@@ -24,35 +24,35 @@ const performanceMenus: MenuItem[] = [
         title: 'Home',
         path: '/',
         icon: Home,
-        roles: ['admin', 'approver', 'sm_dept', 'employee'],
+        roles: ['admin', 'manager', 'sm_dept', 'employee'],
     },
     {
         title: 'Dashboard',
         path: '/performance-management/dashboard',
         icon: SquareKanban,
-        roles: ['admin', 'approver', 'sm_dept'],
+        roles: ['admin', 'manager', 'sm_dept'],
     },
     {
         title: 'Period Master',
         path: '/performance-management/period-master',
         icon: Calendar,
-        roles: ['admin', 'approver', 'sm_dept'],
+        roles: ['admin', 'manager', 'sm_dept'],
     },
     {
         title: 'BSC',
         path: '/performance-management/bsc',
         icon: BarChart3,
-        roles: ['admin', 'approver', 'sm_dept'],
+        roles: ['admin', 'manager', 'sm_dept'],
         subMenus: [
             {
                 title: 'Dashboard',
                 path: '/performance-management/bsc/dashboard',
-                roles: ['admin', 'approver', 'sm_dept']
+                roles: ['admin', 'manager', 'sm_dept']
             },
             {
                 title: 'Input',
                 path: '/performance-management/bsc/input',
-                roles: ['admin', 'approver']
+                roles: ['admin', 'manager']
             }
         ]
     },
@@ -60,28 +60,28 @@ const performanceMenus: MenuItem[] = [
         title: 'Individual Performance',
         path: '/performance-management/ipm',
         icon: LineChart,
-        roles: ['admin', 'employee', 'approver', 'sm_dept'],
+        roles: ['admin', 'employee', 'manager', 'sm_dept'],
     },
     {
         title: 'Monthly Management Performance', 
         path: '/monthly-performance-management/mpm/dashboard',
         icon: Target,
-        roles: ['admin', 'approver', 'sm_dept'],
+        roles: ['admin', 'manager', 'sm_dept'],
         subMenus: [
             {
                 title: 'Action Plan MPM',
                 path: '/performance-management/mpm/action-plan',
-                roles: ['admin', 'approver', 'sm_dept']
+                roles: ['admin', 'manager', 'sm_dept']
             },
             {
-                title: 'Actual Input MPM',
-                path: '/performance-management/mpm/actual-input',
-                roles: ['admin','approver', 'sm_dept']
+                title: 'MPM Actual',
+                path: '/performance-management/mpm/actual',
+                roles: ['admin','manager', 'sm_dept']
             },
             {
-                title: 'Target Input MPM',
-                path: '/performance-management/mpm/target-input',
-                roles: ['admin','approver', 'sm_dept']
+                title: 'MPM Target',
+                path: '/performance-management/mpm/target',
+                roles: ['admin','manager', 'sm_dept']
             }
         ]
     },
@@ -89,7 +89,7 @@ const performanceMenus: MenuItem[] = [
         title: 'Strategic Initiative',
         path: '#',
         icon: Rocket,
-        roles: ['admin', 'approver', 'sm_dept'],
+        roles: ['admin', 'manager', 'sm_dept'],
     }
 ];
 
@@ -98,7 +98,7 @@ const systems = [
         title: 'Performance Management System',
         description: 'Monitor and manage employee performance metrics',
         icon: Trophy,
-        roles: ['admin', 'employee', 'approver', 'sm_dept'],
+        roles: ['admin', 'employee', 'manager', 'sm_dept'],
         iconColor: '#4CAF50',
         titleColor: '#2E7D32',
         url: '/performance-management/bsc/dashboard',

@@ -20,6 +20,7 @@ import {
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import { Info, AlertTriangle, CheckCircle2, FileText, Users } from 'lucide-react';
+import Breadcrumb from '@/components/Breadcrumb';
 
 const PerformanceManagementHome = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -48,14 +49,11 @@ const PerformanceManagementHome = () => {
 
                 <main className={`flex-1 px-4 sm:px-6 md:px-8 pt-20 pb-12 transition-all duration-300 ease-in-out 
                     ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="mb-8">
-                        <h1 className="text-2xl  md:text-3xl mt-4 font-bold text-[#1B6131] dark:text-[#46B749]">
-                            Welcome to Performance Management System
-                        </h1>
-                        <p className="mt-2 text-gray-600 dark:text-gray-300">
-                            Track, manage, and improve performance with our comprehensive management tools
-                        </p>
-                    </div>
+                    <Breadcrumb
+                        items={[]}
+                        currentPage="Home"
+                        showHomeIcon={false}
+                    />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 lg:gap-6 mb-6 md:mb-8">
                         <DashboardCard
@@ -88,7 +86,7 @@ const PerformanceManagementHome = () => {
                                     <div className="flex flex-wrap gap-2 w-full md:w-auto p-2 rounded-md bg-[#e6f3e6] dark:bg-[#0a3419]">
                                         <TabsTrigger value="overview">Overview</TabsTrigger>
                                         <TabsTrigger value="employee">Employee</TabsTrigger>
-                                        <TabsTrigger value="approver">Approver</TabsTrigger>
+                                        <TabsTrigger value="manager">Approver</TabsTrigger>
                                         <TabsTrigger value="sm_dept">SM Department</TabsTrigger>
                                         <TabsTrigger value="admin">Admin</TabsTrigger>
                                     </div>
@@ -151,10 +149,10 @@ const PerformanceManagementHome = () => {
                                                     <li>Navigate to the MPM menu item</li>
                                                     <li>Input targets for each KPI in the "MPM Input Target" section</li>
                                                     <li>Define specific action plans for each KPI</li>
-                                                    <li>Send the targets to your approver using the "Send to approver" button</li>
+                                                    <li>Send the targets to your manager using the "Send to manager" button</li>
                                                     <li>Input actual achievements in the "MPM Input Actual" section</li>
                                                     <li>Provide problem identification and corrective actions for KPIs that did not meet targets</li>
-                                                    <li>Send actual results to your approver</li>
+                                                    <li>Send actual results to your manager</li>
                                                 </ol>
                                                 <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md border border-blue-200 dark:border-blue-800 mt-2">
                                                     <p className="text-sm text-blue-700 dark:text-blue-300 flex items-start">
@@ -183,7 +181,7 @@ const PerformanceManagementHome = () => {
                                                         </ul>
                                                     </li>
                                                     <li>Click "Save Action Plan" to create it</li>
-                                                    <li>Submit to your approver by clicking the send button in the Actions column</li>
+                                                    <li>Submit to your manager by clicking the send button in the Actions column</li>
                                                     <li>Update achievement percentages as you progress</li>
                                                 </ol>
                                                 <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md border border-blue-200 dark:border-blue-800 mt-2">
@@ -225,16 +223,16 @@ const PerformanceManagementHome = () => {
                                     </Accordion>
                                 </TabsContent>
 
-                                <TabsContent value="approver" className="space-y-4">
+                                <TabsContent value="manager" className="space-y-4">
                                     <h3 className="text-xl font-semibold text-[#1B6131] dark:text-[#46B749]">Approver User Guide</h3>
 
                                     <Accordion type="single" collapsible className="w-full">
-                                        <AccordionItem value="mpm-approver">
+                                        <AccordionItem value="mpm-manager">
                                             <AccordionTrigger className="text-[#1B6131] dark:text-[#46B749] font-medium">
                                                 MPM Approval Process
                                             </AccordionTrigger>
                                             <AccordionContent className="text-sm space-y-3">
-                                                <p>As an approver, you review and approve MPM submissions from your team:</p>
+                                                <p>As an manager, you review and approve MPM submissions from your team:</p>
                                                 <ol className="list-decimal ml-5 space-y-2">
                                                     <li>Check the "Sent to Approver" status items in the MPM section</li>
                                                     <li>Review the targets set by employees</li>
@@ -252,7 +250,7 @@ const PerformanceManagementHome = () => {
                                             </AccordionContent>
                                         </AccordionItem>
 
-                                        <AccordionItem value="ipm-approver">
+                                        <AccordionItem value="ipm-manager">
                                             <AccordionTrigger className="text-[#1B6131] dark:text-[#46B749] font-medium">
                                                 IPM Approval Process
                                             </AccordionTrigger>
@@ -275,12 +273,12 @@ const PerformanceManagementHome = () => {
                                             </AccordionContent>
                                         </AccordionItem>
 
-                                        <AccordionItem value="monitoring-approver">
+                                        <AccordionItem value="monitoring-manager">
                                             <AccordionTrigger className="text-[#1B6131] dark:text-[#46B749] font-medium">
                                                 Performance Monitoring
                                             </AccordionTrigger>
                                             <AccordionContent className="text-sm space-y-3">
-                                                <p>As an approver, you can monitor your team's performance:</p>
+                                                <p>As an manager, you can monitor your team's performance:</p>
                                                 <ol className="list-decimal ml-5 space-y-2">
                                                     <li>View the BSC Dashboard to see overall department performance</li>
                                                     <li>Check the MPM Top 5 and IPM Top 5 for high-performing metrics and action plans</li>
@@ -428,7 +426,7 @@ const PerformanceManagementHome = () => {
                                                 <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md border border-blue-200 dark:border-blue-800 mt-2">
                                                     <p className="text-sm text-blue-700 dark:text-blue-300 flex items-start">
                                                         <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
-                                                        Ensure that approver assignments match the organizational hierarchy.
+                                                        Ensure that manager assignments match the organizational hierarchy.
                                                     </p>
                                                 </div>
                                             </AccordionContent>

@@ -18,13 +18,13 @@ import {
     Eye,
     AlertCircle,
     User,
-    ArrowLeft
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from '@/components/Pagination';
-import { useNavigate } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
+import Breadcrumb from '@/components/Breadcrumb';
+import { useParams } from 'react-router-dom';
 
 // Types
 type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved by Manager' | 'Validated by SM';
@@ -65,17 +65,16 @@ interface IPMEntry {
 
 
 const EmployeeIPMDetailsPage = () => {
-    // const { employeeId } = router.query;
+    const { employeeId } = useParams<{ employeeId: string }>();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('admin'); // employee, approver, sm_dept
+    const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [evidenceComment, setEvidenceComment] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, _setItemsPerPage] = useState(5);
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPerspective, setFilterPerspective] = useState('');
-    const navigate = useNavigate();
 
     // Mock data for employee - would normally fetch based on employeeId
     const [employee, _setEmployee] = useState<Employee>({
@@ -236,7 +235,7 @@ const EmployeeIPMDetailsPage = () => {
                             ? {
                                 ...ev,
                                 status: 'Approved',
-                                reviewedBy: currentRole === 'approver' ? 'Michael Wilson' : ev.reviewedBy,
+                                reviewedBy: currentRole === 'manager' ? 'Michael Wilson' : ev.reviewedBy,
                                 reviewDate: new Date().toISOString().split('T')[0]
                             }
                             : ev
@@ -258,7 +257,7 @@ const EmployeeIPMDetailsPage = () => {
                             ? {
                                 ...ev,
                                 status: 'Rejected',
-                                reviewedBy: currentRole === 'approver' ? 'Michael Wilson' : ev.reviewedBy,
+                                reviewedBy: currentRole === 'manager' ? 'Michael Wilson' : ev.reviewedBy,
                                 reviewDate: new Date().toISOString().split('T')[0]
                             }
                             : ev
@@ -278,42 +277,37 @@ const EmployeeIPMDetailsPage = () => {
         ));
     };
 
-    // Helper function to get status color classes
-    const getStatusColor = (status: IPMStatus) => {
-        switch (status) {
-            case 'Pending':
-                return 'bg-gray-200 text-gray-700';
-            case 'Evidence Submitted':
-                return 'bg-blue-200 text-blue-700';
-            case 'Approved by Manager':
-                return 'bg-yellow-200 text-yellow-700';
-            case 'Validated by SM':
-                return 'bg-green-200 text-green-700';
-            default:
-                return 'bg-gray-200 text-gray-700';
-        }
-    };
-
-    // Helper function to get evidence status color classes
-    const getEvidenceStatusColor = (status: EvidenceStatus) => {
-        switch (status) {
-            case 'Not Submitted':
-                return 'bg-gray-200 text-gray-700';
-            case 'Submitted':
-                return 'bg-blue-200 text-blue-700';
-            case 'Approved':
-                return 'bg-green-200 text-green-700';
-            case 'Rejected':
-                return 'bg-red-200 text-red-700';
-            default:
-                return 'bg-gray-200 text-gray-700';
-        }
-    };
-
-    // Go back to IPM list
-    const handleBackToList = () => {
-       navigate('/performance-management/ipm')
-    };
+// Helper function to get status color classes with dark mode support
+const getStatusColor = (status: IPMStatus) => {
+    switch (status) {
+      case 'Pending':
+        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+      case 'Evidence Submitted':
+        return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
+      case 'Approved by Manager':
+        return 'bg-yellow-200 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200';
+      case 'Validated by SM':
+        return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
+      default:
+        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+    }
+  };
+  
+  // Helper function to get evidence status color classes with dark mode support
+  const getEvidenceStatusColor = (status: EvidenceStatus) => {
+    switch (status) {
+      case 'Not Submitted':
+        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+      case 'Submitted':
+        return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
+      case 'Approved':
+        return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
+      case 'Rejected':
+        return 'bg-red-200 text-red-700 dark:bg-red-900 dark:text-red-200';
+      default:
+        return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+    }
+  };
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat overflow-x-hidden">
@@ -326,7 +320,7 @@ const EmployeeIPMDetailsPage = () => {
                 setCurrentRole={setCurrentRole}
                 currentSystem='Performance Management System'
             />
-    
+
             <div className="flex">
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -334,23 +328,23 @@ const EmployeeIPMDetailsPage = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-    
+
                 <main className={`flex-1 w-full px-4 md:px-8 pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
                     <div className="space-y-6 w-full">
-                        {/* Back button */}
-                        <Button 
-                            variant="outline" 
-                            className="text-[#1B6131] border-[#1B6131] hover:bg-[#f0f9f0] dark:text-[#46B749] dark:border-[#46B749] dark:hover:bg-[#0a2e14] mt-4 w-full sm:w-auto"
-                            onClick={handleBackToList}
-                        >
-                            <ArrowLeft className="h-4 w-4 mr-2" />
-                            Back to Employee List
-                        </Button>
-    
+                        <Breadcrumb
+                            items={[{
+                                label: 'Individual Performance Management',
+                                path: '/performance-management/ipm',
+                            }]}
+                            currentPage="Team KPI Action Plans"
+                            subtitle={`Employee ID: ${employeeId}`}
+                            showHomeIcon={true}
+                        />
+
                         <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
-                            Individual Performance Management
+
                         </h1>
-    
+
                         {/* Employee Info Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -367,7 +361,7 @@ const EmployeeIPMDetailsPage = () => {
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{employee.position}</p>
                                         <p className="text-sm text-gray-600 dark:text-gray-400">{employee.department} • {employee.unit}</p>
                                     </div>
-    
+
                                     <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
                                         <div className="p-2 md:p-3 text-center bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-lg">
                                             <h3 className="font-medium text-xs md:text-sm text-[#1B6131] dark:text-[#46B749]">Pending</h3>
@@ -385,7 +379,7 @@ const EmployeeIPMDetailsPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
-    
+
                         {/* IPM Entries */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -394,7 +388,7 @@ const EmployeeIPMDetailsPage = () => {
                                         <FileText className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                         Action Plans
                                     </div>
-                                    
+
                                     <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                                         <Select value={filterStatus} onValueChange={setFilterStatus}>
                                             <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
@@ -408,7 +402,7 @@ const EmployeeIPMDetailsPage = () => {
                                                 <SelectItem value="Validated by SM">Validated by SM</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        
+
                                         <Select value={filterPerspective} onValueChange={setFilterPerspective}>
                                             <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
                                                 <SelectValue placeholder="Filter Perspective" />
@@ -424,7 +418,7 @@ const EmployeeIPMDetailsPage = () => {
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className='mt-2 p-0'>
                                 <div className="overflow-x-auto mt-4">
                                     <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">
@@ -592,8 +586,8 @@ const EmployeeIPMDetailsPage = () => {
                                                                     </Dialog>
                                                                 )}
 
-                                                                {/* Review buttons - Only for approver role and appropriate statuses */}
-                                                                {currentRole === 'approver' && entry.status === 'Evidence Submitted' && entry.evidence.length > 0 && (
+                                                                {/* Review buttons - Only for manager role and appropriate statuses */}
+                                                                {currentRole === 'manager' && entry.status === 'Evidence Submitted' && entry.evidence.length > 0 && (
                                                                     <Dialog>
                                                                         <DialogTrigger asChild>
                                                                             <Button
@@ -682,7 +676,7 @@ const EmployeeIPMDetailsPage = () => {
                                         </tbody>
                                     </table>
                                 </div>
-    
+
                                 {/* Pagination */}
                                 {filteredEntries.length > 0 && (
                                     <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">

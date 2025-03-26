@@ -20,8 +20,10 @@ import {
     MapPin,
     Briefcase,
     Calendar,
-    Users
+    Users,
+    Edit
 } from 'lucide-react';
+import Breadcrumb from '@/components/Breadcrumb';
 
 const UserDetailPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -47,7 +49,7 @@ const UserDetailPage = () => {
             overallScore: 3.4,
             performanceTrend: [75, 82, 78, 90, 95, 92]
         },
-        roles: ["employee", "approver"]
+        roles: ["employee", "manager"]
     };
 
     // Function to render status badge with appropriate color
@@ -92,20 +94,13 @@ const UserDetailPage = () => {
                 />
 
                 <main className={`flex-1 px-4 sm:px-6 lg:px-8 pt-20 pb-12 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
-                    <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                        <h1 className="text-3xl font-bold text-[#1B6131] dark:text-[#46B749]">
-                            User Detail
-                        </h1>
-                        <div className="space-x-3 mt-4 md:mt-0">
-                            <Button
-                                className="bg-[#1B6131] hover:bg-[#144d27] text-white dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
-                            >
-                                Edit User
-                            </Button>
-                        </div>
-                    </div>
+                    <Breadcrumb
+                        items={[]}
+                        currentPage="User Detail"
+                        showHomeIcon={true}
+                    />
                     {/* User Profile Card */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md lg:col-span-1  mb-8">
+                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md lg:col-span-1 mb-8">
                         <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] flex flex-col">
                             <Avatar className="h-24 w-24 mb-4 border-4 border-white dark:border-gray-800">
                                 <AvatarFallback className="bg-[#1B6131] text-white dark:bg-[#46B749] text-2xl">
@@ -115,7 +110,11 @@ const UserDetailPage = () => {
                             <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
                                 {userData.name}
                             </CardTitle>
-                            <div className="mt-2 flex flex-wrap gap-2">
+                            <div className="mt-4 w-full">
+                                {renderStatusBadge(userData.status)}
+                            </div>
+
+                            <div className="my-2 flex flex-wrap gap-2">
                                 {userData.roles.map((role, index) => (
                                     <Badge
                                         key={index}
@@ -125,9 +124,13 @@ const UserDetailPage = () => {
                                     </Badge>
                                 ))}
                             </div>
-                            <div className="mt-4 w-full">
-                                {renderStatusBadge(userData.status)}
-                            </div>
+
+                            <Button
+                                className=" w-fit flex items-center justify-center gap-2 bg-[#1B6131] hover:bg-[#144d27] dark:text-black text-white dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
+                            >
+                                <Edit className="h-4 w-4" />
+                                Edit {userData.roles.includes('manager') ? 'Approver' : 'Employee'}
+                            </Button>
                         </CardHeader>
                         <CardContent className="pt-6">
                             <div className="space-y-4">

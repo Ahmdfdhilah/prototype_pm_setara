@@ -1,0 +1,100 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { MPMEntry } from '@/lib/types';
+
+interface EditMonthlyTargetDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  kpi: MPMEntry | null;
+  onSave: (updatedKPI: MPMEntry) => void;
+}
+
+const EditMonthlyTargetDialog: React.FC<EditMonthlyTargetDialogProps> = ({
+  isOpen,
+  onClose,
+  kpi,
+  onSave
+}) => {
+  const [localTargets, setLocalTargets] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (kpi) {
+      setLocalTargets(prev => ({
+        ...prev, 
+        ...kpi.targets,
+      }));
+    }
+  }, [kpi]);
+
+
+  const handleTargetChange = (month: string, value: string) => {
+    setLocalTargets(prev => ({
+      ...prev,
+      [month]: parseFloat(value) || 0
+    }));
+  };
+
+  const handleSave = () => {
+    if (kpi) {
+      const updatedKPI: MPMEntry = {
+        ...kpi,
+        targets: localTargets
+      };
+      onSave(updatedKPI);
+      onClose();
+    }
+  };
+
+  if (!kpi) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Monthly Targets for {kpi.kpi}</DialogTitle>
+          <DialogDescription>
+            Modify the monthly targets for this KPI
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          {Object.entries(localTargets).map(([month, value]) => (
+            <div key={month} className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor={`target-${month}`} className="text-right">
+                {month}
+              </Label>
+              <Input
+                id={`target-${month}`}
+                type="number"
+                value={value}
+                onChange={(e) => handleTargetChange(month, e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          ))}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>
+            Save Changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default EditMonthlyTargetDialog;

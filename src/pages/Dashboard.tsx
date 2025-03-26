@@ -21,7 +21,7 @@ const Dashboard = () => {
       title: 'Performance Management System',
       description: 'Monitor and manage employee performance metrics with real-time analytics and feedback systems',
       icon: BarChart3,
-      roles: ['admin', 'employee', 'approver', 'sm_dept'],
+      roles: ['admin', 'employee', 'manager', 'sm_dept'],
       iconColor: '#4CAF50',
       titleColor: '#2E7D32',
       url: '/performance-management/dashboard',
