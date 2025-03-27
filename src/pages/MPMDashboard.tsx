@@ -24,6 +24,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { mpmDataMock } from '@/lib/mpmMocks';
 import FilterSection from '@/components/Filtering';
+import Pagination from '@/components/Pagination';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
@@ -71,6 +72,44 @@ const MPMDashboard: React.FC = () => {
             return acc;
         }, {} as Record<Perspective, MPMEntry[]>);
     }, [mpmData]);
+
+    const [currentPages, setCurrentPages] = useState<Record<Perspective, number>>({
+        'Financial': 1,
+        'Customer': 1,
+        'Internal Process': 1,
+        'Learning and Growth': 1
+    });
+
+    // Items per page
+    const ITEMS_PER_PAGE = 5;
+
+    // Paginated and grouped data
+    const paginatedGroupedData = useMemo(() => {
+        const result: Record<Perspective, { items: MPMEntry[], totalPages: number }> = {} as any;
+
+        Object.entries(groupedData).forEach(([perspective, items]) => {
+            const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+            const currentPage = currentPages[perspective as Perspective];
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+
+            result[perspective as Perspective] = {
+                items: items.slice(startIndex, endIndex),
+                totalPages
+            };
+        });
+
+        return result;
+    }, [groupedData, currentPages, ITEMS_PER_PAGE]);
+
+    // Page change handler for a specific perspective
+    const handlePageChange = (perspective: Perspective, newPage: number) => {
+        setCurrentPages(prev => ({
+            ...prev,
+            [perspective]: newPage
+        }));
+    };
+
 
     // Get current period based on selected period type
     const getCurrentPeriod = () => {
@@ -411,8 +450,8 @@ const MPMDashboard: React.FC = () => {
                         </Card>
 
                         {/* Detailed Performance by Perspective */}
-                        {Object.entries(groupedData).map(([perspective, items]) => (
-                            <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages }]) => (
+                            <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
                                         {perspective} Perspective
@@ -489,6 +528,13 @@ const MPMDashboard: React.FC = () => {
                                             </TableRow>
                                         </TableBody>
                                     </Table>
+
+                                    {/* Pagination Component */}
+                                    <Pagination
+                                        currentPage={currentPages[perspective as Perspective]}
+                                        totalPages={totalPages}
+                                        onPageChange={(page) => handlePageChange(perspective as Perspective, page)}
+                                    />
                                 </CardContent>
                             </Card>
                         ))}

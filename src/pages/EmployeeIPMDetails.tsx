@@ -27,17 +27,17 @@ import Breadcrumb from '@/components/Breadcrumb';
 import { useParams } from 'react-router-dom';
 
 // Types
-type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved by Manager' | 'Validated by SM';
-type EvidenceStatus = 'Not Submitted' | 'Submitted' | 'Approved' | 'Rejected';
+type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved' | 'Rejected';
 type Perspective = 'Financial' | 'Customer' | 'Internal Business Process' | 'Learning & Growth';
 type Unit = 'IT' | 'Marketing' | 'Sales' | 'Operations' | 'Customer Service' | 'Finance';
+type Position = 'Employee' | 'Manager' | 'Senior Manager' | 'Admin';
 
 interface Employee {
     id: string;
     name: string;
     employeeNumber: string;
     department: string;
-    position: string;
+    position: Position;
     unit: Unit;
 }
 
@@ -45,10 +45,7 @@ interface Evidence {
     id: string;
     fileName: string;
     uploadDate: string;
-    status: EvidenceStatus;
     comments?: string;
-    reviewedBy?: string;
-    reviewDate?: string;
 }
 
 interface IPMEntry {
@@ -56,25 +53,27 @@ interface IPMEntry {
     title: string;
     description: string;
     status: IPMStatus;
-    targetDate: string;
+    targetValue: number;
+    actualValue?: number;
     weight: number;
     perspective: Perspective;
     employee: Employee;
     evidence: Evidence[];
 }
 
-
 const EmployeeIPMDetailsPage = () => {
     const { employeeId } = useParams<{ employeeId: string }>();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
+    const [reviewDialogOpen, setReviewDialogOpen] = useState<{ [key: string]: boolean }>({});
+    const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept, admin
     const [evidenceComment, setEvidenceComment] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, _setItemsPerPage] = useState(5);
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPerspective, setFilterPerspective] = useState('');
+    const [actualValueInput, setActualValueInput] = useState<{ [key: string]: number }>({});
 
     // Mock data for employee - would normally fetch based on employeeId
     const [employee, _setEmployee] = useState<Employee>({
@@ -82,7 +81,7 @@ const EmployeeIPMDetailsPage = () => {
         name: 'Jane Smith',
         employeeNumber: 'EMP002',
         department: 'Customer Experience',
-        position: 'Customer Support Specialist',
+        position: 'Employee',
         unit: 'Customer Service'
     });
 
@@ -93,7 +92,7 @@ const EmployeeIPMDetailsPage = () => {
             title: 'Increase Customer Satisfaction Rating',
             description: 'Achieve a minimum of 90% satisfaction rating from customer feedback surveys',
             status: 'Pending',
-            targetDate: '2025-06-30',
+            targetValue: 90,
             weight: 30,
             perspective: 'Customer',
             employee: employee,
@@ -104,7 +103,7 @@ const EmployeeIPMDetailsPage = () => {
             title: 'Reduce Response Time',
             description: 'Decrease average ticket response time to under 2 hours',
             status: 'Evidence Submitted',
-            targetDate: '2025-05-15',
+            targetValue: 2,
             weight: 25,
             perspective: 'Internal Business Process',
             employee: employee,
@@ -113,7 +112,6 @@ const EmployeeIPMDetailsPage = () => {
                     id: '1001',
                     fileName: 'response_time_metrics_q1.pdf',
                     uploadDate: '2025-02-15',
-                    status: 'Submitted',
                     comments: 'Mid-quarter progress report showing 30% improvement in response time'
                 }
             ]
@@ -122,8 +120,9 @@ const EmployeeIPMDetailsPage = () => {
             id: '3',
             title: 'Complete Advanced Customer Service Training',
             description: 'Finish the certification program for advanced customer handling techniques',
-            status: 'Approved by Manager',
-            targetDate: '2025-04-20',
+            status: 'Approved',
+            targetValue: 1,
+            actualValue: 1,
             weight: 15,
             perspective: 'Learning & Growth',
             employee: employee,
@@ -132,10 +131,7 @@ const EmployeeIPMDetailsPage = () => {
                     id: '1002',
                     fileName: 'certification_completion.pdf',
                     uploadDate: '2025-03-10',
-                    status: 'Approved',
-                    comments: 'Completed certification with distinction',
-                    reviewedBy: 'Michael Wilson',
-                    reviewDate: '2025-03-12'
+                    comments: 'Completed certification with distinction'
                 }
             ]
         },
@@ -143,8 +139,9 @@ const EmployeeIPMDetailsPage = () => {
             id: '4',
             title: 'Implement New Customer Feedback System',
             description: 'Roll out and train staff on the new feedback collection platform',
-            status: 'Validated by SM',
-            targetDate: '2025-03-01',
+            status: 'Approved',
+            targetValue: 1,
+            actualValue: 1,
             weight: 20,
             perspective: 'Internal Business Process',
             employee: employee,
@@ -153,10 +150,7 @@ const EmployeeIPMDetailsPage = () => {
                     id: '1003',
                     fileName: 'feedback_system_implementation.pdf',
                     uploadDate: '2025-02-25',
-                    status: 'Approved',
-                    comments: 'Implementation completed ahead of schedule with full staff training',
-                    reviewedBy: 'Michael Wilson',
-                    reviewDate: '2025-02-27'
+                    comments: 'Implementation completed ahead of schedule with full staff training'
                 }
             ]
         },
@@ -165,7 +159,7 @@ const EmployeeIPMDetailsPage = () => {
             title: 'Reduce Customer Churn Rate',
             description: 'Implement retention strategies to reduce monthly churn by 15%',
             status: 'Pending',
-            targetDate: '2025-07-31',
+            targetValue: 15,
             weight: 10,
             perspective: 'Financial',
             employee: employee,
@@ -175,8 +169,8 @@ const EmployeeIPMDetailsPage = () => {
 
     // Get summary counts
     const pendingCount = entries.filter(e => e.status === 'Pending').length;
-    const inProgressCount = entries.filter(e => e.status === 'Evidence Submitted' || e.status === 'Approved by Manager').length;
-    const completedCount = entries.filter(e => e.status === 'Validated by SM').length;
+    const inProgressCount = entries.filter(e => e.status === 'Evidence Submitted').length;
+    const completedCount = entries.filter(e => e.status === 'Approved').length;
 
     // Filter entries based on selected filters
     const filteredEntries = entries.filter(entry => {
@@ -206,7 +200,6 @@ const EmployeeIPMDetailsPage = () => {
             id: Date.now().toString(),
             fileName: selectedFile.name,
             uploadDate: new Date().toISOString().split('T')[0],
-            status: 'Submitted',
             comments: evidenceComment
         };
 
@@ -224,81 +217,71 @@ const EmployeeIPMDetailsPage = () => {
         setEvidenceComment('');
     };
 
-    // Handler for approving evidence
-    const handleApproveEvidence = (entryId: string, evidenceId: string) => {
-        setEntries(prev => prev.map(entry =>
-            entry.id === entryId
-                ? {
-                    ...entry,
-                    evidence: entry.evidence.map(ev =>
-                        ev.id === evidenceId
-                            ? {
-                                ...ev,
-                                status: 'Approved',
-                                reviewedBy: currentRole === 'manager' ? 'Michael Wilson' : ev.reviewedBy,
-                                reviewDate: new Date().toISOString().split('T')[0]
-                            }
-                            : ev
-                    ),
-                    status: 'Approved by Manager'
+    const handleReviewActionPlan = (entryId: string, action: 'approve' | 'reject') => {
+        const entry = entries.find(e => e.id === entryId);
+        if (!entry) return;
+
+        // Check if current user has permission to approve this entry
+        const canApprove = checkApprovalPermission(currentRole, entry.employee.position);
+        if (!canApprove) return;
+
+        setEntries(prev => prev.map(entry => {
+            if (entry.id !== entryId) return entry;
+
+            // If approve
+            if (action === 'approve') {
+                // Ensure actual value is filled
+                if (actualValueInput[entryId] === undefined) {
+                    // Could add validation or error message
+                    return entry;
                 }
-                : entry
-        ));
+
+                const updatedEntry: IPMEntry = {
+                    ...entry,
+                    status: 'Approved',
+                    actualValue: actualValueInput[entryId]
+                };
+
+                return updatedEntry;
+            }
+
+            // If reject
+            if (action === 'reject') {
+                const updatedEntry: IPMEntry = {
+                    ...entry,
+                    status: 'Rejected',
+                };
+
+                return updatedEntry;
+            }
+
+            return entry;
+        }));
+
+        // Tutup dialog setelah aksi
+        setReviewDialogOpen(prev => ({ ...prev, [entryId]: false }));
     };
 
-    // Handler for rejecting evidence
-    const handleRejectEvidence = (entryId: string, evidenceId: string) => {
-        setEntries(prev => prev.map(entry =>
-            entry.id === entryId
-                ? {
-                    ...entry,
-                    evidence: entry.evidence.map(ev =>
-                        ev.id === evidenceId
-                            ? {
-                                ...ev,
-                                status: 'Rejected',
-                                reviewedBy: currentRole === 'manager' ? 'Michael Wilson' : ev.reviewedBy,
-                                reviewDate: new Date().toISOString().split('T')[0]
-                            }
-                            : ev
-                    ),
-                    status: 'Pending'
-                }
-                : entry
-        ));
-    };
-
-    // Handler for validating IPM entry
-    const handleValidate = (entryId: string) => {
-        setEntries(prev => prev.map(entry =>
-            entry.id === entryId
-                ? { ...entry, status: 'Validated by SM' }
-                : entry
-        ));
+    // Add this helper function to check approval permissions
+    const checkApprovalPermission = (currentRole: string, employeePosition: Position): boolean => {
+        switch (currentRole) {
+            case 'admin':
+                return true; // Admin can approve everything
+            case 'sm_dept':
+                return employeePosition === 'Manager' || employeePosition === 'Employee';
+            case 'manager':
+                return employeePosition === 'Employee';
+            default:
+                return false;
+        }
     };
 
     // Helper function to get status color classes with dark mode support
     const getStatusColor = (status: IPMStatus) => {
         switch (status) {
             case 'Pending':
-                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+                return 'bg-yellow-200 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-200';
             case 'Evidence Submitted':
-                return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
-            case 'Approved by Manager':
-                return 'bg-yellow-200 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200';
-            case 'Validated by SM':
-                return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
-            default:
-                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-        }
-    };
-
-    // Helper function to get evidence status color classes with dark mode support
-    const getEvidenceStatusColor = (status: EvidenceStatus) => {
-        switch (status) {
-            case 'Not Submitted':
-                return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-            case 'Submitted':
                 return 'bg-blue-200 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
             case 'Approved':
                 return 'bg-green-200 text-green-700 dark:bg-green-900 dark:text-green-200';
@@ -307,6 +290,23 @@ const EmployeeIPMDetailsPage = () => {
             default:
                 return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
         }
+    };
+
+    const canReviewEntry = (entry: IPMEntry): boolean => {
+        // Admin can review all
+        if (currentRole === 'admin') return true;
+
+        // Senior Manager can review Manager and Employee
+        if (currentRole === 'sm_dept') {
+            return entry.employee.position === 'Manager' || entry.employee.position === 'Employee';
+        }
+
+        // Manager can only review Employee
+        if (currentRole === 'manager') {
+            return entry.employee.position === 'Employee';
+        }
+
+        return false;
     };
 
     return (
@@ -329,7 +329,7 @@ const EmployeeIPMDetailsPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6 w-full">
                         <Breadcrumb
                             items={[{
@@ -342,7 +342,6 @@ const EmployeeIPMDetailsPage = () => {
                         />
 
                         <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
-
                         </h1>
 
                         {/* Employee Info Card */}
@@ -398,8 +397,8 @@ const EmployeeIPMDetailsPage = () => {
                                                 <SelectItem value="all">All Statuses</SelectItem>
                                                 <SelectItem value="Pending">Pending</SelectItem>
                                                 <SelectItem value="Evidence Submitted">Evidence Submitted</SelectItem>
-                                                <SelectItem value="Approved by Manager">Approved by Manager</SelectItem>
-                                                <SelectItem value="Validated by SM">Validated by SM</SelectItem>
+                                                <SelectItem value="Approved">Approved</SelectItem>
+                                                <SelectItem value="Completed">Completed</SelectItem>
                                             </SelectContent>
                                         </Select>
 
@@ -425,7 +424,8 @@ const EmployeeIPMDetailsPage = () => {
                                             <tr>
                                                 <th className="p-2 md:p-4 text-left text-xs md:text-sm">Title</th>
                                                 <th className="p-2 md:p-4 text-left text-xs md:text-sm">Perspective</th>
-                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Target Date</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Target</th>
+                                                <th className="p-2 md:p-4 text-left text-xs md:text-sm">Actual</th>
                                                 <th className="p-2 md:p-4 text-left text-xs md:text-sm">Weight</th>
                                                 <th className="p-2 md:p-4 text-left text-xs md:text-sm">Status</th>
                                                 <th className="p-2 md:p-4 text-left text-xs md:text-sm">Actions</th>
@@ -440,7 +440,18 @@ const EmployeeIPMDetailsPage = () => {
                                                             <p className="text-xs text-gray-500 mt-1">{entry.description}</p>
                                                         </td>
                                                         <td className="p-2 md:p-4 text-xs md:text-sm">{entry.perspective}</td>
-                                                        <td className="p-2 md:p-4 text-xs md:text-sm">{entry.targetDate}</td>
+                                                        <td className="p-2 md:p-4 text-xs md:text-sm">{entry.targetValue}</td>
+                                                        <td className="p-2 md:p-4 text-xs md:text-sm">
+                                                            {entry.actualValue !== undefined ? (
+                                                                <span className="text-[#1B6131] dark:text-[#46B749]">
+                                                                    {entry.actualValue}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-[#1B6131] dark:text-[#46B749]">
+                                                                    -
+                                                                </span>
+                                                            )}
+                                                        </td>
                                                         <td className="p-2 md:p-4 text-xs md:text-sm">{entry.weight}%</td>
                                                         <td className="p-2 md:p-4">
                                                             <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(entry.status)}`}>
@@ -483,9 +494,15 @@ const EmployeeIPMDetailsPage = () => {
                                                                                     <p>{entry.weight}%</p>
                                                                                 </div>
                                                                                 <div>
-                                                                                    <h3 className="font-medium">Target Date</h3>
-                                                                                    <p>{entry.targetDate}</p>
+                                                                                    <h3 className="font-medium">Target Value</h3>
+                                                                                    <p>{entry.targetValue}</p>
                                                                                 </div>
+                                                                                {entry.actualValue !== undefined && (
+                                                                                    <div>
+                                                                                        <h3 className="font-medium">Actual Value</h3>
+                                                                                        <p>{entry.actualValue}</p>
+                                                                                    </div>
+                                                                                )}
                                                                                 <div>
                                                                                     <h3 className="font-medium">Status</h3>
                                                                                     <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(entry.status)}`}>
@@ -500,23 +517,13 @@ const EmployeeIPMDetailsPage = () => {
                                                                                     <div className="space-y-2 mt-2">
                                                                                         {entry.evidence.map(ev => (
                                                                                             <div key={ev.id} className="p-3 border rounded-md">
-                                                                                                <div className="flex items-center justify-between">
-                                                                                                    <div className="flex items-center">
-                                                                                                        <FileText className="h-4 w-4 mr-2 text-[#1B6131]" />
-                                                                                                        <p className="font-medium">{ev.fileName}</p>
-                                                                                                    </div>
-                                                                                                    <span className={`px-2 py-1 rounded-full text-xs ${getEvidenceStatusColor(ev.status)}`}>
-                                                                                                        {ev.status}
-                                                                                                    </span>
+                                                                                                <div className="flex items-center">
+                                                                                                    <FileText className="h-4 w-4 mr-2 text-[#1B6131]" />
+                                                                                                    <p className="font-medium">{ev.fileName}</p>
                                                                                                 </div>
                                                                                                 <p className="text-sm mt-1">Uploaded: {ev.uploadDate}</p>
                                                                                                 {ev.comments && (
                                                                                                     <p className="text-sm mt-1">{ev.comments}</p>
-                                                                                                )}
-                                                                                                {ev.reviewedBy && (
-                                                                                                    <p className="text-sm mt-1">
-                                                                                                        Reviewed by {ev.reviewedBy} on {ev.reviewDate}
-                                                                                                    </p>
                                                                                                 )}
                                                                                             </div>
                                                                                         ))}
@@ -530,7 +537,7 @@ const EmployeeIPMDetailsPage = () => {
                                                                 </Dialog>
 
                                                                 {/* Evidence Upload Button - Only for employee role */}
-                                                                {currentRole === 'employee' && entry.status !== 'Validated by SM' && (
+                                                                {currentRole === 'employee' && entry.status !== 'Approved' && (
                                                                     <Dialog>
                                                                         <DialogTrigger asChild>
                                                                             <Button
@@ -586,9 +593,10 @@ const EmployeeIPMDetailsPage = () => {
                                                                     </Dialog>
                                                                 )}
 
-                                                                {/* Review buttons - Only for manager role and appropriate statuses */}
-                                                                {currentRole === 'manager' && entry.status === 'Evidence Submitted' && entry.evidence.length > 0 && (
-                                                                    <Dialog>
+                                                                {canReviewEntry(entry) && entry.evidence.length > 0 && (
+                                                                    <Dialog
+                                                                        open={reviewDialogOpen[entry.id] || false}
+                                                                        onOpenChange={(open) => setReviewDialogOpen(prev => ({ ...prev, [entry.id]: open }))}>
                                                                         <DialogTrigger asChild>
                                                                             <Button
                                                                                 variant="outline"
@@ -610,57 +618,69 @@ const EmployeeIPMDetailsPage = () => {
                                                                                 </div>
 
                                                                                 <div>
+                                                                                    <h3 className="font-medium">Target Value</h3>
+                                                                                    <p>{entry.targetValue}</p>
+                                                                                </div>
+
+                                                                                <div>
+                                                                                    <h3 className="font-medium">Actual Value</h3>
+                                                                                    <Input
+                                                                                        type="number"
+                                                                                        value={actualValueInput[entry.id] ?? ''}
+                                                                                        onChange={(e) => {
+                                                                                            setActualValueInput({
+                                                                                                ...actualValueInput,
+                                                                                                [entry.id]: parseFloat(e.target.value)
+                                                                                            });
+                                                                                        }}
+                                                                                        disabled={!canReviewEntry(entry)}
+                                                                                    />
+                                                                                </div>
+
+                                                                                <div>
                                                                                     <h3 className="font-medium">Evidence Submitted</h3>
-                                                                                    {entry.evidence
-                                                                                        .filter(ev => ev.status === 'Submitted')
-                                                                                        .map(ev => (
-                                                                                            <div key={ev.id} className="p-3 border rounded-md mt-2">
-                                                                                                <div className="flex items-center">
-                                                                                                    <FileText className="h-4 w-4 mr-2 text-[#1B6131]" />
-                                                                                                    <p className="font-medium">{ev.fileName}</p>
-                                                                                                </div>
-                                                                                                <p className="text-sm mt-1">Uploaded: {ev.uploadDate}</p>
-                                                                                                {ev.comments && (
-                                                                                                    <p className="text-sm mt-1">{ev.comments}</p>
-                                                                                                )}
-                                                                                                <div className="flex justify-end space-x-2 mt-3">
-                                                                                                    <Button
-                                                                                                        variant="outline"
-                                                                                                        size="sm"
-                                                                                                        onClick={() => handleRejectEvidence(entry.id, ev.id)}
-                                                                                                        className="border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
-                                                                                                    >
-                                                                                                        <XCircle className="h-4 w-4 mr-1" />
-                                                                                                        Reject
-                                                                                                    </Button>
-                                                                                                    <Button
-                                                                                                        size="sm"
-                                                                                                        onClick={() => handleApproveEvidence(entry.id, ev.id)}
-                                                                                                        className="bg-[#1B6131] hover:bg-[#46B749]"
-                                                                                                    >
-                                                                                                        <CheckCircle2 className="h-4 w-4 mr-1" />
-                                                                                                        Approve
-                                                                                                    </Button>
-                                                                                                </div>
+                                                                                    {entry.evidence.map(ev => (
+                                                                                        <div key={ev.id} className="p-3 border rounded-md mt-2">
+                                                                                            <div className="flex items-center">
+                                                                                                <FileText className="h-4 w-4 mr-2 text-[#1B6131]" />
+                                                                                                <p className="font-medium">{ev.fileName}</p>
                                                                                             </div>
-                                                                                        ))}
+                                                                                            <p className="text-sm mt-1">Uploaded: {ev.uploadDate}</p>
+
+                                                                                            <div className="mt-2">
+                                                                                                <h3 className="font-medium text-sm">Comments</h3>
+                                                                                                <Textarea
+                                                                                                    value={ev.comments || ''}
+                                                                                                    readOnly
+                                                                                                />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    ))}
+                                                                                    {canReviewEntry(entry) && (
+                                                                                        <div className="flex justify-end space-x-2 mt-3">
+                                                                                            <Button
+                                                                                                variant="outline"
+                                                                                                size="sm"
+                                                                                                onClick={() => handleReviewActionPlan(entry.id, 'reject')}
+                                                                                                className="border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                                                                                            >
+                                                                                                <XCircle className="h-4 w-4 mr-1" />
+                                                                                                Reject
+                                                                                            </Button>
+                                                                                            <Button
+                                                                                                size="sm"
+                                                                                                onClick={() => handleReviewActionPlan(entry.id, 'approve')}
+                                                                                                className="bg-[#1B6131] hover:bg-[#46B749]"
+                                                                                            >
+                                                                                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                                                                                Approve
+                                                                                            </Button>
+                                                                                        </div>
+                                                                                    )}
                                                                                 </div>
                                                                             </div>
                                                                         </DialogContent>
                                                                     </Dialog>
-                                                                )}
-
-                                                                {/* Validation button - Only for sm_dept role and entries that are approved by manager */}
-                                                                {currentRole === 'sm_dept' && entry.status === 'Approved by Manager' && (
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        className="text-[#1B6131] border-[#1B6131] hover:bg-[#f0f9f0] dark:text-[#46B749] dark:border-[#46B749] dark:hover:bg-[#0a2e14]"
-                                                                        onClick={() => handleValidate(entry.id)}
-                                                                    >
-                                                                        <CheckCircle2 className="h-4 w-4 mr-1" />
-                                                                        Validate
-                                                                    </Button>
                                                                 )}
                                                             </div>
                                                         </td>
@@ -668,7 +688,7 @@ const EmployeeIPMDetailsPage = () => {
                                                 ))
                                             ) : (
                                                 <tr>
-                                                    <td colSpan={6} className="p-4 text-center text-gray-500">
+                                                    <td colSpan={7} className="p-4 text-center text-gray-500">
                                                         No entries found matching your filter criteria.
                                                     </td>
                                                 </tr>

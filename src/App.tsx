@@ -19,6 +19,9 @@ import MPMTargetList from "./pages/MPMTargetsList";
 import MPMActualsTeamKPI from "./pages/MPMActualsTeamKPI";
 import MPMActualsActionPlans from "./pages/MPMActualsActionPlans";
 import MPMDashboard from "./pages/MPMDashboard";
+import EmployeeManagementPage from "./pages/EmployeeManagement";
+import TeamManagementPage from "./pages/TeamManagement";
+import DepartmentManagementPage from "./pages/DepartmentManagement";
 
 function App() {
   return (
@@ -36,6 +39,13 @@ function App() {
           {/* Performance Management Routes */}
           <Route path="/performance-management">
             <Route path="dashboard" element={<PerformanceManagementDashboard />} />
+
+            {/* Company Management Routes */}
+            <Route path="company-management">
+              <Route path="departments" element={<DepartmentManagementPage />} />
+              <Route path="teams" element={<TeamManagementPage />} />
+              <Route path="employees" element={<EmployeeManagementPage />} />
+            </Route>
 
             {/* BSC Routes */}
             <Route path="bsc">

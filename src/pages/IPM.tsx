@@ -41,7 +41,7 @@ const IPMPage = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage, _] = useState(5);
     const [filterUnit, setFilterUnit] = useState('all'); // Changed default value to 'all' instead of empty string
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
@@ -394,28 +394,6 @@ const IPMPage = () => {
                                 {/* Pagination */}
                                 {filteredEmployees.length > 0 && (
                                     <div className="mt-6 w-full">
-                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                            <div className="text-xs sm:text-sm text-gray-500 text-center w-full">
-                                                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredEmployees.length)} of {filteredEmployees.length} employees
-                                            </div>
-                                            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 w-full justify-center">
-                                                <label className="text-xs sm:text-sm">Items per page:</label>
-                                                <Select value={itemsPerPage.toString()} onValueChange={(value) => {
-                                                    setItemsPerPage(parseInt(value));
-                                                    setCurrentPage(1);
-                                                }}>
-                                                    <SelectTrigger className="w-24">
-                                                        <SelectValue placeholder="5" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="5">5</SelectItem>
-                                                        <SelectItem value="10">10</SelectItem>
-                                                        <SelectItem value="20">20</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-
                                         <Pagination
                                             currentPage={currentPage}
                                             totalPages={totalPages}

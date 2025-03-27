@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Card,
     CardContent,
@@ -17,10 +17,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Search, Plus } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
+import Pagination from '@/components/Pagination';
 
 type PeriodStatus = 'Draft' | 'Active' | 'Closed';
 
@@ -35,37 +36,37 @@ interface Period {
     createdAt: string;
 }
 
-// Dummy data
+// Enhanced dummy data
 const initialPeriods: Period[] = [
     {
         id: '1',
         year: 2023,
-        period: '1',
-        startDate: '2024-01-01',
-        endDate: '2024-01-31',
+        period: '2023',
+        startDate: '2023-01-01',
+        endDate: '2023-12-31',
         status: 'Closed',
-        createdBy: 'SM_DEPT_USER',
-        createdAt: '2024-01-01T00:00:00Z'
+        createdBy: 'Admin',
+        createdAt: '2023-01-01T00:00:00Z'
     },
     {
         id: '2',
         year: 2024,
-        period: '2',
-        startDate: '2024-02-01',
-        endDate: '2024-02-29',
-        status: 'Active',
-        createdBy: 'SM_DEPT_USER',
-        createdAt: '2024-02-01T00:00:00Z'
+        period: '2024',
+        startDate: '2024-01-01',
+        endDate: '2023-12-30',
+        status: 'Closed',
+        createdBy: 'Admin',
+        createdAt: '2023-04-01T00:00:00Z'
     },
     {
         id: '3',
         year: 2025,
-        period: '3',
-        startDate: '2024-01-01',
-        endDate: '2024-03-31',
-        status: 'Draft',
-        createdBy: 'SM_DEPT_USER',
-        createdAt: '2024-01-01T00:00:00Z'
+        period: '2025',
+        startDate: '2025-01-01',
+        endDate: '2025-12-30',
+        status: 'Active',
+        createdBy: 'Admin',
+        createdAt: '2023-07-01T00:00:00Z'
     }
 ];
 
@@ -77,6 +78,7 @@ const PeriodMaster = () => {
 
     // Period management state
     const [periods, setPeriods] = useState<Period[]>(initialPeriods);
+    const [filteredPeriods, setFilteredPeriods] = useState<Period[]>(initialPeriods);
     const [showNewPeriodDialog, setShowNewPeriodDialog] = useState(false);
     const [newPeriod, setNewPeriod] = useState({
         year: new Date().getFullYear(),
@@ -85,8 +87,47 @@ const PeriodMaster = () => {
         endDate: '',
     });
 
+    // Filtering state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState<PeriodStatus | 'All'>('All');
+    const [yearFilter, setYearFilter] = useState<number | 'All'>('All');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+    const totalPages = Math.ceil(filteredPeriods.length / itemsPerPage);
+
     // Check if there's any active period
     const hasActivePeriod = periods.some(p => p.status === 'Active');
+
+    // Apply filters whenever search term, status filter, or year filter changes
+    useEffect(() => {
+        let result = periods;
+
+        if (searchTerm) {
+            result = result.filter(period =>
+                period.period.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                period.year.toString().includes(searchTerm) ||
+                period.status.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (statusFilter !== 'All') {
+            result = result.filter(period => period.status === statusFilter);
+        }
+
+        if (yearFilter !== 'All') {
+            result = result.filter(period => period.year === yearFilter);
+        }
+
+        setFilteredPeriods(result);
+        setCurrentPage(1); // Reset to first page when filters change
+    }, [searchTerm, statusFilter, yearFilter, periods]);
+
+    // Get current items for pagination
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredPeriods.slice(indexOfFirstItem, indexOfLastItem);
 
     const getStatusColor = (status: PeriodStatus) => {
         switch (status) {
@@ -117,7 +158,7 @@ const PeriodMaster = () => {
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
             status: 'Draft',
-            createdBy: 'SM_DEPT_USER',
+            createdBy: 'Admin User',
             createdAt: new Date().toISOString(),
         };
 
@@ -145,6 +186,8 @@ const PeriodMaster = () => {
         }));
     };
 
+    const availableYears = [...new Set(periods.map(p => p.year))].sort((a, b) => b - a);
+
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
             <Header
@@ -165,13 +208,61 @@ const PeriodMaster = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6">
                         <Breadcrumb
                             items={[]}
                             currentPage="Period Master Management"
                             showHomeIcon={true}
                         />
+
+                        {/* Filter Section */}
+                        <Card className="border-[#46B749] dark:border-[#1B6131]">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
+                                        Filter Periods
+                                    </CardTitle>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="relative">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            placeholder="Search periods..."
+                                            className="pl-10"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <select
+                                            className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                            value={statusFilter}
+                                            onChange={(e) => setStatusFilter(e.target.value as PeriodStatus | 'All')}
+                                        >
+                                            <option value="All">All Statuses</option>
+                                            <option value="Draft">Draft</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Closed">Closed</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <select
+                                            className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                            value={yearFilter}
+                                            onChange={(e) => setYearFilter(e.target.value === 'All' ? 'All' : parseInt(e.target.value))}
+                                        >
+                                            <option value="All">All Years</option>
+                                            {availableYears.map(year => (
+                                                <option key={year} value={year}>{year}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
 
                         {/* Period Management Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131]">
@@ -180,18 +271,20 @@ const PeriodMaster = () => {
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
                                         Period Table
                                     </CardTitle>
-                                    <Button
-                                        onClick={() => setShowNewPeriodDialog(true)}
-                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                                    >
-                                        <Calendar className="mr-2 h-4 w-4" />
-                                        Create New Period
-                                    </Button>
+                                    <div className="flex items-center space-x-2">
+                                        <Button
+                                            onClick={() => setShowNewPeriodDialog(true)}
+                                            className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Create New Period
+                                        </Button>
+                                    </div>
                                 </div>
                             </CardHeader>
                             <CardContent className="dark:bg-gray-900 m-0 p-0">
-                                <div className="overflow-x-scroll">
-                                    <table className="w-full overflow-x-scroll">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
                                                 <th className="p-4 text-left border-b">Year</th>
@@ -205,105 +298,139 @@ const PeriodMaster = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {periods.map((period) => (
-                                                <tr
-                                                    key={period.id}
-                                                    className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                                >
-                                                    <td className="p-4">{period.year}</td>
-                                                    <td className="p-4">{period.period}</td>
-                                                    <td className="p-4">{period.startDate}</td>
-                                                    <td className="p-4">{period.endDate}</td>
-                                                    <td className="p-4">
-                                                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(period.status)}`}>
-                                                            {period.status}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">{period.createdBy}</td>
-                                                    <td className="p-4">
-                                                        {new Date(period.createdAt).toLocaleDateString()}
-                                                    </td>
-                                                    <td className="p-4">
-                                                        {period.status === 'Draft' && (
-                                                            <Button
-                                                                onClick={() => handleStatusChange(period.id, 'Active')}
-                                                                className="mr-2 bg-green-500 hover:bg-green-600 text-white"
-                                                                size="sm"
-                                                            >
-                                                                <CheckCircle className="h-4 w-4" />
-                                                            </Button>
-                                                        )}
-                                                        {period.status === 'Active' && (
-                                                            <Button
-                                                                onClick={() => handleStatusChange(period.id, 'Closed')}
-                                                                className="bg-gray-500 hover:bg-gray-600 text-white"
-                                                                size="sm"
-                                                            >
-                                                                <XCircle className="h-4 w-4" />
-                                                            </Button>
-                                                        )}
+                                            {currentItems.length > 0 ? (
+                                                currentItems.map((period) => (
+                                                    <tr
+                                                        key={period.id}
+                                                        className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                    >
+                                                        <td className="p-4">{period.year}</td>
+                                                        <td className="p-4 font-medium">{period.period}</td>
+                                                        <td className="p-4">{new Date(period.startDate).toLocaleDateString()}</td>
+                                                        <td className="p-4">{new Date(period.endDate).toLocaleDateString()}</td>
+                                                        <td className="p-4">
+                                                            <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(period.status)}`}>
+                                                                {period.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4">{period.createdBy}</td>
+                                                        <td className="p-4">
+                                                            {new Date(period.createdAt).toLocaleDateString()}
+                                                        </td>
+                                                        <td className="p-4 space-x-2">
+                                                            {period.status === 'Draft' && (
+                                                                <Button
+                                                                    onClick={() => handleStatusChange(period.id, 'Active')}
+                                                                    className="mr-2 bg-green-500 hover:bg-green-600 text-white"
+                                                                    size="sm"
+                                                                    title="Activate Period"
+                                                                >
+                                                                    <CheckCircle className="h-4 w-4" />
+                                                                </Button>
+                                                            )}
+                                                            {period.status === 'Active' && (
+                                                                <Button
+                                                                    onClick={() => handleStatusChange(period.id, 'Closed')}
+                                                                    className="bg-gray-500 hover:bg-gray-600 text-white"
+                                                                    size="sm"
+                                                                    title="Close Period"
+                                                                >
+                                                                    <XCircle className="h-4 w-4" />
+                                                                </Button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={8} className="p-4 text-center text-gray-500">
+                                                        No periods found matching your criteria
                                                     </td>
                                                 </tr>
-                                            ))}
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
+
+                                {/* Pagination */}
+                                {filteredPeriods.length > 0 && (
+                                    <div className="mt-4 p-4 border-t">
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={setCurrentPage}
+                                        />
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </div>
 
+                    {/* Create New Period Dialog */}
+                    <AlertDialog open={showNewPeriodDialog} onOpenChange={setShowNewPeriodDialog}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Create New Period</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Set up a new BSC period. Only one period can be active at a time.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <label className="text-right">Year</label>
+                                    <Input
+                                        type="number"
+                                        value={newPeriod.year}
+                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+                                        className="col-span-3"
+                                        min={new Date().getFullYear() - 1}
+                                        max={new Date().getFullYear() + 5}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <label className="text-right">Period</label>
+                                    <Input
+                                        type="text"
+                                        value={newPeriod.period}
+                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, period: e.target.value }))}
+                                        className="col-span-3"
+                                        min={new Date().getFullYear() - 1}
+                                        max={new Date().getFullYear() + 5}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <label className="text-right">Start Date</label>
+                                    <Input
+                                        type="date"
+                                        value={newPeriod.startDate}
+                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, startDate: e.target.value }))}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <label className="text-right">End Date</label>
+                                    <Input
+                                        type="date"
+                                        value={newPeriod.endDate}
+                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, endDate: e.target.value }))}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                            </div>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleCreatePeriod}
+                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                    disabled={!newPeriod.period || !newPeriod.startDate || !newPeriod.endDate}
+                                >
+                                    Create Period
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </main>
             </div>
-
-            {/* Create New Period Dialog */}
-            <AlertDialog open={showNewPeriodDialog} onOpenChange={setShowNewPeriodDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Create New Period</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Set up a new BSC period. Only one period can be active at a time.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <label className="text-right">Year</label>
-                            <Input
-                                type="number"
-                                value={newPeriod.year}
-                                onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-                                className="col-span-3"
-                            />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <label className="text-right">Start Date</label>
-                            <Input
-                                type="date"
-                                value={newPeriod.startDate}
-                                onChange={(e) => setNewPeriod(prev => ({ ...prev, startDate: e.target.value }))}
-                                className="col-span-3"
-                            />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <label className="text-right">End Date</label>
-                            <Input
-                                type="date"
-                                value={newPeriod.endDate}
-                                onChange={(e) => setNewPeriod(prev => ({ ...prev, endDate: e.target.value }))}
-                                className="col-span-3"
-                            />
-                        </div>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleCreatePeriod}
-                            className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                        >
-                            Create Period
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, User, BarChart3, Building2, LineChart, Target, Rocket, Trophy, ChevronDown, ChevronRight, Home, Calendar, SquareKanban } from 'lucide-react';
+import { LogOut, User, BarChart3, Building2, LineChart, Target, Rocket, Trophy, ChevronDown, ChevronRight, Home, Calendar, SquareKanban, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
@@ -39,6 +39,29 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'manager', 'sm_dept'],
     },
     {
+        title: 'Company Management',
+        path: '/performance-management/company-management',
+        icon: Building,
+        roles: ['admin'],
+        subMenus: [
+            {
+                title: 'Department Management',
+                path: '/performance-management/company-management/departments',
+                roles: ['admin']
+            },
+            {
+                title: 'Teams Management',
+                path: '/performance-management/company-management/teams',
+                roles: ['admin']
+            },
+             {
+                title: 'Employee Management',
+                path: '/performance-management/company-management/employees',
+                roles: ['admin']
+            },
+        ]
+    },
+    {
         title: 'BSC',
         path: '/performance-management/bsc',
         icon: BarChart3,
@@ -63,7 +86,7 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'employee', 'manager', 'sm_dept'],
     },
     {
-        title: 'Monthly Management Performance', 
+        title: 'Monthly Management Performance',
         path: '/monthly-performance-management/mpm/dashboard',
         icon: Target,
         roles: ['admin', 'manager', 'sm_dept'],
@@ -76,12 +99,12 @@ const performanceMenus: MenuItem[] = [
             {
                 title: 'MPM Actual',
                 path: '/performance-management/mpm/actual',
-                roles: ['admin','manager', 'sm_dept']
+                roles: ['admin', 'manager', 'sm_dept']
             },
             {
                 title: 'MPM Target',
                 path: '/performance-management/mpm/target',
-                roles: ['admin','manager', 'sm_dept']
+                roles: ['admin', 'manager', 'sm_dept']
             }
         ]
     },
@@ -195,11 +218,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                                             }
                                         }
                                     }}
-                                    className={`w-full justify-start h-auto min-h-10 py-2 ${
-                                        isMenuActive(menu)
-                                            ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                    }`}
+                                    className={`w-full justify-start h-auto min-h-10 py-2 ${isMenuActive(menu)
+                                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                        }`}
                                 >
                                     <div className="flex items-center w-full">
                                         {menu.icon && <menu.icon className="mr-2 h-4 w-4 flex-shrink-0" />}
@@ -228,11 +250,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                                                         setIsSidebarOpen(false);
                                                     }
                                                 }}
-                                                className={`w-full justify-start pl-6 h-auto min-h-8 py-2 ${
-                                                    isSubmenuActive(submenu.path)
-                                                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                                                }`}
+                                                className={`w-full justify-start pl-6 h-auto min-h-8 py-2 ${isSubmenuActive(submenu.path)
+                                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                                    }`}
                                             >
                                                 <span className="truncate text-sm">{submenu.title}</span>
                                             </Button>
