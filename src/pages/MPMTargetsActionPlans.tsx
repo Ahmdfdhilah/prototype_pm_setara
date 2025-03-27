@@ -65,10 +65,9 @@ type IndividualPerformanceEntry = {
     teamWeight: number;
 };
 
-const TeamIndividualActionPlans: React.FC = () => {
+const MPMTargetsActionPlans: React.FC = () => {
     const { targetId, mpmId, teamId } = useParams<{ targetId: string, mpmId: string, teamId: string }>();
 
-    // Predefined Parent KPI (mirroring the structure in the first document)
     const parentKPI: ParentKPI = {
         id: 1,
         perspective: 'Financial',
@@ -352,20 +351,7 @@ const TeamIndividualActionPlans: React.FC = () => {
                 />
 
                 <main className={`
-                 flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full
+                 flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
             `}>
                     <div className="space-y-6 mb-16">
                         <Breadcrumb
@@ -442,11 +428,11 @@ const TeamIndividualActionPlans: React.FC = () => {
                                         className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
                                     >
                                         <PlusCircle className="mr-2 h-4 w-4" />
-                                        Add Individual
+                                        Create Action Plans
                                     </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className='mt-2 p-0 overflow-x-auto'>
+                            <CardContent className='m-0 p-0 overflow-x-auto'>
                                 <table className="w-full border-collapse">
                                     <thead className="bg-[#1B6131] text-white">
                                         <tr>
@@ -572,4 +558,4 @@ const TeamIndividualActionPlans: React.FC = () => {
     );
 };
 
-export default TeamIndividualActionPlans;
+export default MPMTargetsActionPlans;

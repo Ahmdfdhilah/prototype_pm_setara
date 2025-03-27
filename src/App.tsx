@@ -8,65 +8,72 @@ import IPMPage from "./pages/IPM";
 import PeriodMaster from "./pages/PeriodMaster";
 import MPMTargets from "./pages/MPMTargets";
 import PerformanceManagementDashboard from "./pages/PerformanceManagementDashboard";
-import MPMActionPlan from "./pages/MPMActionPlan";
 import PerformanceManagementHome from "./pages/PerformanceManagementHome";
 import UserDetailPage from "./pages/UserDetail";
 import EmployeeIPMDetailsPage from "./pages/EmployeeIPMDetails";
-import TeamKPIActionPlans from "./pages/TeamKPIActionPlan";
-import TeamIndividualActionPlans from "./pages/TeamIndividualActionPlans";
-import MPMActualEntry from "./pages/MPMActualEntry";
+import MPMTargetsTeamKPI from "./pages/MPMTargetsTeamKPI";
+import MPMTargetsActionPlans from "./pages/MPMTargetsActionPlans";
+import MPMActuals from "./pages/MPMActuals";
 import MPMActualList from "./pages/MPMActualList";
 import MPMTargetList from "./pages/MPMTargetsList";
+import MPMActualsTeamKPI from "./pages/MPMActualsTeamKPI";
+import MPMActualsActionPlans from "./pages/MPMActualsActionPlans";
+import MPMDashboard from "./pages/MPMDashboard";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Dashboard Routes */}
           <Route path="/" element={<PerformanceManagementHome />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/user-profile" element={<UserDetailPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/performance-management/bsc/dashboard" element={<BSCDashboard />} />
-          <Route path="/performance-management/dashboard" element={<PerformanceManagementDashboard />} />
-          <Route path="/performance-management/bsc/input" element={<BSCEntryPage />} />
-          <Route path="/performance-management/ipm" element={<IPMPage />} />
-          <Route path="/performance-management/ipm/:employeeId/details" element={<EmployeeIPMDetailsPage />} />
-          <Route path="/performance-management/period-master" element={<PeriodMaster />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route
-            path="/performance-management/bsc/dashboard"
-            element={<BSCDashboard />}
-          />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/performance-management/mpm/target"
-            element={<MPMTargetList />}
-          />
-          <Route
-            path="/performance-management/mpm/target/:targetId"
-            element={<MPMTargets />}
-          />
-          <Route
-            path="/performance-management/mpm/target/:targetId/entri/:mpmId/teams"
-            element={<TeamKPIActionPlans />}
-          />
-          <Route
-            path="/performance-management/mpm/target/:targetId/entri/:mpmId/teams/:teamId"
-            element={<TeamIndividualActionPlans />}
-          />
-          <Route
-            path="/performance-management/mpm/actual"
-            element={<MPMActualList />}
-          />
-          <Route
-            path="/performance-management/mpm/actual/:mpmActualId"
-            element={<MPMActualEntry />}
-          />
-          <Route
-            path="/performance-management/mpm/action-plan"
-            element={<MPMActionPlan />}
-          />
+
+          {/* Performance Management Routes */}
+          <Route path="/performance-management">
+            <Route path="dashboard" element={<PerformanceManagementDashboard />} />
+
+            {/* BSC Routes */}
+            <Route path="bsc">
+              <Route path="dashboard" element={<BSCDashboard />} />
+              <Route path="input" element={<BSCEntryPage />} />
+            </Route>
+
+            {/* IPM Routes */}
+            <Route path="ipm">
+              <Route index element={<IPMPage />} />
+              <Route path=":employeeId/details" element={<EmployeeIPMDetailsPage />} />
+            </Route>
+
+            {/* MPM Routes */}
+            <Route path="mpm">
+              <Route path="target">
+                <Route index element={<MPMTargetList />} />
+                <Route path=":targetId" element={<MPMTargets />} />
+                <Route path=":targetId/entri/:mpmId">
+                  <Route path="teams" element={<MPMTargetsTeamKPI />} />
+                  <Route path="teams/:teamId" element={<MPMTargetsActionPlans />} />
+                </Route>
+              </Route>
+
+              <Route path="actual">
+                <Route index element={<MPMActualList />} />
+                <Route path=":mpmActualId" element={<MPMActuals />} />
+                <Route path=":mpmActualId/entri/:mpmId">
+                  <Route path="teams" element={<MPMActualsTeamKPI />} />
+                  <Route path="teams/:teamId" element={<MPMActualsActionPlans />} />
+                </Route>
+              </Route>
+
+              <Route path="dashboard" element={<MPMDashboard />} />
+            </Route>
+
+            <Route path="period-master" element={<PeriodMaster />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

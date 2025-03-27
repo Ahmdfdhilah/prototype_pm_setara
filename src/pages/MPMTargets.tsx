@@ -29,7 +29,7 @@ import {
 
 import { Label } from '@/components/ui/label';
 import Sidebar from '@/components/Sidebar';
-import { Edit, Plus, PlusCircle, Send } from 'lucide-react';
+import { Edit, Eye, Send } from 'lucide-react';
 import Header from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import EditMonthlyTargetDialog from '@/components/MPM/EditMonthlyTargetDialog';
@@ -184,20 +184,7 @@ const MPMTargets = () => {
 
         <main
           className={`
-        flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full
+        flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
           `}
         >
           <div className="space-y-6 w-full">
@@ -221,13 +208,6 @@ const MPMTargets = () => {
                   </CardTitle>
                   <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full md:w-auto">
                     <Button
-                      onClick={() => navigate('/performance-management/mpm/action-plan')}
-                      className="w-full sm:w-auto bg-[#1B6131] hover:bg-[#46B749] flex items-center justify-center text-white"
-                    >
-                      <PlusCircle className="mr-2 h-4 w-4" />
-                      Create Action Plan
-                    </Button>
-                    <Button
                       variant="outline"
                       className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF] flex items-center justify-center dark:text-white"
                       onClick={() => setSendToApproverOpen(true)}
@@ -238,7 +218,7 @@ const MPMTargets = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='mt-2 p-0'>
+              <CardContent className='m-0 p-0'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">
@@ -268,6 +248,16 @@ const MPMTargets = () => {
                             <>
                               <tr key={`${item.perspective}-${item.kpiNumber}`} className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
                                 <td className="p-4 text-center flex gap-2 justify-center">
+                                  {/* Tombol Create */}
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="hover:text-[#1B6131]"
+                                    onClick={() => navigate(`/performance-management/mpm/target/${mpmTargetsDataMock.id}/entri/${item.id}/teams`)}
+                                  >
+
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
                                   {/* Tombol Edit */}
                                   <Button
                                     variant="ghost"
@@ -276,17 +266,6 @@ const MPMTargets = () => {
                                     onClick={() => handleEditMonthlyTarget(item)}
                                   >
                                     <Edit className="h-4 w-4" />
-                                  </Button>
-
-                                  {/* Tombol Create */}
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="hover:text-[#1B6131]"
-                                    onClick={() => navigate(`/performance-management/mpm/target/${mpmTargetsDataMock.id}/entri/${item.id}/teams`)}
-                                  >
-                                   
-                                    <Plus className="h-4 w-4" />
                                   </Button>
                                 </td>
                                 <td className="p-4">{item.kpi}</td>

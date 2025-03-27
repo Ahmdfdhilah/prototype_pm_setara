@@ -267,20 +267,7 @@ const PerformanceManagementDashboard = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full`}>
+                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6">
                         <Breadcrumb
                             items={[]}
@@ -354,7 +341,7 @@ const PerformanceManagementDashboard = () => {
                                     Performance Trends
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="pt-5">
+                            <CardContent className="pt-5 px-0">
                                 <div className="flex flex-col md:flex-row items-center justify-end gap-4 mb-4">
                                     <div className="flex items-center">
                                         <span className="inline-block w-3 h-3 bg-[#1B6131] rounded-full mr-2"></span>
@@ -400,7 +387,7 @@ const PerformanceManagementDashboard = () => {
                                         MPM Top 5 Performers
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="pt-5">
+                                <CardContent className="p-0">
                                     <div className="overflow-x-auto">
                                         <Table>
                                             <TableHeader>
@@ -441,7 +428,7 @@ const PerformanceManagementDashboard = () => {
                                         IPM Top 5 Performers
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="pt-5">
+                                <CardContent className="p-0">
                                     <div className="overflow-x-auto">
                                         <Table>
                                             <TableHeader>

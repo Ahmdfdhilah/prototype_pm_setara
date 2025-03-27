@@ -329,20 +329,7 @@ const EmployeeIPMDetailsPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full`}>
+                <main className={`   flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6 w-full">
                         <Breadcrumb
                             items={[{
@@ -431,7 +418,7 @@ const EmployeeIPMDetailsPage = () => {
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className='mt-2 p-0'>
+                            <CardContent className='m-0 p-0 pb-4'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">
@@ -692,16 +679,11 @@ const EmployeeIPMDetailsPage = () => {
 
                                 {/* Pagination */}
                                 {filteredEntries.length > 0 && (
-                                    <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-                                        <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                                            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredEntries.length)} of {filteredEntries.length} entries
-                                        </div>
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={setCurrentPage}
-                                        />
-                                    </div>
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={setCurrentPage}
+                                    />
                                 )}
                             </CardContent>
                         </Card>

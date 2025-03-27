@@ -267,7 +267,7 @@ const MPMActualList: React.FC = () => {
 
   // Navigate to individual MPM Actual details
   const handleRowClick = (actual: MpmActual) => {
-    navigate(`/performance-management/mpm/actual/${actual.id}`);
+    navigate(`/performance-management/mpm/actual/${actual.id}?month=${actual.month}`);
   };
 
   return (
@@ -291,20 +291,7 @@ const MPMActualList: React.FC = () => {
         />
 
         <main className={`
-         flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full
+         flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
             `}>
           <div className="space-y-6 w-full">
             <Breadcrumb
@@ -323,7 +310,7 @@ const MPMActualList: React.FC = () => {
                   MPM Actuals Table
                 </CardTitle>
               </CardHeader>
-              <CardContent className='mt-2 p-0 overflow-x-scroll'>
+              <CardContent className='m-0 p-0 overflow-x-scroll'>
                 <table className="w-full border-collapse">
                   <thead className="bg-[#1B6131] text-white">
                     <tr>

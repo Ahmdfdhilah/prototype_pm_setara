@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -20,15 +21,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Sidebar from '@/components/Sidebar';
-import { Edit, Send } from 'lucide-react';
+import { Edit, Send, Eye } from 'lucide-react';
 import Header from '@/components/Header';
+import Breadcrumb from '@/components/Breadcrumb';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
 type Category = 'Max' | 'Min' | 'On Target';
 type YTDCalculation = 'Accumulative' | 'Average' | 'Last Value';
+type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
+  'July' | 'August' | 'September' | 'October' | 'November' | 'December';
+type Perspective = 'Financial' | 'Customer' | 'Internal Process' | 'Learning and Growth';
 
 type KPIEntry = {
+  id: number;
+  periodId: number;
+  month: MonthType;
+  perspective: Perspective;
   kpi: string;
   kpiDefinition: string;
   weight: number;
@@ -42,6 +51,7 @@ type KPIEntry = {
   problemIdentification: string;
   correctiveAction: string;
 };
+
 type Approver = {
   id: string;
   name: string;
@@ -49,7 +59,7 @@ type Approver = {
   department: string;
 };
 
-const MPMActualEntry = () => {
+const MPMActuals = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
@@ -57,6 +67,10 @@ const MPMActualEntry = () => {
   const [selectedKPI, setSelectedKPI] = useState<KPIEntry | null>(null);
   const [sendToApproverOpen, setSendToApproverOpen] = useState(false);
   const [selectedApprover, setSelectedApprover] = useState<string>('');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const month = searchParams.get('month');
+  const { mpmActualId } = useParams<{ mpmActualId: string }>();
 
   const approvers: Approver[] = [
     { id: 'app1', name: 'Budi Santoso', position: 'Manager', department: 'Performance Management' },
@@ -65,9 +79,12 @@ const MPMActualEntry = () => {
     { id: 'app4', name: 'Dewi Kartika', position: 'VP', department: 'Human Resources' },
   ];
 
-  // Sample data structure matching the client's image
   const [kpiData, setKpiData] = useState<KPIEntry[]>([
     {
+      id: 1,
+      periodId: 1,
+      month: 'January',
+      perspective: 'Financial',
       kpi: 'Profit / Loss',
       kpiDefinition: 'Rasio keuntungan',
       weight: 15,
@@ -82,6 +99,10 @@ const MPMActualEntry = () => {
       correctiveAction: '',
     },
     {
+      id: 2,
+      periodId: 1,
+      month: 'January',
+      perspective: 'Customer',
       kpi: 'Total Penjualan',
       kpiDefinition: 'Total penjualan',
       weight: 40,
@@ -95,49 +116,22 @@ const MPMActualEntry = () => {
       problemIdentification: '',
       correctiveAction: '',
     },
-    {
-      kpi: 'Jumlah Customer',
-      kpiDefinition: 'Jumlah customer',
-      weight: 15,
-      uom: 'Number',
-      category: 'Max',
-      ytdCalculation: 'Accumulative',
-      target: 10,
-      actual: 10,
-      achievement: 100.0,
-      score: 2,
-      problemIdentification: '',
-      correctiveAction: '',
-    },
-    {
-      kpi: 'Jumlah Supplier',
-      kpiDefinition: 'Jumlah supplier',
-      weight: 15,
-      uom: 'Number',
-      category: 'Max',
-      ytdCalculation: 'Accumulative',
-      target: 10,
-      actual: 10,
-      achievement: 100.0,
-      score: 2,
-      problemIdentification: '',
-      correctiveAction: '',
-    },
-    {
-      kpi: 'Jumlah Training',
-      kpiDefinition: 'Jumlah training',
-      weight: 15,
-      uom: 'Number',
-      category: 'Max',
-      ytdCalculation: 'Accumulative',
-      target: 5,
-      actual: 3,
-      achievement: 60.0,
-      score: 1,
-      problemIdentification: '',
-      correctiveAction: '',
-    },
   ]);
+
+  // Group data by perspective
+  const groupedData = useMemo(() => {
+    return kpiData.reduce((acc, curr) => {
+      if (!acc[curr.perspective]) {
+        acc[curr.perspective] = [];
+      }
+      acc[curr.perspective].push(curr);
+      return acc;
+    }, {} as Record<Perspective, KPIEntry[]>);
+  }, [kpiData]);
+
+  const handleRowClick = (item: KPIEntry) => {
+    navigate(`/performance-management/mpm/actual/${item.periodId}/entri/${item.id}/teams?month=${item.month}`);
+  };
 
   // Edit Dialog Component
   const EditKPIDialog = () => {
@@ -147,7 +141,7 @@ const MPMActualEntry = () => {
       if (selectedKPI) {
         setKpiData((prevData) =>
           prevData.map((kpi) =>
-            kpi.kpi === selectedKPI.kpi ? selectedKPI : kpi
+            kpi.id === selectedKPI.id ? selectedKPI : kpi
           )
         );
         setIsEditDialogOpen(false);
@@ -156,7 +150,7 @@ const MPMActualEntry = () => {
 
     return (
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl  overflow-y-scroll max-h-[85vh]">
+        <DialogContent className="max-w-2xl overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
             <DialogTitle>Edit KPI Actual Data</DialogTitle>
             <DialogDescription>
@@ -339,58 +333,50 @@ const MPMActualEntry = () => {
 
         <main
           className={`
-            flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full
+            flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
           `}
         >
-       <div className="space-y-6 w-full">
-            {/* Header Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
-                MPM Info - KPI Specific (Input Actual)
-              </h1>
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
-                onClick={() => setSendToApproverOpen(true)}
-              >
-                <Send className="mr-2 h-4 w-4" />
-                Send to Approver
-              </Button>
-            </div>
+          <div className="space-y-6 w-full">
+            <Breadcrumb
+              items={[{
+                label: 'MPM Target List',
+                path: '/performance-management/mpm/target'
+              }]}
+              currentPage={`MPM Actual - ${month}`}
+              showHomeIcon={true}
+              subtitle={`MPM Actual ID : ${mpmActualId}`}
+            />
 
             {/* Main Card */}
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
               <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                  KPI Actuals
-                </CardTitle>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    KPI Actuals Table
+                  </CardTitle>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
+                    onClick={() => setSendToApproverOpen(true)}
+                  >
+                    <Send className="mr-2 h-4 w-4" />
+                    Send to Approver
+                  </Button>
+                </div>
               </CardHeader>
-              <CardContent className='mt-4'>
+              <CardContent className='m-0 p-0'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">
                       <tr>
                         {[
-                          'Action', 'KPI', 'KPI Definition', 'Weight', 'UOM', 
-                          'Category', 'YTD Calculation', 'Target', 'Actual', 
-                          'Achievement', 'Score', 'Problem Identification', 
+                          'Actions', 'KPI', 'KPI Definition', 'Weight', 'UOM',
+                          'Category', 'YTD Calculation', 'Target', 'Actual',
+                          'Achievement', 'Score', 'Problem Identification',
                           'Corrective Action'
                         ].map((header) => (
-                          <th 
-                            key={header} 
+                          <th
+                            key={header}
                             className="p-4 text-center whitespace-nowrap"
                           >
                             {header}
@@ -399,38 +385,61 @@ const MPMActualEntry = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {kpiData.map((item, index) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                        >
-                          <td className="p-4 text-center">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="hover:text-[#1B6131]"
-                              onClick={() => handleEditClick(item)}
+                      {groupedData && Object.entries(groupedData).map(([perspective, items]) => (
+                        <>
+                          <tr key={perspective} className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
+                            <td colSpan={13} className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]">
+                              {perspective}
+                            </td>
+                          </tr>
+                          {items.map((item) => (
+                            <tr
+                              key={item.id}
+                              className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
                             >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </td>
-                          <td className="p-4">{item.kpi}</td>
-                          <td className="p-4">{item.kpiDefinition}</td>
-                          <td className="p-4 text-center">{item.weight}%</td>
-                          <td className="p-4 text-center">{item.uom}</td>
-                          <td className="p-4 text-center">{item.category}</td>
-                          <td className="p-4 text-center">
-                            {item.ytdCalculation}
-                          </td>
-                          <td className="p-4 text-center">{item.target}</td>
-                          <td className="p-4 text-center">{item.actual}</td>
-                          <td className="p-4 text-center">
-                            {item.achievement.toFixed(2)}%
-                          </td>
-                          <td className="p-4 text-center">{item.score}</td>
-                          <td className="p-4">{item.problemIdentification}</td>
-                          <td className="p-4">{item.correctiveAction}</td>
-                        </tr>
+                              <td className="p-4 text-center flex items-center justify-center space-x-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="hover:text-[#1B6131]"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditClick(item);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="hover:text-[#1B6131]"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRowClick(item);
+                                  }}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </td>
+                              <td className="p-4">{item.kpi}</td>
+                              <td className="p-4">{item.kpiDefinition}</td>
+                              <td className="p-4 text-center">{item.weight}%</td>
+                              <td className="p-4 text-center">{item.uom}</td>
+                              <td className="p-4 text-center">{item.category}</td>
+                              <td className="p-4 text-center">
+                                {item.ytdCalculation}
+                              </td>
+                              <td className="p-4 text-center">{item.target}</td>
+                              <td className="p-4 text-center">{item.actual}</td>
+                              <td className="p-4 text-center">
+                                {item.achievement.toFixed(2)}%
+                              </td>
+                              <td className="p-4 text-center">{item.score}</td>
+                              <td className="p-4">{item.problemIdentification}</td>
+                              <td className="p-4">{item.correctiveAction}</td>
+                            </tr>
+                          ))}
+                        </>
                       ))}
                     </tbody>
                   </table>
@@ -447,4 +456,4 @@ const MPMActualEntry = () => {
   );
 }
 
-export default MPMActualEntry;
+export default MPMActuals;

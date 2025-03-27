@@ -45,12 +45,12 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'manager', 'sm_dept'],
         subMenus: [
             {
-                title: 'Dashboard',
+                title: 'BSC Dashboard',
                 path: '/performance-management/bsc/dashboard',
                 roles: ['admin', 'manager', 'sm_dept']
             },
             {
-                title: 'Input',
+                title: 'BSC KPI Input',
                 path: '/performance-management/bsc/input',
                 roles: ['admin', 'manager']
             }
@@ -69,8 +69,8 @@ const performanceMenus: MenuItem[] = [
         roles: ['admin', 'manager', 'sm_dept'],
         subMenus: [
             {
-                title: 'Action Plan MPM',
-                path: '/performance-management/mpm/action-plan',
+                title: 'MPM Dashboard',
+                path: '/performance-management/mpm/dashboard',
                 roles: ['admin', 'manager', 'sm_dept']
             },
             {

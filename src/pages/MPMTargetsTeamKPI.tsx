@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Edit, Info, Plus, PlusCircle, Trash2 } from 'lucide-react';
+import { Edit, Eye, Info, PlusCircle, Trash2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -63,7 +63,7 @@ type TeamKPIActionPlan = {
     comments?: string; // Optional: Add comments for team strategy
 };
 
-const TeamKPIActionPlans: React.FC = () => {
+const MPMTargetsTeamKPI: React.FC = () => {
     const { targetId, mpmId } = useParams<{ targetId: string, mpmId: string }>();
 
     const [parentKPIs, _] = useState<MPMEntry[]>([
@@ -345,20 +345,7 @@ const TeamKPIActionPlans: React.FC = () => {
                 />
 
                 <main className={`
-                     flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full
+                     flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
                 `}>
                     <div className="space-y-6 w-full">
                         <Breadcrumb
@@ -432,7 +419,7 @@ const TeamKPIActionPlans: React.FC = () => {
                                     Team KPI Action Plans
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className='mt-2 p-0'>
+                            <CardContent className='m-0 p-0'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full border-collapse">
                                         <thead className="bg-[#1B6131] text-white">
@@ -461,7 +448,7 @@ const TeamKPIActionPlans: React.FC = () => {
                                                                 className="hover:text-[#1B6131]"
                                                                 onClick={() => navigate(`/performance-management/mpm/target/${targetId}/entri/${mpmId}/teams/${plan.teamName}`)}
                                                             >
-                                                                <Plus className="h-4 w-4" />
+                                                                <Eye className="h-4 w-4" />
                                                             </Button>
                                                             <Button
                                                                 variant="ghost"
@@ -529,4 +516,4 @@ const TeamKPIActionPlans: React.FC = () => {
     );
 };
 
-export default TeamKPIActionPlans;
+export default MPMTargetsTeamKPI;

@@ -165,20 +165,7 @@ const PeriodMaster = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 
-            px-2 
-            sm:px-4 
-            lg:px-6 
-            pt-16 
-            pb-12
-            mt-4
-            sm:pt-18 
-            lg:pt-20 
-            transition-all 
-            duration-300 
-            ease-in-out 
-            ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}
-            w-full`}>
+                <main className={`   flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6">
                         <Breadcrumb
                             items={[]}
@@ -202,7 +189,7 @@ const PeriodMaster = () => {
                                     </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className="dark:bg-gray-900 mt-2 p-0">
+                            <CardContent className="dark:bg-gray-900 m-0 p-0">
                                 <div className="overflow-x-scroll">
                                     <table className="w-full overflow-x-scroll">
                                         <thead className="bg-[#1B6131] text-white">

@@ -186,7 +186,7 @@ const Breadcrumb = ({
   };
 
   return (
-    <div className={`bg-gradient-to-r from-[#e6f3e6] to-[#d4ebd4] dark:from-[#0c2f16] dark:to-[#0a3a1a] mb-8 rounded-lg shadow-sm ${className}`}>
+    <div className={`bg-gradient-to-r from-[#e6f3e6] to-[#d4ebd4] dark:from-[#0c2f16] dark:to-[#0a3a1a] mb-8 shadow-sm ${className}`}>
       <div className="mx-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center">
           <div>
