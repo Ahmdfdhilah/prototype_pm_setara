@@ -13,12 +13,14 @@ import {
     Search,
     CheckCircle2,
     Clock,
-    AlertCircle
+    AlertCircle,
+    BarChart2Icon
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Pagination from '@/components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
+import FilterSection from '@/components/Filtering';
 
 // Types
 type Unit = 'IT' | 'Marketing' | 'Sales' | 'Operations' | 'Customer Service' | 'Finance';
@@ -303,6 +305,91 @@ const IPMPage = () => {
                             </CardContent>
                         </Card>
 
+                        <FilterSection>
+                            {currentRole !== 'employee' && (
+                                <>
+                                    <div className="space-y-3">
+                                        <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                            <span>Search</span>
+                                        </label>
+                                        <Input
+                                            placeholder="Search employees..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            <User className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                            <span>Unit</span>
+                                        </label>
+                                        <Select
+                                            value={filterUnit}
+                                            onValueChange={setFilterUnit}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Filter by Unit" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Units</SelectItem>
+                                                <SelectItem value="IT">IT</SelectItem>
+                                                <SelectItem value="Marketing">Marketing</SelectItem>
+                                                <SelectItem value="Sales">Sales</SelectItem>
+                                                <SelectItem value="Operations">Operations</SelectItem>
+                                                <SelectItem value="Customer Service">Customer Service</SelectItem>
+                                                <SelectItem value="Finance">Finance</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                            <span>Team</span>
+                                        </label>
+                                        <Select
+                                        // value={filters.team}
+                                        // onValueChange={(value) => handleFilterChange('team', value)}
+                                        >
+                                            <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                                <SelectValue placeholder="All Teams" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Teams</SelectItem>
+                                                {/* {teams.map(team => (
+                                                    <SelectItem key={team.team_id} value={String(team.team_id)}>
+                                                        {team.team_name}
+                                                    </SelectItem>
+                                                ))} */}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                            <span>Status</span>
+                                        </label>
+                                        <Select
+                                        // value={filters.status}
+                                        // onValueChange={(value) => handleFilterChange('status', value)}
+                                        >
+                                            <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                                <SelectValue placeholder="All Statuses" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Statuses</SelectItem>
+                                                <SelectItem value="active">Active</SelectItem>
+                                                <SelectItem value="inactive">Inactive</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </>
+                            )}
+                        </FilterSection>
+
                         {/* Employee List Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -310,43 +397,7 @@ const IPMPage = () => {
                                     {currentRole === 'employee' ? 'My Performance Plans' : 'Employee Performance Plans'}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="w-full">
-                                {/* Filters - Only visible for manager and SM roles */}
-                                {currentRole !== 'employee' && (
-                                    <div className="mb-6 mt-4 w-full">
-                                        <div className="flex flex-col gap-4">
-                                            <div className="relative w-full">
-                                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                                                <Input
-                                                    placeholder="Search employees..."
-                                                    value={searchTerm}
-                                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                                    className="pl-9 w-full"
-                                                />
-                                            </div>
-                                            <div className="w-full">
-                                                <Select
-                                                    value={filterUnit}
-                                                    onValueChange={setFilterUnit}
-                                                >
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Filter by Unit" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="all">All Units</SelectItem>
-                                                        <SelectItem value="IT">IT</SelectItem>
-                                                        <SelectItem value="Marketing">Marketing</SelectItem>
-                                                        <SelectItem value="Sales">Sales</SelectItem>
-                                                        <SelectItem value="Operations">Operations</SelectItem>
-                                                        <SelectItem value="Customer Service">Customer Service</SelectItem>
-                                                        <SelectItem value="Finance">Finance</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
+                            <CardContent className="w-full mt-4">
                                 {/* Employee List */}
                                 <div className="space-y-4 w-full">
                                     {currentEmployees.length > 0 ? (

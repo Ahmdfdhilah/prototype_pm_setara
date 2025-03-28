@@ -25,6 +25,7 @@ import Pagination from '@/components/Pagination';
 import { Textarea } from '@/components/ui/textarea';
 import Breadcrumb from '@/components/Breadcrumb';
 import { useParams } from 'react-router-dom';
+import FilterSection from '@/components/Filtering';
 
 // Types
 type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved' | 'Rejected';
@@ -378,6 +379,44 @@ const EmployeeIPMDetailsPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
+                        <FilterSection>
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <User className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Status</span>
+                                </label>
+                                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Filter Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Statuses</SelectItem>
+                                        <SelectItem value="Pending">Pending</SelectItem>
+                                        <SelectItem value="Evidence Submitted">Evidence Submitted</SelectItem>
+                                        <SelectItem value="Approved">Approved</SelectItem>
+                                        <SelectItem value="Completed">Completed</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <User className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Status</span>
+                                </label>
+                                <Select value={filterPerspective} onValueChange={setFilterPerspective}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Filter Perspective" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Perspectives</SelectItem>
+                                        <SelectItem value="Financial">Financial</SelectItem>
+                                        <SelectItem value="Customer">Customer</SelectItem>
+                                        <SelectItem value="Internal Business Process">Internal Business Process</SelectItem>
+                                        <SelectItem value="Learning & Growth">Learning & Growth</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </FilterSection>
 
                         {/* IPM Entries */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
@@ -386,34 +425,6 @@ const EmployeeIPMDetailsPage = () => {
                                     <div className="flex items-center mb-2 sm:mb-0">
                                         <FileText className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                         Action Plans
-                                    </div>
-
-                                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                                        <Select value={filterStatus} onValueChange={setFilterStatus}>
-                                            <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
-                                                <SelectValue placeholder="Filter Status" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">All Statuses</SelectItem>
-                                                <SelectItem value="Pending">Pending</SelectItem>
-                                                <SelectItem value="Evidence Submitted">Evidence Submitted</SelectItem>
-                                                <SelectItem value="Approved">Approved</SelectItem>
-                                                <SelectItem value="Completed">Completed</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-
-                                        <Select value={filterPerspective} onValueChange={setFilterPerspective}>
-                                            <SelectTrigger className="w-full sm:w-36 text-xs sm:text-sm h-9">
-                                                <SelectValue placeholder="Filter Perspective" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="all">All Perspectives</SelectItem>
-                                                <SelectItem value="Financial">Financial</SelectItem>
-                                                <SelectItem value="Customer">Customer</SelectItem>
-                                                <SelectItem value="Internal Business Process">Internal Business Process</SelectItem>
-                                                <SelectItem value="Learning & Growth">Learning & Growth</SelectItem>
-                                            </SelectContent>
-                                        </Select>
                                     </div>
                                 </CardTitle>
                             </CardHeader>

@@ -20,21 +20,13 @@ import {
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+
 // Dummy data types based on your database schema
 type Department = {
     department_id: number;
@@ -240,67 +232,69 @@ const DepartmentManagementPage = () => {
                     <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                         <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
                             <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Department List
-                                </CardTitle>
-                                <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Create Department
-                                </Button>
+                                <div className="w-full flex flex-col lg:flex-row justify-between gap-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
+                                        Department List
+                                    </CardTitle>
+                                    <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Create Department
+                                    </Button>
+                                </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-8">
-                            <div className="rounded-md border border-gray-200 dark:border-gray-700">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Code</TableHead>
-                                            <TableHead>Department</TableHead>
-                                            <TableHead>Senior Manager</TableHead>
-                                            <TableHead>Manager</TableHead>
-                                            <TableHead>Employees</TableHead>
-                                            <TableHead>Teams</TableHead>
-                                            <TableHead>Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
+                        <CardContent className="p-0 pb-4">
+                            <div className="border border-gray-200 dark:border-gray-700 rounded-md overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-[#1B6131] text-white">
+                                        <tr>
+                                            <th className="p-4 text-left font-medium">Code</th>
+                                            <th className="p-4 text-left font-medium">Department</th>
+                                            <th className="p-4 text-left font-medium">Senior Manager</th>
+                                            <th className="p-4 text-left font-medium">Manager</th>
+                                            <th className="p-4 text-left font-medium">Employees</th>
+                                            <th className="p-4 text-left font-medium">Teams</th>
+                                            <th className="p-4 text-left font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {currentItems.length > 0 ? (
                                             currentItems.map((department) => (
-                                                <TableRow key={department.department_id}>
-                                                    <TableCell className="font-medium">
-                                                        <Badge variant="outline" className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                <tr key={department.department_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                                    <td className="p-4">
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
                                                             {department.department_code}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4">
                                                         <div className="flex items-center space-x-2">
                                                             <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
                                                             <span>{department.department_name}</span>
                                                         </div>
-                                                    </TableCell>
-                                                    <TableCell>
+                                                    </td>
+                                                    <td className="p-4">
                                                         <div className="flex items-center space-x-2">
                                                             <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
                                                             <span>{department.manager_name}</span>
                                                         </div>
-                                                    </TableCell>
-                                                    <TableCell>
+                                                    </td>
+                                                    <td className="p-4">
                                                         <div className="flex items-center space-x-2">
                                                             <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
                                                             <span>{department.sm_manager_name}</span>
                                                         </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge variant="outline" className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
                                                             {department.employee_count} employees
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge variant="outline" className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4">
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
                                                             {department.team_count} teams
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4">
                                                         <div className="flex space-x-2">
                                                             <DropdownMenu>
                                                                 <DropdownMenuTrigger asChild>
@@ -329,22 +323,22 @@ const DepartmentManagementPage = () => {
                                                                 </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         </div>
-                                                    </TableCell>
-                                                </TableRow>
+                                                    </td>
+                                                </tr>
                                             ))
                                         ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={8} className="h-24 text-center">
+                                            <tr>
+                                                <td colSpan={7} className="p-8 text-center">
                                                     No departments found
-                                                </TableCell>
-                                            </TableRow>
+                                                </td>
+                                            </tr>
                                         )}
-                                    </TableBody>
-                                </Table>
+                                    </tbody>
+                                </table>
                             </div>
 
                             {/* Pagination */}
-                            <div className="mt-4">
+                            <div className="mt-4 px-4">
                                 <Pagination
                                     currentPage={currentPage}
                                     totalPages={totalPages}

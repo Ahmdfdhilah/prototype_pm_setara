@@ -288,8 +288,8 @@ const MPMDashboard: React.FC = () => {
                         <Breadcrumb
                             items={[]}
                             currentPage="MPM Dashboard"
+                            subtitle={`MPM ${currentRole == 'admin' ? 'Company' : 'IT Department'} Dashboard`}
                             showHomeIcon={true}
-                            subtitle={`Performance Year: ${selectedYear} | Period: ${selectedPeriodType} - ${currentPeriod}`}
                         />
 
                         <FilterSection

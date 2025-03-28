@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/Pagination';
 import Header from '@/components/Header';
@@ -11,6 +11,7 @@ import { DialogFooter, DialogHeader } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Breadcrumb from '@/components/Breadcrumb';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type MPMActualStatus = 'Pending' | 'Draft' | 'Submitted' | 'Approved by Senior Manager' | 'Rejected by Senior Manager';
 
@@ -21,11 +22,20 @@ type ApproverComment = {
   reviewedAt: Date;
 };
 
+type Department = {
+  id: number;
+  name: string;
+  code: string;
+};
+
 type MpmActual = {
   id: string;
   month: string;
   period: string;
+  year: string;
   submittedBy: string;
+  departmentId: number;
+  departmentName: string;
   submittedAt: Date;
   status: MPMActualStatus;
   approverComments?: ApproverComment[];
@@ -37,11 +47,23 @@ const MPMActualList: React.FC = () => {
   // State Management
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [currentRole, setCurrentRole] = useState('manager');
+  const [currentRole, setCurrentRole] = useState('admin');
 
   // Filtering States
   const [selectedPeriod, setSelectedPeriod] = useState('');
-  const [selectedStatus, _] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+
+  // Departments data
+  const [departments, _] = useState<Department[]>([
+    { id: 1, name: 'IT Department', code: 'IT' },
+    { id: 2, name: 'Marketing', code: 'MKT' },
+    { id: 3, name: 'Human Resources', code: 'HRD' },
+    { id: 4, name: 'Finance', code: 'FIN' },
+  ]);
+
+  // Current user department (for manager/sm)
+  const [currentUserDepartment, ] = useState<number | null>(1);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +80,10 @@ const MPMActualList: React.FC = () => {
       id: '1',
       month: 'January',
       period: 'Jan-25',
+      year: '2025',
       submittedBy: 'John Doe',
+      departmentId: 1,
+      departmentName: 'IT Department',
       submittedAt: new Date(2025, 0, 15),
       status: 'Approved by Senior Manager',
       approverComments: [{
@@ -72,7 +97,10 @@ const MPMActualList: React.FC = () => {
       id: '2',
       month: 'February',
       period: 'Feb-25',
+      year: '2025',
       submittedBy: 'John Doe',
+      departmentId: 1,
+      departmentName: 'IT Department',
       submittedAt: new Date(2025, 1, 16),
       status: 'Approved by Senior Manager',
       approverComments: [{
@@ -86,12 +114,15 @@ const MPMActualList: React.FC = () => {
       id: '3',
       month: 'March',
       period: 'Mar-25',
+      year: '2025',
       submittedBy: 'John Doe',
+      departmentId: 1,
+      departmentName: 'IT Department',
       submittedAt: new Date(2025, 2, 17),
-      status: 'Approved by Senior Manager',
+      status: 'Rejected by Senior Manager',
       approverComments: [{
         reviewer: 'Jane Smith',
-        comment: 'Good',
+        comment: 'Incomplete documentation',
         action: 'Rejected',
         reviewedAt: new Date(2025, 2, 20)
       }]
@@ -100,7 +131,10 @@ const MPMActualList: React.FC = () => {
       id: '4',
       month: 'April',
       period: 'Apr-25',
+      year: '2025',
       submittedBy: 'John Doe',
+      departmentId: 1,
+      departmentName: 'IT Department',
       submittedAt: new Date(2025, 3, 15),
       status: 'Submitted',
       approverComments: []
@@ -109,7 +143,10 @@ const MPMActualList: React.FC = () => {
       id: '5',
       month: 'May',
       period: 'May-25',
+      year: '2025',
       submittedBy: 'John Doe',
+      departmentId: 1,
+      departmentName: 'IT Department',
       submittedAt: new Date(2025, 4, 16),
       status: 'Draft',
       approverComments: []
@@ -118,7 +155,10 @@ const MPMActualList: React.FC = () => {
       id: '6',
       month: 'June',
       period: 'Jun-25',
+      year: '2025',
       submittedBy: 'Sarah Johnson',
+      departmentId: 2,
+      departmentName: 'Marketing',
       submittedAt: new Date(2025, 5, 17),
       status: 'Approved by Senior Manager',
       approverComments: [{
@@ -132,7 +172,10 @@ const MPMActualList: React.FC = () => {
       id: '7',
       month: 'July',
       period: 'Jul-25',
+      year: '2025',
       submittedBy: 'Sarah Johnson',
+      departmentId: 2,
+      departmentName: 'Marketing',
       submittedAt: new Date(2025, 6, 15),
       status: 'Submitted',
       approverComments: []
@@ -141,7 +184,10 @@ const MPMActualList: React.FC = () => {
       id: '8',
       month: 'August',
       period: 'Aug-25',
+      year: '2025',
       submittedBy: 'Sarah Johnson',
+      departmentId: 2,
+      departmentName: 'Marketing',
       submittedAt: new Date(2025, 7, 16),
       status: 'Draft',
       approverComments: []
@@ -150,7 +196,10 @@ const MPMActualList: React.FC = () => {
       id: '9',
       month: 'September',
       period: 'Sep-25',
+      year: '2025',
       submittedBy: 'Robert Brown',
+      departmentId: 3,
+      departmentName: 'Human Resources',
       submittedAt: new Date(2025, 8, 17),
       status: 'Approved by Senior Manager',
       approverComments: [{
@@ -164,7 +213,10 @@ const MPMActualList: React.FC = () => {
       id: '10',
       month: 'October',
       period: 'Oct-25',
+      year: '2025',
       submittedBy: 'Robert Brown',
+      departmentId: 3,
+      departmentName: 'Human Resources',
       submittedAt: new Date(2025, 9, 15),
       status: 'Rejected by Senior Manager',
       approverComments: [{
@@ -178,7 +230,10 @@ const MPMActualList: React.FC = () => {
       id: '11',
       month: 'November',
       period: 'Nov-25',
+      year: '2025',
       submittedBy: 'Robert Brown',
+      departmentId: 3,
+      departmentName: 'Human Resources',
       submittedAt: new Date(2025, 10, 16),
       status: 'Submitted',
       approverComments: []
@@ -187,7 +242,10 @@ const MPMActualList: React.FC = () => {
       id: '12',
       month: 'December',
       period: 'Dec-25',
+      year: '2025',
       submittedBy: 'Robert Brown',
+      departmentId: 3,
+      departmentName: 'Human Resources',
       submittedAt: new Date(2025, 11, 15),
       status: 'Draft',
       approverComments: []
@@ -196,16 +254,32 @@ const MPMActualList: React.FC = () => {
 
   // Filtering and Pagination Logic
   const filteredMpmActuals = useMemo(() => {
-    return mpmActuals.filter(actual =>
+    let result = mpmActuals;
+    
+    // Filter by role
+    if (currentRole === 'manager' || currentRole === 'sm_dept') {
+      result = result.filter(actual => actual.departmentId === currentUserDepartment);
+    }
+    
+    // Apply other filters
+    result = result.filter(actual =>
       (!selectedPeriod || actual.period === selectedPeriod) &&
-      (!selectedStatus || actual.status === selectedStatus)
+      (!selectedStatus || actual.status === selectedStatus) &&
+      (!selectedDepartment || actual.departmentId.toString() === selectedDepartment) 
     );
-  }, [mpmActuals, selectedPeriod, selectedStatus]);
+    
+    return result;
+  }, [mpmActuals, selectedPeriod, selectedStatus, selectedDepartment, currentRole, currentUserDepartment]);
 
   const paginatedMpmActuals = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredMpmActuals.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredMpmActuals, currentPage]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedPeriod, selectedStatus, selectedDepartment]);
 
   // Handlers
   const handleSubmitMpmActual = () => {
@@ -247,7 +321,6 @@ const MPMActualList: React.FC = () => {
     }
   };
 
-  // Helper function to get status color classes
   const getStatusColor = (status: MPMActualStatus) => {
     switch (status) {
       case 'Pending':
@@ -291,95 +364,165 @@ const MPMActualList: React.FC = () => {
         />
 
         <main className={`
-         flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
+            flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
             `}>
           <div className="space-y-6 w-full">
             <Breadcrumb
               items={[]}
-              currentPage="MPM Actuals"
+              currentPage="MPM Actuals List"
               showHomeIcon={true}
+              subtitle={`Actual MPM Value ${currentRole == 'admin' ? 'Company' : 'IT Department'}`}
             />
+            
+            {/* Enhanced Filter Section */}
             <FilterSection
               handlePeriodChange={setSelectedPeriod}
               selectedPeriod={selectedPeriod}
-            />
+            >
+
+              <div className="space-y-3">
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <span>Status</span>
+                </label>
+                <Select onValueChange={setSelectedStatus} value={selectedStatus}>
+                  <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Submitted">Submitted</SelectItem>
+                    <SelectItem value="Approved by Senior Manager">Approved</SelectItem>
+                    <SelectItem value="Rejected by Senior Manager">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {currentRole === 'admin' && (
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                    <span>Department</span>
+                  </label>
+                  <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                      <SelectValue placeholder="All Departments" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Departments</SelectItem>
+                      {departments.map(dept => (
+                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </FilterSection>
 
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
               <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                  MPM Actuals Table
-                </CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    MPM Actuals Table
+                  </CardTitle>
+                </div>
               </CardHeader>
-              <CardContent className='m-0 p-0 overflow-x-scroll'>
-                <table className="w-full border-collapse">
+              <CardContent className='m-0 p-0 overflow-x-auto'>
+                <table className="w-full border-collapse min-w-[800px]">
                   <thead className="bg-[#1B6131] text-white">
                     <tr>
-                      {['Month', 'Submitted By', 'Submitted At', 'Status', 'Actions'].map(header => (
-                        <th key={header} className="p-4 text-center">{header}</th>
+                      {['Month', 'Year', 'Department', 'Submitted By', 'Submitted At', 'Status', 'Actions'].map(header => (
+                        <th key={header} className="p-4 text-left">{header}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedMpmActuals.map(actual => (
-                      <tr
-                        key={actual.id}
-                        className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
-                        onClick={() => handleRowClick(actual)}
-                      >
-                        <td className="p-4 text-center">{actual.month}</td>
-                        <td className="p-4 text-center">{actual.submittedBy}</td>
-                        <td className="p-4 text-center">
-                          {actual.submittedAt.toLocaleDateString()}
-                        </td>
-                        <td className="p-4 text-center">
-                          <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(actual.status)}`}>
-                            {actual.status}
-                          </span>
-                        </td>
-                        <td
-                          className="p-4 text-center space-x-2"
-                          onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                    {paginatedMpmActuals.length > 0 ? (
+                      paginatedMpmActuals.map(actual => (
+                        <tr
+                          key={actual.id}
+                          className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer border-b border-gray-200 dark:border-gray-700"
+                          onClick={() => handleRowClick(actual)}
                         >
-                          {currentRole === 'manager' && actual.status === 'Draft' && (
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                setSelectedMpmActual(actual);
-                                setIsSubmitModalOpen(true);
-                              }}
-                            >
-                              Submit
-                            </Button>
-                          )}
-                          {currentRole === 'sm_dept' && actual.status === 'Submitted' && (
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                setSelectedMpmActual(actual);
-                                setIsReviewModalOpen(true);
-                              }}
-                            >
-                              Review
-                            </Button>
-                          )}
+                          <td className="p-4">{actual.month}</td>
+                          <td className="p-4">{actual.year}</td>
+                          <td className="p-4">{actual.departmentName}</td>
+                          <td className="p-4">{actual.submittedBy}</td>
+                          <td className="p-4">
+                            {actual.submittedAt.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </td>
+                          <td className="p-4">
+                            <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(actual.status)}`}>
+                              {actual.status}
+                            </span>
+                          </td>
+                          <td
+                            className="p-4 space-x-2 whitespace-nowrap"
+                            onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                          >
+                            {currentRole === 'manager' && actual.status === 'Draft' && (
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedMpmActual(actual);
+                                  setIsSubmitModalOpen(true);
+                                }}
+                              >
+                                Submit
+                              </Button>
+                            )}
+                            {currentRole === 'sm_dept' && actual.status === 'Submitted' && (
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedMpmActual(actual);
+                                  setIsReviewModalOpen(true);
+                                }}
+                              >
+                                Review
+                              </Button>
+                            )}
+                            {currentRole === 'admin' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRowClick(actual)}
+                              >
+                                View Details
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="p-4 text-center text-gray-500">
+                          No actuals found matching your criteria
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
 
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
-                  onPageChange={setCurrentPage}
-                />
+                {filteredMpmActuals.length > 0 && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
+                    onPageChange={setCurrentPage}
+                  />
+                )}
               </CardContent>
             </Card>
           </div>
         </main>
       </div>
 
-      {/* Submit Modal - Positioned with absolute positioning */}
+      {/* Submit Modal */}
       <Dialog open={isSubmitModalOpen} onOpenChange={setIsSubmitModalOpen}>
         <DialogContent className="max-w-md w-[95%] lg:max-w-lg rounded-lg overflow-y-scroll max-h-[85vh]">
           <DialogHeader>
@@ -402,7 +545,7 @@ const MPMActualList: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Review Modal - Positioned with absolute positioning */}
+      {/* Review Modal */}
       <Dialog open={isReviewModalOpen} onOpenChange={setIsReviewModalOpen}>
         <DialogContent className="max-w-md w-[95%] lg:max-w-lg rounded-lg overflow-y-scroll max-h-[85vh]">
           <DialogHeader>

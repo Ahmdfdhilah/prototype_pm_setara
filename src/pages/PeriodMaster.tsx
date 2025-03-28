@@ -17,13 +17,15 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { CheckCircle, XCircle, Search, Plus } from 'lucide-react';
+import { CheckCircle, XCircle, Search, Plus, BarChart2Icon } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
+import FilterSection from '@/components/Filtering';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-type PeriodStatus = 'Draft' | 'Active' | 'Closed';
+type PeriodStatus = 'All' | 'Draft' | 'Active' | 'Closed';
 
 interface Period {
     id: string;
@@ -89,8 +91,8 @@ const PeriodMaster = () => {
 
     // Filtering state
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState<PeriodStatus | 'All'>('All');
-    const [yearFilter, setYearFilter] = useState<number | 'All'>('All');
+    const [statusFilter, setStatusFilter] = useState('All');
+    const [yearFilter, setYearFilter] = useState<string>('All');
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -117,12 +119,13 @@ const PeriodMaster = () => {
         }
 
         if (yearFilter !== 'All') {
-            result = result.filter(period => period.year === yearFilter);
+            result = result.filter(period => period.year === parseInt(yearFilter));
         }
 
         setFilteredPeriods(result);
         setCurrentPage(1); // Reset to first page when filters change
     }, [searchTerm, statusFilter, yearFilter, periods]);
+
 
     // Get current items for pagination
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -186,8 +189,6 @@ const PeriodMaster = () => {
         }));
     };
 
-    const availableYears = [...new Set(periods.map(p => p.year))].sort((a, b) => b - a);
-
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
             <Header
@@ -215,54 +216,50 @@ const PeriodMaster = () => {
                             currentPage="Period Master Management"
                             showHomeIcon={true}
                         />
+                        <FilterSection
+                            handlePeriodChange={setYearFilter}
+                            selectedPeriod={yearFilter}
+                        >
+                            {/* Search Input */}
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search Periods</span>
+                                </label>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        placeholder="Search periods..."
+                                        className="pl-10 w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131]"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
 
-                        {/* Filter Section */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
-                                        Filter Periods
-                                    </CardTitle>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="relative">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                        <Input
-                                            placeholder="Search periods..."
-                                            className="pl-10"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
-                                    <div>
-                                        <select
-                                            className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
-                                            value={statusFilter}
-                                            onChange={(e) => setStatusFilter(e.target.value as PeriodStatus | 'All')}
-                                        >
-                                            <option value="All">All Statuses</option>
-                                            <option value="Draft">Draft</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Closed">Closed</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <select
-                                            className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
-                                            value={yearFilter}
-                                            onChange={(e) => setYearFilter(e.target.value === 'All' ? 'All' : parseInt(e.target.value))}
-                                        >
-                                            <option value="All">All Years</option>
-                                            {availableYears.map(year => (
-                                                <option key={year} value={year}>{year}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                            {/* Status Filter */}
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Status</span>
+                                </label>
+                                <Select
+                                    onValueChange={(value: PeriodStatus | 'All') => setStatusFilter(value)}
+                                    value={statusFilter}
+                                >
+                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                        <SelectValue placeholder="Select Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="All">All Statuses</SelectItem>
+                                        <SelectItem value="Draft">Draft</SelectItem>
+                                        <SelectItem value="Active">Active</SelectItem>
+                                        <SelectItem value="Closed">Closed</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </FilterSection>
+
 
                         {/* Period Management Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131]">

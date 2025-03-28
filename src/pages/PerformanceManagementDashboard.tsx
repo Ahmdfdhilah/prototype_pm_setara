@@ -16,48 +16,14 @@ import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Breadcrumb from '@/components/Breadcrumb';
-
-const Table: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="w-full overflow-auto">
-        <table className="w-full border-collapse">{children}</table>
-    </div>
-);
-
-const TableHeader: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-    <thead className={`bg-[#1B6131] ${className || ''}`}>{children}</thead>
-);
-
-const TableBody: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <tbody>{children}</tbody>
-);
-
-const TableRow: React.FC<{
-    children: React.ReactNode;
-    className?: string;
-    onClick?: () => void;
-    hover?: boolean;
-}> = ({ children, className, onClick, hover = false }) => (
-    <tr
-        className={`border-b ${className || ''} ${hover ? 'hover:bg-gray-50 cursor-pointer' : ''}`}
-        onClick={onClick}
-    >
-        {children}
-    </tr>
-);
-
-const TableCell: React.FC<{
-    children: React.ReactNode;
-    colSpan?: number;
-    rowSpan?: number;
-    className?: string;
-}> = ({ children, colSpan, rowSpan, className }) => (
-    <td className={`p-4 ${className || ''}`} colSpan={colSpan} rowSpan={rowSpan}>{children}</td>
-);
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import { ClockIcon } from 'lucide-react';
+import FilterSection from '@/components/Filtering';
 
 // Ranking Badge Component
 const RankBadge: React.FC<{ rank: number }> = ({ rank }) => {
     return (
-        <span className={`inline-flex items-center justify-center w-6 h-6 text-black font-bold text-xs mr-2`}>
+        <span className={`inline-flex items-center justify-center w-6 h-6 text-black font-bold text-xs mr-2 dark:text-white`}>
             {rank}.
         </span>
     );
@@ -275,61 +241,78 @@ const PerformanceManagementDashboard = () => {
                             showHomeIcon={true}
                         />
 
-                        {/* Period Filter Section */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                                    </svg>
-                                    Filter Period
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-5">
-                                <div className="flex flex-col md:flex-row gap-4">
-                                    <div className="w-full md:w-1/2">
-                                        <label className="block text-sm font-medium mb-2">
-                                            First Period
-                                        </label>
-                                        <Select
-                                            value={startPeriod}
-                                            onValueChange={setStartPeriod}
-                                        >
-                                            <SelectTrigger className="border-[#46B749] focus:ring-[#1B6131] focus:ring-opacity-50">
-                                                <SelectValue placeholder="Pilih periode awal" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {availablePeriods.map((period) => (
-                                                    <SelectItem key={`start-${period}`} value={period}>
-                                                        {period}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="w-full md:w-1/2">
-                                        <label className="block text-sm font-medium mb-2">
-                                            Last Period
-                                        </label>
-                                        <Select
-                                            value={endPeriod}
-                                            onValueChange={setEndPeriod}
-                                        >
-                                            <SelectTrigger className="border-[#46B749] focus:ring-[#1B6131] focus:ring-opacity-50">
-                                                <SelectValue placeholder="Pilih periode akhir" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {availableEndPeriods.map((period) => (
-                                                    <SelectItem key={`end-${period}`} value={period}>
-                                                        {period}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <FilterSection
+                        >
+                            {/* Additional custom filters can be added as children */}
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <ClockIcon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Start Period</span>
+                                </label>
+                                <Select
+                                    value={startPeriod}
+                                    onValueChange={setStartPeriod}
+                                >
+                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                        <SelectValue placeholder="Select Start Period" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availablePeriods.map((period) => (
+                                            <SelectItem key={`start-${period}`} value={period}>
+                                                {period}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <ClockIcon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>End Period</span>
+                                </label>
+                                <Select
+                                    value={endPeriod}
+                                    onValueChange={setEndPeriod}
+                                >
+                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                        <SelectValue placeholder="Select End Period" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableEndPeriods.map((period) => (
+                                            <SelectItem key={`end-${period}`} value={period}>
+                                                {period}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <ClockIcon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Period Year</span>
+                                </label>
+                                <Select>
+                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                        <SelectValue placeholder="Select Start Period" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value='2022'>
+                                            2022
+                                        </SelectItem>
+                                        <SelectItem value='2023'>
+                                            2023
+                                        </SelectItem>
+                                        <SelectItem value='2024'>
+                                            2024
+                                        </SelectItem>
+                                        <SelectItem value='2025'>
+                                            2025
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </FilterSection>
 
                         {/* Performance Trends Chart */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
@@ -401,7 +384,7 @@ const PerformanceManagementDashboard = () => {
                                             </TableHeader>
                                             <TableBody>
                                                 {[0, 1, 2, 3, 4].map((index) => (
-                                                    <TableRow key={`mpm-row-${index}`} hover>
+                                                    <TableRow className='hover:bg-gray-50 dark:hover:bg-gray-800/50' key={`mpm-row-${index}`}>
                                                         {selectedPeriods.map((period) => (
                                                             <TableCell key={`mpm-cell-${period}-${index}`} className="text-center">
                                                                 <div className="flex items-center justify-center">
@@ -442,7 +425,7 @@ const PerformanceManagementDashboard = () => {
                                             </TableHeader>
                                             <TableBody>
                                                 {[0, 1, 2, 3, 4].map((index) => (
-                                                    <TableRow key={`ipm-row-${index}`} hover>
+                                                    <TableRow className='hover:bg-gray-50 dark:hover:bg-gray-800/50' key={`ipm-row-${index}`} >
                                                         {selectedPeriods.map((period) => (
                                                             <TableCell key={`ipm-cell-${period}-${index}`} className="text-center">
                                                                 <div className="flex items-center justify-center">
