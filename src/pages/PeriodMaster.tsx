@@ -96,8 +96,9 @@ const PeriodMaster = () => {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
-    const totalPages = Math.ceil(filteredPeriods.length / itemsPerPage);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, setPaginationExpanded] = useState(true);
+
 
     // Check if there's any active period
     const hasActivePeriod = periods.some(p => p.status === 'Active');
@@ -189,6 +190,19 @@ const PeriodMaster = () => {
         }));
     };
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+    };
+
+    const handleTogglePaginationExpand = () => {
+        setPaginationExpanded(!paginationExpanded);
+    };
+
+
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
             <Header
@@ -262,7 +276,7 @@ const PeriodMaster = () => {
 
 
                         {/* Period Management Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131]">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
@@ -350,15 +364,16 @@ const PeriodMaster = () => {
                                 </div>
 
                                 {/* Pagination */}
-                                {filteredPeriods.length > 0 && (
-                                    <div className="mt-4 p-4 border-t">
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={setCurrentPage}
-                                        />
-                                    </div>
-                                )}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(filteredPeriods.length / itemsPerPage)}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredPeriods.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={handleTogglePaginationExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>

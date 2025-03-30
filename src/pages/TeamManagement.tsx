@@ -392,11 +392,11 @@ const TeamManagementPage = () => {
                             </div>
 
                             <div className="mt-2">
-                                <Pagination
+                                {/* <Pagination
                                     currentPage={currentPage}
                                     totalPages={totalPages}
                                     onPageChange={setCurrentPage}
-                                />
+                                /> */}
                             </div>
                         </CardContent>
                     </Card>

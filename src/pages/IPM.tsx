@@ -43,10 +43,12 @@ const IPMPage = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, _] = useState(5);
-    const [filterUnit, setFilterUnit] = useState('all'); // Changed default value to 'all' instead of empty string
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [filterUnit, setFilterUnit] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [paginationExpanded, setPaginationExpanded] = useState(true);
     const navigate = useNavigate();
+
     // Mock data for employees with action plan counts
     const [employees, _setEmployees] = useState<Employee[]>([
         {
@@ -209,7 +211,7 @@ const IPMPage = () => {
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [filterUnit, searchTerm, currentRole]);
+    }, [filterUnit, searchTerm, currentRole, itemsPerPage]);
 
     // Get current employees for pagination
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -220,6 +222,17 @@ const IPMPage = () => {
     // Handle employee selection/click
     const handleEmployeeSelect = (employeeId: string) => {
         navigate(`/performance-management/ipm/${employeeId}/details`)
+    };
+
+    // Handle items per page change
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1); // Reset to first page when changing items per page
+    };
+
+    // Toggle pagination expanded state
+    const togglePaginationExpand = () => {
+        setPaginationExpanded(!paginationExpanded);
     };
 
     return (
@@ -242,7 +255,7 @@ const IPMPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`   flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <div className="space-y-6 w-full">
                         <Breadcrumb
                             items={[]}
@@ -443,15 +456,16 @@ const IPMPage = () => {
                                 </div>
 
                                 {/* Pagination */}
-                                {filteredEmployees.length > 0 && (
-                                    <div className="mt-6 w-full">
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={setCurrentPage}
-                                        />
-                                    </div>
-                                )}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredEmployees.length}
+                                    onPageChange={setCurrentPage}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={togglePaginationExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>

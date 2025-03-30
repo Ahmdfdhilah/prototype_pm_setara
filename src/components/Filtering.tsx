@@ -31,7 +31,7 @@ function FilterSection({
     children
 }: FilteringParams) {
     // State to manage filter visibility
-    const [isFilterVisible, setIsFilterVisible] = useState<boolean>(true);
+    const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
 
     // Toggle filter visibility
     const toggleFilterVisibility = () => {

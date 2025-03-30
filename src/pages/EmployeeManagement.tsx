@@ -458,7 +458,7 @@ const EmployeeManagementPage = () => {
                             </div>
 
                             {/* Pagination */}
-                            {filteredEmployees.length > itemsPerPage && (
+                            {/* {filteredEmployees.length > itemsPerPage && (
                                 <div className="mt-4">
                                     <Pagination
                                         currentPage={currentPage}
@@ -466,7 +466,7 @@ const EmployeeManagementPage = () => {
                                         onPageChange={setCurrentPage}
                                     />
                                 </div>
-                            )}
+                            )} */}
                         </CardContent>
                     </Card>
                 </main>

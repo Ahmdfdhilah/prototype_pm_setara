@@ -73,6 +73,7 @@ const MPMDashboard: React.FC = () => {
         }, {} as Record<Perspective, MPMEntry[]>);
     }, [mpmData]);
 
+    // Pagination state for each perspective
     const [currentPages, setCurrentPages] = useState<Record<Perspective, number>>({
         'Financial': 1,
         'Customer': 1,
@@ -80,27 +81,43 @@ const MPMDashboard: React.FC = () => {
         'Learning and Growth': 1
     });
 
-    // Items per page
-    const ITEMS_PER_PAGE = 5;
+    // Items per page state for each perspective
+    const [itemsPerPage, setItemsPerPage] = useState<Record<Perspective, number>>({
+        'Financial': 5,
+        'Customer': 5,
+        'Internal Process': 5,
+        'Learning and Growth': 5
+    });
+
+    // Pagination expanded state for each perspective
+    const [paginationExpanded, setPaginationExpanded] = useState<Record<Perspective, boolean>>({
+        'Financial': true,
+        'Customer': true,
+        'Internal Process': true,
+        'Learning and Growth': true
+    });
 
     // Paginated and grouped data
     const paginatedGroupedData = useMemo(() => {
-        const result: Record<Perspective, { items: MPMEntry[], totalPages: number }> = {} as any;
+        const result: Record<Perspective, { items: MPMEntry[], totalPages: number, totalItems: number }> = {} as any;
 
         Object.entries(groupedData).forEach(([perspective, items]) => {
-            const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+            const totalItems = items.length;
+            const perspectiveItemsPerPage = itemsPerPage[perspective as Perspective];
+            const totalPages = Math.ceil(totalItems / perspectiveItemsPerPage);
             const currentPage = currentPages[perspective as Perspective];
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const startIndex = (currentPage - 1) * perspectiveItemsPerPage;
+            const endIndex = startIndex + perspectiveItemsPerPage;
 
             result[perspective as Perspective] = {
                 items: items.slice(startIndex, endIndex),
-                totalPages
+                totalPages,
+                totalItems
             };
         });
 
         return result;
-    }, [groupedData, currentPages, ITEMS_PER_PAGE]);
+    }, [groupedData, currentPages, itemsPerPage]);
 
     // Page change handler for a specific perspective
     const handlePageChange = (perspective: Perspective, newPage: number) => {
@@ -110,6 +127,28 @@ const MPMDashboard: React.FC = () => {
         }));
     };
 
+    // Items per page change handler for a specific perspective
+    const handleItemsPerPageChange = (perspective: Perspective, value: string) => {
+        const newItemsPerPage = parseInt(value);
+        setItemsPerPage(prev => ({
+            ...prev,
+            [perspective]: newItemsPerPage
+        }));
+
+        // Reset to page 1 when changing items per page
+        setCurrentPages(prev => ({
+            ...prev,
+            [perspective]: 1
+        }));
+    };
+
+    // Toggle pagination expanded state
+    const handleTogglePaginationExpand = (perspective: Perspective) => {
+        setPaginationExpanded(prev => ({
+            ...prev,
+            [perspective]: !prev[perspective]
+        }));
+    };
 
     // Get current period based on selected period type
     const getCurrentPeriod = () => {
@@ -450,7 +489,7 @@ const MPMDashboard: React.FC = () => {
                         </Card>
 
                         {/* Detailed Performance by Perspective */}
-                        {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages }]) => (
+                        {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages, totalItems }]) => (
                             <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
@@ -529,11 +568,16 @@ const MPMDashboard: React.FC = () => {
                                         </TableBody>
                                     </Table>
 
-                                    {/* Pagination Component */}
+                                    {/* Updated Pagination Component */}
                                     <Pagination
                                         currentPage={currentPages[perspective as Perspective]}
                                         totalPages={totalPages}
+                                        itemsPerPage={itemsPerPage[perspective as Perspective]}
+                                        totalItems={totalItems}
                                         onPageChange={(page) => handlePageChange(perspective as Perspective, page)}
+                                        onItemsPerPageChange={(value) => handleItemsPerPageChange(perspective as Perspective, value)}
+                                        expanded={paginationExpanded[perspective as Perspective]}
+                                        onToggleExpand={() => handleTogglePaginationExpand(perspective as Perspective)}
                                     />
                                 </CardContent>
                             </Card>

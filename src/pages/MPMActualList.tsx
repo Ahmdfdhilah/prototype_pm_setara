@@ -63,11 +63,13 @@ const MPMActualList: React.FC = () => {
   ]);
 
   // Current user department (for manager/sm)
-  const [currentUserDepartment, ] = useState<number | null>(1);
+  const [currentUserDepartment,] = useState<number | null>(1);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isPaginationExpanded, setIsPaginationExpanded] = useState(true);
+
 
   // Modal States
   const [selectedMpmActual, setSelectedMpmActual] = useState<MpmActual | null>(null);
@@ -255,19 +257,19 @@ const MPMActualList: React.FC = () => {
   // Filtering and Pagination Logic
   const filteredMpmActuals = useMemo(() => {
     let result = mpmActuals;
-    
+
     // Filter by role
     if (currentRole === 'manager' || currentRole === 'sm_dept') {
       result = result.filter(actual => actual.departmentId === currentUserDepartment);
     }
-    
+
     // Apply other filters
     result = result.filter(actual =>
       (!selectedPeriod || actual.period === selectedPeriod) &&
       (!selectedStatus || actual.status === selectedStatus) &&
-      (!selectedDepartment || actual.departmentId.toString() === selectedDepartment) 
+      (!selectedDepartment || actual.departmentId.toString() === selectedDepartment)
     );
-    
+
     return result;
   }, [mpmActuals, selectedPeriod, selectedStatus, selectedDepartment, currentRole, currentUserDepartment]);
 
@@ -373,7 +375,7 @@ const MPMActualList: React.FC = () => {
               showHomeIcon={true}
               subtitle={`Actual MPM Value ${currentRole == 'admin' ? 'Company' : 'IT Department'}`}
             />
-            
+
             {/* Enhanced Filter Section */}
             <FilterSection
               handlePeriodChange={setSelectedPeriod}
@@ -397,7 +399,7 @@ const MPMActualList: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {currentRole === 'admin' && (
                 <div className="space-y-3">
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -509,13 +511,19 @@ const MPMActualList: React.FC = () => {
                   </tbody>
                 </table>
 
-                {filteredMpmActuals.length > 0 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
-                    onPageChange={setCurrentPage}
-                  />
-                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={filteredMpmActuals.length}
+                  onPageChange={setCurrentPage}
+                  onItemsPerPageChange={(value) => {
+                    setItemsPerPage(Number(value));
+                    setCurrentPage(1); 
+                  }}
+                  expanded={isPaginationExpanded}
+                  onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                />
               </CardContent>
             </Card>
           </div>

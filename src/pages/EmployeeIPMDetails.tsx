@@ -70,8 +70,12 @@ const EmployeeIPMDetailsPage = () => {
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept, admin
     const [evidenceComment, setEvidenceComment] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, _setItemsPerPage] = useState(5);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, _] = useState(true);
+    const [expanded, setExpanded] = useState(true);
+
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPerspective, setFilterPerspective] = useState('');
     const [actualValueInput, setActualValueInput] = useState<{ [key: string]: number }>({});
@@ -184,7 +188,19 @@ const EmployeeIPMDetailsPage = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentEntries = filteredEntries.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredEntries.length / itemsPerPage);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1);
+    };
+
+    const toggleExpand = () => {
+        setExpanded(!expanded);
+    };
 
     // Handler for file selection
     const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -709,13 +725,16 @@ const EmployeeIPMDetailsPage = () => {
                                 </div>
 
                                 {/* Pagination */}
-                                {filteredEntries.length > 0 && (
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                )}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(filteredEntries.length / itemsPerPage)}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredEntries.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={toggleExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>

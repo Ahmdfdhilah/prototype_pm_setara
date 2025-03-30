@@ -63,11 +63,13 @@ const MPMTargetList: React.FC = () => {
   ]);
 
   // Current user department (for manager/sm)
-  const [currentUserDepartment, ] = useState<number | null>(1);
+  const [currentUserDepartment,] = useState<number | null>(1);
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1); 0;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isPaginationExpanded, setIsPaginationExpanded] = useState(true);
+
 
   // Modal States
   const [selectedMpmTarget, setSelectedMpmTarget] = useState<MpmTarget | null>(null);
@@ -151,19 +153,19 @@ const MPMTargetList: React.FC = () => {
   // Filtering and Pagination Logic
   const filteredMpmTargets = useMemo(() => {
     let result = mpmTargets;
-    
+
     // Filter by role
     if (currentRole === 'manager' || currentRole === 'sm_dept') {
       result = result.filter(target => target.departmentId === currentUserDepartment);
     }
-    
+
     // Apply other filters
     result = result.filter(target =>
       (!selectedPeriod || target.period === selectedPeriod) &&
       (!selectedStatus || target.status === selectedStatus) &&
       (!selectedDepartment || target.departmentId.toString() === selectedDepartment)
     );
-    
+
     return result;
   }, [mpmTargets, selectedPeriod, selectedStatus, selectedDepartment, currentRole, currentUserDepartment]);
 
@@ -269,53 +271,53 @@ const MPMTargetList: React.FC = () => {
               showHomeIcon={true}
               subtitle={`Target MPM Value ${currentRole == 'admin' ? 'Company' : 'IT Department'}`}
             />
-            
-            <FilterSection
-            handlePeriodChange={setSelectedPeriod}
-            selectedPeriod={selectedPeriod}
-          >
-            {/* Additional filters as children */}
-            <div className="space-y-3">
-              <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                <span>Status</span>
-              </label>
-              <Select onValueChange={setSelectedStatus} value={selectedStatus}>
-                <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                  <SelectValue placeholder="All Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="Draft">Draft</SelectItem>
-                  <SelectItem value="Submitted">Submitted</SelectItem>
-                  <SelectItem value="Approved by Senior Manager">Approved</SelectItem>
-                  <SelectItem value="Rejected by Senior Manager">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
-            {currentRole === 'admin' && (
+            <FilterSection
+              handlePeriodChange={setSelectedPeriod}
+              selectedPeriod={selectedPeriod}
+            >
+              {/* Additional filters as children */}
               <div className="space-y-3">
                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                   <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                  <span>Department</span>
+                  <span>Status</span>
                 </label>
-                <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+                <Select onValueChange={setSelectedStatus} value={selectedStatus}>
                   <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                    <SelectValue placeholder="All Departments" />
+                    <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Departments</SelectItem>
-                    {departments.map(dept => (
-                      <SelectItem key={dept.id} value={dept.id.toString()}>
-                        {dept.name}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                    <SelectItem value="Submitted">Submitted</SelectItem>
+                    <SelectItem value="Approved by Senior Manager">Approved</SelectItem>
+                    <SelectItem value="Rejected by Senior Manager">Rejected</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            )}
-          </FilterSection>
+
+              {currentRole === 'admin' && (
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                    <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                    <span>Department</span>
+                  </label>
+                  <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                      <SelectValue placeholder="All Departments" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Departments</SelectItem>
+                      {departments.map(dept => (
+                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                          {dept.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </FilterSection>
 
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
               <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -405,13 +407,19 @@ const MPMTargetList: React.FC = () => {
                   </tbody>
                 </table>
 
-                {filteredMpmTargets.length > 0 && (
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={Math.ceil(filteredMpmTargets.length / itemsPerPage)}
-                    onPageChange={setCurrentPage}
-                  />
-                )}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(filteredMpmTargets.length / itemsPerPage)}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={filteredMpmTargets.length}
+                  onPageChange={setCurrentPage}
+                  onItemsPerPageChange={(value) => {
+                    setItemsPerPage(Number(value));
+                    setCurrentPage(1);
+                  }}
+                  expanded={isPaginationExpanded}
+                  onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                />
               </CardContent>
             </Card>
           </div>

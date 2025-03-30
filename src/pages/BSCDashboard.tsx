@@ -1,22 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import Sidebar from '@/components/Sidebar';
 import {
-    ChevronUp, ChevronDown, Minus, ChevronRight, ChevronDown as ExpandMore,
-
+    ChevronUp, ChevronDown, Minus, ChevronRight, Search,
+    ChevronDown as ExpandMore,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import FilterSection from '@/components/Filtering';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { dummyData } from '../lib/bscMocks';
 import Breadcrumb from '@/components/Breadcrumb';
+import Pagination from '@/components/Pagination';
+
 // Types
-type Period = 'Jan-25' | 'Feb-25' | 'Mar-25' | 'Apr-25';
+type Period = 'Jan-25' | 'Feb-25' | 'Mar-25' | 'Apr-25' | 'All' | '2022' | '2023' | '2024' | '2025';
 type BSCType = 'Monthly' | 'Quarterly' | 'Yearly';
 type Perspective = 'Financial' | 'Customer' | 'Internal Business Process' | 'Learning & Growth';
 type Category = 'Max' | 'Min' | 'On Target';
@@ -53,6 +56,16 @@ const BSCDashboard = () => {
     const [endDate, setEndDate] = useState<string>('');
     const [isEndDateDisabled, setIsEndDateDisabled] = useState<boolean>(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, setPaginationExpanded] = useState(true);
+
+    // Search functionality
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedPerspective, setSelectedPerspective] = useState<string>('All');
+    const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setStartDate(e.target.value);
         if (selectedType !== 'Yearly') {
@@ -80,17 +93,88 @@ const BSCDashboard = () => {
         return ['Monthly', 'Quarterly', 'Yearly'].includes(value);
     };
 
+    const isPeriod = (value: string): value is Period => {
+        return ['Jan-25', 'Feb-25', 'Mar-25', 'Apr-25', 'All', '2022', '2023', '2024', '2025'].includes(value);
+    };
+
+    const handlePeriodChange = (value: string) => {
+        if (isPeriod(value)) {
+            setSelectedPeriod(value);
+        }
+    };
+
+    const handlePerspectiveChange = (value: string) => {
+        setSelectedPerspective(value);
+        setCurrentPage(1); // Reset to first page when filter changes
+    };
+
+    const handleCategoryChange = (value: string) => {
+        setSelectedCategory(value);
+        setCurrentPage(1); // Reset to first page when filter changes
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset to first page when search changes
+    };
+
+    // Filter and search data
+    const filteredData = useMemo(() => {
+        return dummyData.filter(item => {
+            // Search term filter
+            const matchesSearch =
+                searchTerm === '' ||
+                item.kpi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.kpiDefinition.toLowerCase().includes(searchTerm.toLowerCase());
+
+            // Perspective filter
+            const matchesPerspective =
+                selectedPerspective === 'All' ||
+                item.perspective === selectedPerspective;
+
+            // Category filter
+            const matchesCategory =
+                selectedCategory === 'All' ||
+                item.category === selectedCategory;
+
+            return matchesSearch && matchesPerspective && matchesCategory;
+        });
+    }, [dummyData, searchTerm, selectedPerspective, selectedCategory]);
 
     // Group data by perspective
-    const groupedData = useMemo(() => {
-        return dummyData.reduce((acc, curr) => {
+    // const groupedData = useMemo(() => {
+    //     return filteredData.reduce((acc, curr) => {
+    //         if (!acc[curr.perspective]) {
+    //             acc[curr.perspective] = [];
+    //         }
+    //         acc[curr.perspective].push(curr as BSCEntry);
+    //         return acc;
+    //     }, {} as Record<Perspective, BSCEntry[]>);
+    // }, [filteredData]);
+
+    // Handle pagination
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return filteredData.slice(startIndex, endIndex);
+    }, [filteredData, currentPage, itemsPerPage]);
+
+    // Group paginated data by perspective for display
+    const paginatedGroupedData = useMemo(() => {
+        return paginatedData.reduce((acc, curr) => {
             if (!acc[curr.perspective]) {
                 acc[curr.perspective] = [];
             }
             acc[curr.perspective].push(curr as BSCEntry);
             return acc;
         }, {} as Record<Perspective, BSCEntry[]>);
-    }, [dummyData]);
+    }, [paginatedData]);
+
+    // Reset to first page when items per page changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [itemsPerPage]);
 
     // Status indicator component
     const StatusIndicator: React.FC<{ value: number }> = ({ value }) => {
@@ -101,7 +185,7 @@ const BSCDashboard = () => {
 
     // Calculate totals
     const totals = useMemo(() => {
-        return dummyData.reduce((acc, curr) => ({
+        return filteredData.reduce((acc, curr) => ({
             weight: acc.weight + (curr.weight ?? 0),
             score: acc.score + (curr.score ?? 0),
             activeWeight: acc.activeWeight + (curr.activeWeight ?? 0),
@@ -114,20 +198,22 @@ const BSCDashboard = () => {
             totalScore: 0,
             endScore: 0,
         });
-    }, [dummyData]);
+    }, [filteredData]);
 
     const handleRowClick = (code: string) => {
         setExpandedRow(expandedRow === code ? null : code);
     };
 
-    const handlePeriodChange = (value: string) => {
-        if (isPeriod(value)) {
-            setSelectedPeriod(value);
-        }
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
     };
 
-    const isPeriod = (value: string): value is Period => {
-        return ['Jan-25', 'Feb-25', 'Mar-25', 'Apr-25'].includes(value);
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+    };
+
+    const handleTogglePaginationExpand = () => {
+        setPaginationExpanded(!paginationExpanded);
     };
 
     const ExpandedContent = ({ item }: { item: BSCEntry }) => (
@@ -147,6 +233,12 @@ const BSCDashboard = () => {
             )}
         </div>
     );
+
+    // Get unique perspectives for filter
+    const perspectives = ['All', ...new Set(dummyData.map(item => item.perspective))];
+
+    // Get unique categories for filter
+    const categories = ['All', ...new Set(dummyData.map(item => item.category))];
 
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
@@ -177,7 +269,6 @@ const BSCDashboard = () => {
                             showHomeIcon={true}
                         />
 
-
                         {/* Filter Section */}
                         <FilterSection
                             startDate={startDate}
@@ -189,16 +280,64 @@ const BSCDashboard = () => {
                             selectedPeriod={selectedPeriod}
                             handleTypeChange={handleTypeChange}
                             selectedType={selectedType}
-                        />
+                        >
+                            {/* Custom Filter Options */}
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <Input
+                                    placeholder="Search by KPI, Code, or Definition..."
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                />
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Perspective</span>
+                                </label>
+                                <select
+                                    value={selectedPerspective}
+                                    onChange={(e) => handlePerspectiveChange(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                >
+                                    {perspectives.map((perspective) => (
+                                        <option key={perspective} value={perspective}>
+                                            {perspective}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Category</span>
+                                </label>
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => handleCategoryChange(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                >
+                                    {categories.map((category) => (
+                                        <option key={category} value={category}>
+                                            {category}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </FilterSection>
 
                         {/* BSC Table Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
                                 <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                     BSC Performance Metrics
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="dark:bg-gray-900  m-0 p-0">
+                            <CardContent className="dark:bg-gray-900 m-0 p-0">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -217,7 +356,7 @@ const BSCDashboard = () => {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {Object.entries(groupedData).map(([perspective, items]) => (
+                                        {Object.entries(paginatedGroupedData).map(([perspective, items]) => (
                                             items.map((item, index) => (
                                                 <>
                                                     <TableRow
@@ -264,22 +403,43 @@ const BSCDashboard = () => {
                                                 </>
                                             ))
                                         ))}
-                                        {/* Totals Row */}
-                                        <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
-                                            <TableCell colSpan={3}>Total</TableCell>
-                                            <TableCell>{totals.weight.toFixed(2)}%</TableCell>
-                                            <TableCell colSpan={6} children={undefined}></TableCell>
-                                            <TableCell>{totals.score.toFixed(2)}</TableCell>
-                                            <TableCell>{totals.endScore.toFixed(2)}</TableCell>
-                                        </TableRow>
+
+                                        {paginatedData.length === 0 && (
+                                            <TableRow>
+                                                <TableCell colSpan={12} className="text-center py-8 text-gray-500">
+                                                    No results found. Try adjusting your filters.
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+
+                                        {/* Totals Row - Only show when we have data */}
+                                        {paginatedData.length > 0 && (
+                                            <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
+                                                <TableCell colSpan={3}>Total</TableCell>
+                                                <TableCell>{totals.weight.toFixed(2)}%</TableCell>
+                                                <TableCell colSpan={6}></TableCell>
+                                                <TableCell>{totals.score.toFixed(2)}</TableCell>
+                                                <TableCell>{totals.endScore.toFixed(2)}</TableCell>
+                                            </TableRow>
+                                        )}
                                     </TableBody>
                                 </Table>
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredData.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={handleTogglePaginationExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>
                 </main>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 

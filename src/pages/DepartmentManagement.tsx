@@ -26,6 +26,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import FilterSection from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Department = {
@@ -58,7 +59,8 @@ const DepartmentManagementPage = () => {
     const [filteredDepartments, setFilteredDepartments] = useState<Department[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [isPaginationExpanded, setIsPaginationExpanded] = useState(true);
 
     // Generate dummy data
     useEffect(() => {
@@ -175,7 +177,17 @@ const DepartmentManagementPage = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredDepartments.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredDepartments.length / itemsPerPage);
+    const totalItems = filteredDepartments.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+        setCurrentPage(1); // Reset to first page when items per page changes
+    };
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
@@ -204,32 +216,22 @@ const DepartmentManagementPage = () => {
                         showHomeIcon={true}
                     />
 
-                    {/* Search and Filter Section */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mb-6">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-3">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Search
-                                </CardTitle>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="pt-4">
-                            <div className="flex flex-col space-y-4">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Search by department name, code, or manager..."
-                                        className="pl-9 bg-white dark:bg-gray-800"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {/* Combined Filter and Search Section */}
+                    <FilterSection
+                    >
+                        <div className="relative">
+                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Input
+                                placeholder="Search by department name, code, or manager..."
+                                className="pl-9 bg-white dark:bg-gray-800"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                    </FilterSection>
 
                     {/* Department Table */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mt-8">
                         <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
                             <div className="flex justify-between items-center">
                                 <div className="w-full flex flex-col lg:flex-row justify-between gap-4">
@@ -338,13 +340,16 @@ const DepartmentManagementPage = () => {
                             </div>
 
                             {/* Pagination */}
-                            <div className="mt-4 px-4">
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={setCurrentPage}
-                                />
-                            </div>
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                itemsPerPage={itemsPerPage}
+                                totalItems={totalItems}
+                                onPageChange={handlePageChange}
+                                onItemsPerPageChange={handleItemsPerPageChange}
+                                expanded={isPaginationExpanded}
+                                onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                            />
                         </CardContent>
                     </Card>
                 </main>

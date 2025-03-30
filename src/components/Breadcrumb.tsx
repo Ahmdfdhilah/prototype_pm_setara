@@ -61,12 +61,12 @@ const Breadcrumb = ({
         <li className="flex items-center shrink-0">
           <Link
             to="/"
-            className="flex items-center text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100 transition-colors"
+            className="flex items-center text-[#1B6131] dark:text-[#46B749] hover:text-green-900 dark:hover:text-green-100 transition-colors"
             aria-label="Home"
           >
             <Home className="w-4 h-4" />
           </Link>
-          <ChevronRight className="w-4 h-4 mx-2 text-green-500 dark:text-green-600 opacity-70 shrink-0" />
+          <ChevronRight className="w-4 h-4 mx-2 text-[#1B6131] dark:text-[#46B749] opacity-70 shrink-0" />
         </li>
       )}
 
@@ -75,7 +75,7 @@ const Breadcrumb = ({
           <Link
             to={item.path}
             className={`
-              text-green-700 dark:text-green-300 
+              text-[#1B6131] dark:text-[#46B749] 
               hover:text-green-900 dark:hover:text-green-100 
               transition-colors whitespace-nowrap
               ${index === items.length - 1 ? 'font-semibold' : ''}
@@ -89,7 +89,7 @@ const Breadcrumb = ({
 
       <li
         aria-current="page"
-        className="text-green-900 dark:text-green-100 font-semibold tracking-tight whitespace-nowrap"
+        className="text-[#1B6131] dark:text-[#46B749] font-semibold tracking-tight whitespace-nowrap"
       >
         {currentPage}
       </li>
@@ -108,12 +108,12 @@ const Breadcrumb = ({
           <li className="flex items-center shrink-0">
             <Link
               to="/"
-              className="flex items-center text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100 transition-colors"
+              className="flex items-center text-[#1B6131] dark:text-[#46B749] hover:text-green-900 dark:hover:text-green-100 transition-colors"
               aria-label="Home"
             >
               <Home className="w-4 h-4" />
             </Link>
-            <ChevronRight className="w-4 h-4 mx-2 text-green-500 dark:text-green-600 opacity-70 shrink-0" />
+            <ChevronRight className="w-4 h-4 mx-2 text-[#1B6131] dark:text-[#46B749] opacity-70 shrink-0" />
           </li>
         )}
 
@@ -124,7 +124,7 @@ const Breadcrumb = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100"
+                className="text-[#1B6131] dark:text-[#46B749] hover:text-green-900 dark:hover:text-green-100"
               >
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
@@ -132,7 +132,7 @@ const Breadcrumb = ({
             <DialogContent className="sm:max-w-md w-[95%] max-w-[500px] rounded-lg">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <FolderIcon className="w-5 h-5 text-green-600" />
+                  <FolderIcon className="w-5 h-5 text-[#1B6131] dark:text-[#46B749]" />
                   Navigation Path
                 </DialogTitle>
   
@@ -186,11 +186,11 @@ const Breadcrumb = ({
   };
 
   return (
-    <div className={`bg-gradient-to-r from-[#e6f3e6] to-[#d4ebd4] dark:from-[#0c2f16] dark:to-[#0a3a1a] mb-8 shadow-sm ${className}`}>
+    <div className={`bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] mb-8 shadow-sm ${className}`}>
       <div className="mx-6 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center">
           <div>
-            <h2 className="text-xl font-bold text-green-800 dark:text-green-200 tracking-tight">
+            <h2 className="text-xl font-bold text-[#1B6131] dark:text-[#46B749] tracking-tight">
               {currentPage}
             </h2>
             {subtitle && (
