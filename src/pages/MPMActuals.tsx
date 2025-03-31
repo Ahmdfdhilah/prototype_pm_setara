@@ -21,9 +21,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Sidebar from '@/components/Sidebar';
-import { Edit, Send, Eye } from 'lucide-react';
+import { Edit, Send, Eye, Users } from 'lucide-react';
 import Header from '@/components/Header';
 import Breadcrumb from '@/components/Breadcrumb';
+import Pagination from '@/components/Pagination';
+import FilterSection from '@/components/Filtering';
+import React from 'react';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
@@ -67,6 +70,15 @@ const MPMActuals = () => {
   const [selectedKPI, setSelectedKPI] = useState<KPIEntry | null>(null);
   const [sendToApproverOpen, setSendToApproverOpen] = useState(false);
   const [selectedApprover, setSelectedApprover] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('Monthly');
+  const [selectedPerspective, setSelectedPerspective] = useState<string>('');
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const month = searchParams.get('month');
@@ -116,21 +128,150 @@ const MPMActuals = () => {
       problemIdentification: '',
       correctiveAction: '',
     },
+    {
+      id: 3,
+      periodId: 1,
+      month: 'January',
+      perspective: 'Internal Process',
+      kpi: 'Efisiensi Proses',
+      kpiDefinition: 'Persentase efisiensi proses produksi',
+      weight: 25,
+      uom: '%',
+      category: 'Max',
+      ytdCalculation: 'Average',
+      target: 95,
+      actual: 92,
+      achievement: 96.8,
+      score: 3,
+      problemIdentification: 'Beberapa mesin perlu maintenance',
+      correctiveAction: 'Jadwalkan maintenance rutin',
+    },
+    {
+      id: 4,
+      periodId: 1,
+      month: 'January',
+      perspective: 'Learning and Growth',
+      kpi: 'Training Karyawan',
+      kpiDefinition: 'Jam training per karyawan',
+      weight: 20,
+      uom: 'Days',
+      category: 'Max',
+      ytdCalculation: 'Accumulative',
+      target: 3,
+      actual: 2.5,
+      achievement: 83.3,
+      score: 2,
+      problemIdentification: 'Keterbatasan waktu karyawan',
+      correctiveAction: 'Implementasi program e-learning',
+    },
   ]);
+
+  // Apply filters to data
+  const filteredData = useMemo(() => {
+    return kpiData.filter(item => {
+      // Filter by perspective if selected
+      if (selectedPerspective && item.perspective !== selectedPerspective) {
+        return false;
+      }
+      
+      // Filter by date range if provided
+      if (startDate) {
+        const itemDate = new Date(`${item.month} 1, 2024`);
+        const filterStart = new Date(startDate);
+        if (itemDate < filterStart) {
+          return false;
+        }
+      }
+      
+      if (endDate) {
+        const itemDate = new Date(`${item.month} 1, 2024`);
+        const filterEnd = new Date(endDate);
+        if (itemDate > filterEnd) {
+          return false;
+        }
+      }
+      
+      // Filter by period if selected
+      if (selectedPeriod && selectedPeriod !== 'All') {
+        // Assuming period is year, would need adjustment for actual implementation
+        return true; // Placeholder for period filtering
+      }
+      
+      return true;
+    });
+  }, [kpiData, selectedPerspective, startDate, endDate, selectedPeriod]);
 
   // Group data by perspective
   const groupedData = useMemo(() => {
-    return kpiData.reduce((acc, curr) => {
+    return filteredData.reduce((acc, curr) => {
       if (!acc[curr.perspective]) {
         acc[curr.perspective] = [];
       }
       acc[curr.perspective].push(curr);
       return acc;
     }, {} as Record<Perspective, KPIEntry[]>);
-  }, [kpiData]);
+  }, [filteredData]);
+
+  // Pagination calculation
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  
+  // Get paginated data
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    
+    const result: Record<Perspective, KPIEntry[]> = {} as Record<Perspective, KPIEntry[]>;
+    
+    // This is a simplified approach - in a real implementation you might need 
+    // to handle pagination differently for grouped data
+    let count = 0;
+    let itemsAdded = 0;
+    
+    for (const [perspective, items] of Object.entries(groupedData)) {
+      if (count >= startIndex && count < endIndex) {
+        result[perspective as Perspective] = items;
+        itemsAdded += items.length;
+      }
+      count += items.length;
+      
+      if (count >= endIndex) break;
+    }
+    
+    return result;
+  }, [groupedData, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
 
   const handleRowClick = (item: KPIEntry) => {
     navigate(`/performance-management/mpm/actual/${item.periodId}/entri/${item.id}/teams?month=${item.month}`);
+  };
+
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(e.target.value);
+  };
+
+  const handlePeriodChange = (value: string) => {
+    setSelectedPeriod(value);
+  };
+
+  const handleTypeChange = (value: string) => {
+    setSelectedType(value);
+  };
+
+  const handlePerspectiveChange = (value: string) => {
+    setSelectedPerspective(value);
   };
 
   // Edit Dialog Component
@@ -347,6 +488,41 @@ const MPMActuals = () => {
               subtitle={`MPM Actual ID : ${mpmActualId}`}
             />
 
+            {/* Filter Section */}
+            <FilterSection
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDateChange={handleStartDateChange}
+              handleEndDateChange={handleEndDateChange}
+              handlePeriodChange={handlePeriodChange}
+              selectedPeriod={selectedPeriod}
+              handleTypeChange={handleTypeChange}
+              selectedType={selectedType}
+            >
+              {/* Custom filter for perspective */}
+              <div className="space-y-3">
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                  <span>Perspective</span>
+                </label>
+                <Select
+                  onValueChange={handlePerspectiveChange}
+                  value={selectedPerspective}
+                >
+                  <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                    <SelectValue placeholder="Select Perspective" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Perspectives</SelectItem>
+                    <SelectItem value="Financial">Financial</SelectItem>
+                    <SelectItem value="Customer">Customer</SelectItem>
+                    <SelectItem value="Internal Process">Internal Process</SelectItem>
+                    <SelectItem value="Learning and Growth">Learning and Growth</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </FilterSection>
+
             {/* Main Card */}
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
               <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -364,7 +540,7 @@ const MPMActuals = () => {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className='m-0 p-0  pb-8'>
+              <CardContent className='m-0 p-0 pb-8'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">
@@ -385,9 +561,9 @@ const MPMActuals = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {groupedData && Object.entries(groupedData).map(([perspective, items]) => (
-                        <>
-                          <tr key={perspective} className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
+                      {Object.entries(paginatedData).map(([perspective, items]) => (
+                        <React.Fragment key={perspective}>
+                          <tr className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
                             <td colSpan={13} className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]">
                               {perspective}
                             </td>
@@ -404,10 +580,10 @@ const MPMActuals = () => {
                                   className="hover:text-[#1B6131]"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleEditClick(item);
+                                    handleRowClick(item);
                                   }}
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Eye className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -415,10 +591,10 @@ const MPMActuals = () => {
                                   className="hover:text-[#1B6131]"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleRowClick(item);
+                                    handleEditClick(item);
                                   }}
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <Edit className="h-4 w-4" />
                                 </Button>
                               </td>
                               <td className="p-4">{item.kpi}</td>
@@ -439,11 +615,23 @@ const MPMActuals = () => {
                               <td className="p-4">{item.correctiveAction}</td>
                             </tr>
                           ))}
-                        </>
+                        </React.Fragment>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                
+                {/* Pagination Component */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={totalItems}
+                  onPageChange={handlePageChange}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                  expanded={isPaginationExpanded}
+                  onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                />
               </CardContent>
             </Card>
           </div>

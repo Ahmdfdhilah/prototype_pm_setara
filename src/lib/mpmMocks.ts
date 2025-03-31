@@ -45,7 +45,7 @@ export const mpmDataMock = <MPMEntry[]>([
             '2025': 11.8
         },
         achievements: {
-            'Jan-25': 97.5, 'Feb-25': 97.6, 'Mar-25': 96.7, 'Apr-25': 96.8, 'May-25': 96.0, 'Jun-25': 96.2,
+            'Jan-25': 102.5, 'Feb-25': 97.6, 'Mar-25': 96.7, 'Apr-25': 96.8, 'May-25': 96.0, 'Jun-25': 96.2,
             'Jul-25': 95.5, 'Aug-25': 95.7, 'Sep-25': 95.0, 'Oct-25': 95.2, 'Nov-25': 94.6, 'Dec-25': 94.8,
             'Q1-25': 97.3, 'Q2-25': 96.0, 'Q3-25': 95.7, 'Q4-25': 94.6,
             '2025': 95.8
@@ -75,10 +75,10 @@ export const mpmDataMock = <MPMEntry[]>([
             '2025': 17.8
         },
         achievements: {
-            'Jan-25': 98.7, 'Feb-25': 98.7, 'Mar-25': 98.1, 'Apr-25': 98.2, 'May-25': 97.6, 'Jun-25': 97.7,
+            'Jan-25': 8.7, 'Feb-25': 98.7, 'Mar-25': 98.1, 'Apr-25': 98.2, 'May-25': 97.6, 'Jun-25': 97.7,
             'Jul-25': 97.2, 'Aug-25': 97.3, 'Sep-25': 96.8, 'Oct-25': 96.9, 'Nov-25': 96.5, 'Dec-25': 96.6,
             'Q1-25': 98.5, 'Q2-25': 97.6, 'Q3-25': 97.3, 'Q4-25': 96.5,
-            '2025': 97.2
+            '2025': 7.2
         },
         problemIdentification: 'Rising raw material costs impacting margins in Q3-Q4',
         correctiveAction: 'Negotiate better supplier contracts and optimize production processes',
