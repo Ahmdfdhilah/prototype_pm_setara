@@ -384,7 +384,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                     Team KPI Actuals
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className='m-0 p-0'>
+                            <CardContent className='m-0 p-0 pb-8'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full border-collapse">
                                         <thead className="bg-[#1B6131] text-white">

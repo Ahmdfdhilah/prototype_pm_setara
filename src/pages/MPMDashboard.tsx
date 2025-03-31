@@ -91,10 +91,10 @@ const MPMDashboard: React.FC = () => {
 
     // Pagination expanded state for each perspective
     const [paginationExpanded, setPaginationExpanded] = useState<Record<Perspective, boolean>>({
-        'Financial': true,
-        'Customer': true,
-        'Internal Process': true,
-        'Learning and Growth': true
+        'Financial': false,
+        'Customer': false,
+        'Internal Process': false,
+        'Learning and Growth': false
     });
 
     // Paginated and grouped data
@@ -496,7 +496,7 @@ const MPMDashboard: React.FC = () => {
                                         {perspective} Perspective
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="m-0 p-0">
+                                <CardContent className="m-0 p-0 pb-4">
                                     <Table>
                                         <TableHeader>
                                             <TableRow className="bg-[#1B6131] text-white">

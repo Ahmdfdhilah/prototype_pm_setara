@@ -14,9 +14,6 @@ import {
     Edit,
     Plus,
     Search,
-    Filter,
-    ChevronDown,
-    ChevronUp,
     UserX,
     UserCheck,
 } from 'lucide-react';
@@ -38,7 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FilterSection from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Employee = {
@@ -77,14 +74,14 @@ const EmployeeManagementPage = () => {
     const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, setPaginationExpanded] = useState(true);
     const [filters, setFilters] = useState({
         department: '',
         team: '',
         status: 'all',
         isManager: 'all'
     });
-    const [showFilters, setShowFilters] = useState(false);
 
     // Generate dummy data
     useEffect(() => {
@@ -191,14 +188,9 @@ const EmployeeManagementPage = () => {
         }));
     };
 
-    const resetFilters = () => {
-        setFilters({
-            department: '',
-            team: '',
-            status: 'all',
-            isManager: 'all'
-        });
-        setSearchTerm('');
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1); // Reset to first page when items per page changes
     };
 
     return (
@@ -228,127 +220,93 @@ const EmployeeManagementPage = () => {
                         showHomeIcon={true}
                     />
 
-                    {/* Search and Filter Section */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mb-6">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-3">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Search & Filter
-                                </CardTitle>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setShowFilters(!showFilters)}
-                                    className="text-[#1B6131] dark:text-[#46B749]"
-                                >
-                                    <Filter className="h-4 w-4 mr-2" />
-                                    {showFilters ? 'Hide Filters' : 'Show Filters'}
-                                    {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="pt-4">
-                            <div className="flex flex-col space-y-4">
+                    {/* Search and Filter Section - using the FilterSection component */}
+                    <div className="mb-6">
+                        <FilterSection>
+                            <div className="space-y-3 md:col-span-2">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                     <Input
                                         placeholder="Search by name, employee number, or email..."
-                                        className="pl-9 bg-white dark:bg-gray-800"
+                                        className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
+
                                 </div>
-
-                                {showFilters && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
-                                            <Select
-                                                value={filters.department}
-                                                onValueChange={(value) => handleFilterChange('department', value)}
-                                            >
-                                                <SelectTrigger className="w-full bg-white dark:bg-gray-800">
-                                                    <SelectValue placeholder="All Departments" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All Departments</SelectItem>
-                                                    {departments.map(dept => (
-                                                        <SelectItem key={dept.department_id} value={String(dept.department_id)}>
-                                                            {dept.department_name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Team</label>
-                                            <Select
-                                                value={filters.team}
-                                                onValueChange={(value) => handleFilterChange('team', value)}
-                                            >
-                                                <SelectTrigger className="w-full bg-white dark:bg-gray-800">
-                                                    <SelectValue placeholder="All Teams" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All Teams</SelectItem>
-                                                    {teams.map(team => (
-                                                        <SelectItem key={team.team_id} value={String(team.team_id)}>
-                                                            {team.team_name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                                            <Select
-                                                value={filters.status}
-                                                onValueChange={(value) => handleFilterChange('status', value)}
-                                            >
-                                                <SelectTrigger className="w-full bg-white dark:bg-gray-800">
-                                                    <SelectValue placeholder="All Statuses" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All Statuses</SelectItem>
-                                                    <SelectItem value="active">Active</SelectItem>
-                                                    <SelectItem value="inactive">Inactive</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Manager</label>
-                                            <Select
-                                                value={filters.isManager}
-                                                onValueChange={(value) => handleFilterChange('isManager', value)}
-                                            >
-                                                <SelectTrigger className="w-full bg-white dark:bg-gray-800">
-                                                    <SelectValue placeholder="All" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All</SelectItem>
-                                                    <SelectItem value="yes">Managers</SelectItem>
-                                                    <SelectItem value="no">Non-Managers</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="md:col-span-2 lg:col-span-4 flex justify-end space-x-2">
-                                            <Button
-                                                variant="outline"
-                                                onClick={resetFilters}
-                                                className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]"
-                                            >
-                                                Reset Filters
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
-                        </CardContent>
-                    </Card>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Department</span>
+                                </label>
+                                <select
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    value={filters.department}
+                                    onChange={(e) => handleFilterChange('department', e.target.value)}
+                                >
+                                    <option value="">All Departments</option>
+                                    {departments.map(dept => (
+                                        <option key={dept.department_id} value={String(dept.department_id)}>
+                                            {dept.department_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Team</span>
+                                </label>
+                                <select
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    value={filters.team}
+                                    onChange={(e) => handleFilterChange('team', e.target.value)}
+                                >
+                                    <option value="">All Teams</option>
+                                    {teams.map(team => (
+                                        <option key={team.team_id} value={String(team.team_id)}>
+                                            {team.team_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Status</span>
+                                </label>
+                                <select
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    value={filters.status}
+                                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                                >
+                                    <option value="all">All Statuses</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Role</span>
+                                </label>
+                                <select
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    value={filters.isManager}
+                                    onChange={(e) => handleFilterChange('isManager', e.target.value)}
+                                >
+                                    <option value="all">All Roles</option>
+                                    <option value="yes">Managers</option>
+                                    <option value="no">Non-Managers</option>
+                                </select>
+                            </div>
+                        </FilterSection>
+                    </div>
 
                     {/* Employee Table */}
                     <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
@@ -457,16 +415,19 @@ const EmployeeManagementPage = () => {
                                 </Table>
                             </div>
 
-                            {/* Pagination */}
-                            {/* {filteredEmployees.length > itemsPerPage && (
-                                <div className="mt-4">
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={setCurrentPage}
-                                    />
-                                </div>
-                            )} */}
+                            {/* Updated Pagination Component */}
+                            {filteredEmployees.length > 0 && (
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredEmployees.length}
+                                    onPageChange={setCurrentPage}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={() => setPaginationExpanded(!paginationExpanded)}
+                                />
+                            )}
                         </CardContent>
                     </Card>
                 </main>

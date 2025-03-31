@@ -30,7 +30,7 @@ const BSCEntryPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
 
     // Search and filter state
     const [searchTerm, setSearchTerm] = useState('');
@@ -225,7 +225,7 @@ const BSCEntryPage = () => {
 
                         {/* Filter Section */}
                         <FilterSection>
-                            <div className="space-y-3">
+                            <div className="space-y-3 md:col-span-2">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                     <span>Search</span>
@@ -284,7 +284,7 @@ const BSCEntryPage = () => {
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0 pb-8">
                                         KPI Entries
                                     </CardTitle>
                                     <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto justify-start sm:justify-end">

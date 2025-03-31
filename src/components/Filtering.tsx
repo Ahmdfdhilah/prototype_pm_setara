@@ -42,12 +42,12 @@ function FilterSection({
         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4 flex flex-row justify-between items-center">
                 <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                    <Filter className="text-[#1B6131] dark:text-[#46B749] w-5 h-5 mr-2"/>
+                    <Filter className="text-[#1B6131] dark:text-[#46B749] w-5 h-5 mr-2" />
                     Filter Options
                 </CardTitle>
-                
+
                 {/* Toggle Button for Filters */}
-                <button 
+                <button
                     onClick={toggleFilterVisibility}
                     className="flex items-center space-x-2 text-[#1B6131] dark:text-[#46B749] hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-md"
                 >
@@ -80,6 +80,9 @@ function FilterSection({
                         </Alert>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                            {/* Render children filters */}
+                            {children}
+                            
                             {handleStartDateChange && (
                                 <div className="space-y-3">
                                     <label htmlFor="startDate" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -159,8 +162,7 @@ function FilterSection({
                                 </div>
                             )}
 
-                            {/* Render children filters */}
-                            {children}
+
                         </div>
                     </div>
                 </CardContent>

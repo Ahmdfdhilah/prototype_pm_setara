@@ -370,7 +370,7 @@ const PerformanceManagementDashboard = () => {
                                         MPM Top 5 Performers
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="p-0">
+                                <CardContent className="p-0 pb-8">
                                     <div className="overflow-x-auto">
                                         <Table>
                                             <TableHeader>

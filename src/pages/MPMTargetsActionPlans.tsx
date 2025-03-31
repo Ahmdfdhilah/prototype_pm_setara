@@ -432,7 +432,7 @@ const MPMTargetsActionPlans: React.FC = () => {
                                     </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className='m-0 p-0 overflow-x-auto'>
+                            <CardContent className='m-0 p-0 pb-8 overflow-x-auto'>
                                 <table className="w-full border-collapse">
                                     <thead className="bg-[#1B6131] text-white">
                                         <tr>

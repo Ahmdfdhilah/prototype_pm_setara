@@ -97,7 +97,7 @@ const PeriodMaster = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(true);
+    const [paginationExpanded, setPaginationExpanded] = useState(false);
 
 
     // Check if there's any active period
@@ -235,7 +235,7 @@ const PeriodMaster = () => {
                             selectedPeriod={yearFilter}
                         >
                             {/* Search Input */}
-                            <div className="space-y-3">
+                            <div className="space-y-3  md:col-span-2">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                     <span>Search Periods</span>

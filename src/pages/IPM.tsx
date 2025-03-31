@@ -46,7 +46,7 @@ const IPMPage = () => {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [filterUnit, setFilterUnit] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
-    const [paginationExpanded, setPaginationExpanded] = useState(true);
+    const [paginationExpanded, setPaginationExpanded] = useState(false);
     const navigate = useNavigate();
 
     // Mock data for employees with action plan counts
@@ -321,7 +321,7 @@ const IPMPage = () => {
                         <FilterSection>
                             {currentRole !== 'employee' && (
                                 <>
-                                    <div className="space-y-3">
+                                    <div className="space-y-3 md:col-span-2">
                                         <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                             <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                             <span>Search</span>
@@ -410,7 +410,7 @@ const IPMPage = () => {
                                     {currentRole === 'employee' ? 'My Performance Plans' : 'Employee Performance Plans'}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="w-full mt-4">
+                            <CardContent className="w-full pb-8 mt-4">
                                 {/* Employee List */}
                                 <div className="space-y-4 w-full">
                                     {currentEmployees.length > 0 ? (

@@ -68,7 +68,7 @@ const MPMTargetList: React.FC = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1); 0;
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [isPaginationExpanded, setIsPaginationExpanded] = useState(true);
+  const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
 
   // Modal States
@@ -327,7 +327,7 @@ const MPMTargetList: React.FC = () => {
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className='m-0 p-0 overflow-x-auto'>
+              <CardContent className='m-0 p-0 pb-4 overflow-x-auto'>
                 <table className="w-full border-collapse min-w-[800px]">
                   <thead className="bg-[#1B6131] text-white">
                     <tr>

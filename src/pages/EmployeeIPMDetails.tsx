@@ -73,7 +73,7 @@ const EmployeeIPMDetailsPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, _] = useState(true);
+    const [paginationExpanded, _] = useState(false);
     const [expanded, setExpanded] = useState(true);
 
     const [filterStatus, setFilterStatus] = useState('');
@@ -444,7 +444,7 @@ const EmployeeIPMDetailsPage = () => {
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className='m-0 p-0 pb-4'>
+                            <CardContent className='m-0 p-0 pb-8'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">

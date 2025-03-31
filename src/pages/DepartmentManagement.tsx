@@ -60,7 +60,7 @@ const DepartmentManagementPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [isPaginationExpanded, setIsPaginationExpanded] = useState(true);
+    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
     // Generate dummy data
     useEffect(() => {
@@ -219,14 +219,20 @@ const DepartmentManagementPage = () => {
                     {/* Combined Filter and Search Section */}
                     <FilterSection
                     >
-                        <div className="relative">
-                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                                placeholder="Search by department name, code, or manager..."
-                                className="pl-9 bg-white dark:bg-gray-800"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                        <div className="space-y-3 space-y-3 md:col-span-2">
+                            <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                <span>Search</span>
+                            </label>
+                            <div className="relative">
+                                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                <Input
+                                    placeholder="Search by department name, code, or manager..."
+                                    className="pl-9 bg-white dark:bg-gray-800"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </div>
                     </FilterSection>
 
@@ -245,7 +251,7 @@ const DepartmentManagementPage = () => {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-4">
+                        <CardContent className="p-0 pb-8">
                             <div className="border border-gray-200 dark:border-gray-700 rounded-md overflow-x-auto">
                                 <table className="w-full">
                                     <thead className="bg-[#1B6131] text-white">

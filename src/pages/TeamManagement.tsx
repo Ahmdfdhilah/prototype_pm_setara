@@ -13,9 +13,6 @@ import {
     Edit,
     Plus,
     Search,
-    Filter,
-    ChevronDown,
-    ChevronUp,
     Trash2,
 } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -36,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FilterSection from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Team = {
@@ -64,11 +61,9 @@ const TeamManagementPage = () => {
     const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
-    const [filters, setFilters] = useState({
-        department: 'all',
-    });
-    const [showFilters, setShowFilters] = useState(false);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedDepartment, setSelectedDepartment] = useState('all');
+    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
     // Generate dummy data
     useEffect(() => {
@@ -174,15 +169,14 @@ const TeamManagementPage = () => {
         }
 
         // Apply department filter
-        if (filters.department !== 'all') {
+        if (selectedDepartment !== 'all') {
             result = result.filter(team =>
-                team.team_department_id === parseInt(filters.department)
+                team.team_department_id === parseInt(selectedDepartment)
             );
         }
-
         setFilteredTeams(result);
         setCurrentPage(1); // Reset to first page when filters change
-    }, [searchTerm, filters, teams]);
+    }, [searchTerm, selectedDepartment, teams]);
 
     // Pagination logic
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -190,19 +184,20 @@ const TeamManagementPage = () => {
     const currentItems = filteredTeams.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredTeams.length / itemsPerPage);
 
-    const handleFilterChange = (name: string, value: string) => {
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
+    const handleDepartmentChange = (value: string) => {
+        setSelectedDepartment(value);
     };
 
-    const resetFilters = () => {
-        setFilters({
-            department: 'all',
-        });
-        setSearchTerm('');
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1); // Reset to first page when items per page changes
     };
+
+    const togglePaginationExpand = () => {
+        setIsPaginationExpanded(!isPaginationExpanded);
+    };
+
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
@@ -232,72 +227,45 @@ const TeamManagementPage = () => {
                     />
 
                     {/* Search and Filter Section */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mb-6">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-3">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Search & Filter
-                                </CardTitle>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setShowFilters(!showFilters)}
-                                    className="text-[#1B6131] dark:text-[#46B749]"
-                                >
-                                    <Filter className="h-4 w-4 mr-2" />
-                                    {showFilters ? 'Hide Filters' : 'Show Filters'}
-                                    {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="pt-4">
-                            <div className="flex flex-col space-y-4">
+                    <div className="mb-6">
+                        <FilterSection
+                        >
+                            <div className="space-y-3 md:col-span-2">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                     <Input
                                         placeholder="Search by team name, department, or description..."
-                                        className="pl-9 bg-white dark:bg-gray-800"
+                                        className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-
-                                {showFilters && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
-                                            <Select
-                                                value={filters.department}
-                                                onValueChange={(value) => handleFilterChange('department', value)}
-                                            >
-                                                <SelectTrigger className="w-full bg-white dark:bg-gray-800">
-                                                    <SelectValue placeholder="All Departments" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="all">All Departments</SelectItem>
-                                                    {departments.map(dept => (
-                                                        <SelectItem key={dept.department_id} value={String(dept.department_id)}>
-                                                            {dept.department_name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="md:col-span-2 lg:col-span-4 flex justify-end space-x-2">
-                                            <Button
-                                                variant="outline"
-                                                onClick={resetFilters}
-                                                className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]"
-                                            >
-                                                Reset Filters
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
-                        </CardContent>
-                    </Card>
+                            {/* Custom filter options for department */}
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Department</span>
+                                </label>
+                                <select
+                                    value={selectedDepartment}
+                                    onChange={(e) => handleDepartmentChange(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                >
+                                    <option value="all">All Departments</option>
+                                    {departments.map(dept => (
+                                        <option key={dept.department_id} value={String(dept.department_id)}>
+                                            {dept.department_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </FilterSection>
+                    </div>
 
                     {/* Team Table */}
                     <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
@@ -312,7 +280,7 @@ const TeamManagementPage = () => {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-4">
+                        <CardContent className="p-0 pb-8">
                             <div className="rounded-md border border-gray-200 dark:border-gray-700">
                                 <Table>
                                     <TableHeader>
@@ -391,13 +359,17 @@ const TeamManagementPage = () => {
                                 </Table>
                             </div>
 
-                            <div className="mt-2">
-                                {/* <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={setCurrentPage}
-                                /> */}
-                            </div>
+                            {/* Updated Pagination Component */}
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                itemsPerPage={itemsPerPage}
+                                totalItems={filteredTeams.length}
+                                onPageChange={setCurrentPage}
+                                onItemsPerPageChange={handleItemsPerPageChange}
+                                expanded={isPaginationExpanded}
+                                onToggleExpand={togglePaginationExpand}
+                            />
                         </CardContent>
                     </Card>
                 </main>
