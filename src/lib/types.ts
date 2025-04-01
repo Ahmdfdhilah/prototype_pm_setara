@@ -57,7 +57,7 @@ export type BSCEntry = {
 };
 
 
-export type Approver = {
+export type Manager = {
     id: string;
     name: string;
     position: string;

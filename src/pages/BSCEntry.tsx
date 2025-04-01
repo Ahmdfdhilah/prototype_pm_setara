@@ -19,7 +19,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import FilterSection from '@/components/Filtering';
 
 const BSCEntryPage = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [allEntries, setAllEntries] = useState<BSCEntry[]>([]);

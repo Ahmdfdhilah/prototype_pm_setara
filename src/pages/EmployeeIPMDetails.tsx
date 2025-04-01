@@ -64,7 +64,12 @@ interface IPMEntry {
 
 const EmployeeIPMDetailsPage = () => {
     const { employeeId } = useParams<{ employeeId: string }>();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [reviewDialogOpen, setReviewDialogOpen] = useState<{ [key: string]: boolean }>({});
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept, admin

@@ -17,10 +17,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Edit, Eye, Info } from 'lucide-react';
+import { Edit, Eye, Info, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
+import Pagination from '@/components/Pagination';
+import FilterSection from '@/components/Filtering';
 
 type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
     'July' | 'August' | 'September' | 'October' | 'November' | 'December';
@@ -59,18 +61,33 @@ type TeamKPIActual = {
 
 const MPMActualsTeamKPI: React.FC = () => {
     const [searchParams] = useSearchParams();
-    const { mpmActualId,mpmId } = useParams<{
+    const { mpmActualId, mpmId } = useParams<{
         mpmActualId: string,
         mpmId: string
     }>();
     const month = searchParams.get('month');
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    // State for sidebar and UI
+     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedTeamKPI, setSelectedTeamKPI] = useState<TeamKPIActual | null>(null);
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, setPaginationExpanded] = useState(true);
+    
+    // Filter state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All');
 
     const navigate = useNavigate();
 
@@ -113,17 +130,114 @@ const MPMActualsTeamKPI: React.FC = () => {
             rootCauseAnalysis: '',
             correctiveAction: '',
             status: 'On Track'
+        },
+        {
+            id: '3',
+            teamId: 3,
+            teamName: 'Marketing',
+            month: 'January',
+            target: 15000,
+            actual: 12000,
+            achievement: 80,
+            weight: 15,
+            problemIdentification: 'Campaign underperformance',
+            rootCauseAnalysis: 'Poor targeting and messaging',
+            correctiveAction: 'Refine messaging and audience targeting',
+            status: 'At Risk'
+        },
+        {
+            id: '4',
+            teamId: 4,
+            teamName: 'Product Development',
+            month: 'January',
+            target: 10000,
+            actual: 5000,
+            achievement: 50,
+            weight: 25,
+            problemIdentification: 'Product launch delays',
+            rootCauseAnalysis: 'Technical issues and resource constraints',
+            correctiveAction: 'Increase development team capacity',
+            status: 'Off Track'
+        },
+        {
+            id: '5',
+            teamId: 5,
+            teamName: 'Customer Success',
+            month: 'January',
+            target: 30000,
+            actual: 32000,
+            achievement: 107,
+            weight: 15,
+            problemIdentification: '',
+            rootCauseAnalysis: '',
+            correctiveAction: '',
+            status: 'On Track'
+        },
+        {
+            id: '6',
+            teamId: 6,
+            teamName: 'Strategic Partnerships',
+            month: 'January',
+            target: 20000,
+            actual: 18000,
+            achievement: 90,
+            weight: 15,
+            problemIdentification: 'Partner engagement issues',
+            rootCauseAnalysis: 'Insufficient partner incentives',
+            correctiveAction: 'Restructure partner program benefits',
+            status: 'At Risk'
         }
     ]);
 
-    const calculateTotals = useMemo(() => {
-        return {
-            total: teamKPIActuals.reduce((sum, plan) => sum + plan.actual, 0),
-            totalWeight: teamKPIActuals.reduce((sum, plan) => sum + plan.weight, 0),
-            averageAchievement: teamKPIActuals.reduce((sum, plan) => sum + plan.achievement, 0) / teamKPIActuals.length
-        };
-    }, [teamKPIActuals]);
+    // Apply filters to get filtered data
+    const filteredData = useMemo(() => {
+        return teamKPIActuals.filter(kpi => {
+            // Apply search term filter (case insensitive)
+            const matchesSearch = searchTerm === '' || 
+                kpi.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                kpi.problemIdentification.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                kpi.rootCauseAnalysis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                kpi.correctiveAction.toLowerCase().includes(searchTerm.toLowerCase());
+            
+            // Apply status filter
+            const matchesStatus = statusFilter === 'All' || kpi.status === statusFilter;
+            
+            return matchesSearch && matchesStatus;
+        });
+    }, [teamKPIActuals, searchTerm, statusFilter]);
 
+    // Paginate the filtered data
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredData.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredData, currentPage, itemsPerPage]);
+
+    const calculateTotals = useMemo(() => {
+        // Calculate totals based on filtered data
+        return {
+            total: filteredData.reduce((sum, plan) => sum + plan.actual, 0),
+            totalWeight: filteredData.reduce((sum, plan) => sum + plan.weight, 0),
+            averageAchievement: filteredData.length > 0 
+                ? filteredData.reduce((sum, plan) => sum + plan.achievement, 0) / filteredData.length 
+                : 0
+        };
+    }, [filteredData]);
+
+    // Pagination handlers
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+        setCurrentPage(1); // Reset to first page when changing items per page
+    };
+
+    const togglePaginationExpand = () => {
+        setPaginationExpanded(!paginationExpanded);
+    };
+
+    // Team KPI handlers
     const handleAddTeamKPI = (newTeamKPI: TeamKPIActual) => {
         setTeamKPIActuals(prev => [
             ...prev,
@@ -374,15 +488,57 @@ const MPMActualsTeamKPI: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-
                             </CardContent>
                         </Card>
 
+                        {/* Filter Section */}
+                        <FilterSection>
+                            <div className="space-y-3">
+                                <label htmlFor="searchTerm" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <Input
+                                    id="searchTerm"
+                                    type="text"
+                                    placeholder="Search by team name or action items..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Info className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Status</span>
+                                </label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                >
+                                    <option value="All">All Statuses</option>
+                                    <option value="On Track">On Track</option>
+                                    <option value="At Risk">At Risk</option>
+                                    <option value="Off Track">Off Track</option>
+                                </select>
+                            </div>
+                        </FilterSection>
+
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    Team KPI Actuals
-                                </CardTitle>
+                                <div className="flex flex-row justify-between items-center">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        Team KPI Actuals
+                                    </CardTitle>
+                                    <Button 
+                                        onClick={() => setIsAddDialogOpen(true)}
+                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                    >
+                                        Add Team KPI
+                                    </Button>
+                                </div>
                             </CardHeader>
                             <CardContent className='m-0 p-0 pb-8'>
                                 <div className="overflow-x-auto">
@@ -399,7 +555,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {teamKPIActuals.map((kpi) => (
+                                            {paginatedData.map((kpi) => (
                                                 <tr
                                                     key={kpi.id}
                                                 >
@@ -442,18 +598,42 @@ const MPMActualsTeamKPI: React.FC = () => {
                                                     </td>
                                                 </tr>
                                             ))}
-                                            {/* Total Row */}
-                                            <tr className="bg-[#1B6131] text-white font-bold">
-                                                <td className="p-4 text-center" colSpan={2}>Total</td>
-                                                <td className="p-4 text-center">{calculateTotals.total.toLocaleString()}</td>
-                                                <td className="p-4 text-center"></td>
-                                                <td className="p-4 text-center">{calculateTotals.averageAchievement.toFixed(2)}%</td>
-                                                <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
-                                                <td className="p-4 text-center"></td>
-                                            </tr>
+                                            
+                                            {/* Show message when no data is available */}
+                                            {paginatedData.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={7} className="p-4 text-center text-gray-500">
+                                                        No team KPIs match your search criteria.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            
+                                            {/* Total Row - only show if we have data */}
+                                            {paginatedData.length > 0 && (
+                                                <tr className="bg-[#1B6131] text-white font-bold">
+                                                    <td className="p-4 text-center" colSpan={2}>Total</td>
+                                                    <td className="p-4 text-center"></td>
+                                                    <td className="p-4 text-center">{calculateTotals.total.toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{calculateTotals.averageAchievement.toFixed(2)}%</td>
+                                                    <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
+                                                    <td className="p-4 text-center"></td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                {/* Pagination Component */}
+                                <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredData.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={paginationExpanded}
+                                        onToggleExpand={togglePaginationExpand}
+                                    />
                             </CardContent>
                         </Card>
                     </div>

@@ -55,7 +55,7 @@ type KPIEntry = {
   correctiveAction: string;
 };
 
-type Approver = {
+type Manager = {
   id: string;
   name: string;
   position: string;
@@ -63,7 +63,12 @@ type Approver = {
 };
 
 const MPMActuals = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -84,7 +89,7 @@ const MPMActuals = () => {
   const month = searchParams.get('month');
   const { mpmActualId } = useParams<{ mpmActualId: string }>();
 
-  const approvers: Approver[] = [
+  const approvers: Manager[] = [
     { id: 'app1', name: 'Budi Santoso', position: 'Manager', department: 'Performance Management' },
     { id: 'app2', name: 'Rina Wijaya', position: 'Senior Manager', department: 'Operations' },
     { id: 'app3', name: 'Agus Purnomo', position: 'Director', department: 'Business Development' },
@@ -377,7 +382,7 @@ const MPMActuals = () => {
     <Dialog open={sendToApproverOpen} onOpenChange={setSendToApproverOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Send to Approver</DialogTitle>
+          <DialogTitle>Send to Manager</DialogTitle>
           <DialogDescription>
             Select an approver and send this MPM target for approval
           </DialogDescription>
@@ -385,7 +390,7 @@ const MPMActuals = () => {
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="approver-select">Select Approver</Label>
+            <Label htmlFor="approver-select">Select Manager</Label>
             <Select
               value={selectedApprover}
               onValueChange={setSelectedApprover}
@@ -405,7 +410,7 @@ const MPMActuals = () => {
 
           {selectedApprover && (
             <div className="p-4 bg-[#E4EFCF]/50 rounded-md">
-              <p className="font-medium text-[#1B6131]">Selected Approver:</p>
+              <p className="font-medium text-[#1B6131]">Selected Manager:</p>
               <p>{approvers.find(a => a.id === selectedApprover)?.name}</p>
               <p className="text-sm text-gray-600">
                 {approvers.find(a => a.id === selectedApprover)?.position},
@@ -536,7 +541,7 @@ const MPMActuals = () => {
                     onClick={() => setSendToApproverOpen(true)}
                   >
                     <Send className="mr-2 h-4 w-4" />
-                    Send to Approver
+                    Send to Manager
                   </Button>
                 </div>
               </CardHeader>

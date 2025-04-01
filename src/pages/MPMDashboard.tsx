@@ -25,7 +25,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components
 import { mpmDataMock } from '@/lib/mpmMocks';
 import FilterSection from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
@@ -52,7 +52,12 @@ type MPMEntry = {
 };
 
 const MPMDashboard: React.FC = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [selectedYear, setSelectedYear] = useState('2025');
@@ -445,7 +450,8 @@ const MPMDashboard: React.FC = () => {
                     {viewType === 'chart' && (
                         <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
                             <div className="h-64">
-                                <LineChart width={window.innerWidth - 150} height={250} data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis yAxisId="left" />
@@ -456,6 +462,7 @@ const MPMDashboard: React.FC = () => {
                                     <Line type="monotone" dataKey="actual" stroke="#82ca9d" name="Actual" yAxisId="left" />
                                     <Line type="monotone" dataKey="achievement" stroke="#ff7300" name="Achievement %" yAxisId="right" />
                                 </LineChart>
+                            </ResponsiveContainer>
                             </div>
                         </div>
                     )}

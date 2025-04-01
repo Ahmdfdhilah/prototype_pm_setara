@@ -20,7 +20,7 @@ import {
 import {
   Perspective,
   MPMEntry,
-  Approver
+  Manager
 } from '../lib/types';
 import {
   mpmTargetsDataMock
@@ -39,7 +39,12 @@ import FilterSection from '@/components/Filtering';
 import React from 'react';
 
 const MPMTargets = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
 
@@ -62,7 +67,7 @@ const MPMTargets = () => {
   const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
   
   // Sample data untuk approvers
-  const approvers: Approver[] = [
+  const approvers: Manager[] = [
     { id: 'app1', name: 'Budi Santoso', position: 'Manager', department: 'Performance Management' },
     { id: 'app2', name: 'Rina Wijaya', position: 'Senior Manager', department: 'Operations' },
     { id: 'app3', name: 'Agus Purnomo', position: 'Director', department: 'Business Development' },
@@ -195,7 +200,7 @@ const MPMTargets = () => {
     <Dialog open={sendToApproverOpen} onOpenChange={setSendToApproverOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Send to Approver</DialogTitle>
+          <DialogTitle>Send to Manager</DialogTitle>
           <DialogDescription>
             Select an manager and send this MPM target for approval
           </DialogDescription>
@@ -203,7 +208,7 @@ const MPMTargets = () => {
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label htmlFor="manager-select">Select Approver</Label>
+            <Label htmlFor="manager-select">Select Manager</Label>
             <Select
               value={selectedApprover}
               onValueChange={setSelectedApprover}
@@ -223,7 +228,7 @@ const MPMTargets = () => {
 
           {selectedApprover && (
             <div className="p-4 bg-[#E4EFCF]/50 rounded-md">
-              <p className="font-medium text-[#1B6131]">Selected Approver:</p>
+              <p className="font-medium text-[#1B6131]">Selected Manager:</p>
               <p>{approvers.find(a => a.id === selectedApprover)?.name}</p>
               <p className="text-sm text-gray-600">
                 {approvers.find(a => a.id === selectedApprover)?.position},
@@ -352,7 +357,7 @@ const MPMTargets = () => {
                       onClick={() => setSendToApproverOpen(true)}
                     >
                       <Send className="mr-2 h-4 w-4" />
-                      Send to Approver
+                      Send to Manager
                     </Button>
                   </div>
                 </div>

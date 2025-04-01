@@ -23,7 +23,12 @@ import { Info, AlertTriangle, CheckCircle2, FileText, Users } from 'lucide-react
 import Breadcrumb from '@/components/Breadcrumb';
 
 const PerformanceManagementHome = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
 
@@ -79,13 +84,13 @@ const PerformanceManagementHome = () => {
                                 User Guide
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="pt-6 p-2 sm:p-6">
+                        <CardContent className="px-8 pt-2 pb-8">
                             <Tabs defaultValue="overview" className="w-full">
-                                <TabsList className="my-6 p-0 bg-transparent md:max-w-2xl md:mx-auto md:justify-between">
-                                    <div className="flex flex-wrap gap-2 w-full md:w-auto p-2 rounded-md bg-[#e6f3e6] dark:bg-[#0a3419]">
+                                <TabsList className="my-12 md:my-4 p-0 bg-transparent ">
+                                    <div className="flex flex-wrap gap-2 w-full md:w-auto p-2 rounded-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                         <TabsTrigger value="overview">Overview</TabsTrigger>
                                         <TabsTrigger value="employee">Employee</TabsTrigger>
-                                        <TabsTrigger value="manager">Approver</TabsTrigger>
+                                        <TabsTrigger value="manager">Manager</TabsTrigger>
                                         <TabsTrigger value="sm_dept">SM Department</TabsTrigger>
                                         <TabsTrigger value="admin">Admin</TabsTrigger>
                                     </div>
@@ -223,7 +228,7 @@ const PerformanceManagementHome = () => {
                                 </TabsContent>
 
                                 <TabsContent value="manager" className="space-y-4">
-                                    <h3 className="text-xl font-semibold text-[#1B6131] dark:text-[#46B749]">Approver User Guide</h3>
+                                    <h3 className="text-xl font-semibold text-[#1B6131] dark:text-[#46B749]">Manager User Guide</h3>
 
                                     <Accordion type="single" collapsible className="w-full">
                                         <AccordionItem value="mpm-manager">
@@ -233,7 +238,7 @@ const PerformanceManagementHome = () => {
                                             <AccordionContent className="text-sm space-y-3">
                                                 <p>As an manager, you review and approve MPM submissions from your team:</p>
                                                 <ol className="list-decimal ml-5 space-y-2">
-                                                    <li>Check the "Sent to Approver" status items in the MPM section</li>
+                                                    <li>Check the "Sent to Manager" status items in the MPM section</li>
                                                     <li>Review the targets set by employees</li>
                                                     <li>Evaluate action plans for feasibility and alignment with department goals</li>
                                                     <li>Review actual achievements and problem identification</li>
@@ -256,7 +261,7 @@ const PerformanceManagementHome = () => {
                                             <AccordionContent className="text-sm space-y-3">
                                                 <p>Manage and approve IPM action plans from your team members:</p>
                                                 <ol className="list-decimal ml-5 space-y-2">
-                                                    <li>Review IPM action plans with "Sent to Approver" status</li>
+                                                    <li>Review IPM action plans with "Sent to Manager" status</li>
                                                     <li>Assess if action plans are aligned with department objectives</li>
                                                     <li>Check if achievement percentages are accurate</li>
                                                     <li>Approve action plans by clicking the check button</li>
@@ -418,7 +423,7 @@ const PerformanceManagementHome = () => {
                                                 <ol className="list-decimal ml-5 space-y-2">
                                                     <li>Access the "Master User Access" menu item</li>
                                                     <li>Create new user accounts and assign roles</li>
-                                                    <li>Manage role permissions (Employee, Approver, SM Dept, Admin)</li>
+                                                    <li>Manage role permissions (Employee, Manager, SM Dept, Admin)</li>
                                                     <li>Deactivate accounts when needed</li>
                                                     <li>Reset passwords and manage account recovery</li>
                                                 </ol>

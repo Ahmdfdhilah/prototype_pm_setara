@@ -45,7 +45,12 @@ const MPMTargetList: React.FC = () => {
   const navigate = useNavigate();
 
   // State Management
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
 

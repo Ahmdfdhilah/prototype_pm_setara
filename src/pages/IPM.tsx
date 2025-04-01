@@ -39,7 +39,12 @@ interface Employee {
 }
 
 const IPMPage = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768; 
+    }
+    return true; 
+  });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
@@ -181,7 +186,7 @@ const IPMPage = () => {
             // Employee sees only themselves
             filteredList = filteredList.filter(emp => emp.id === '1');
         } else if (currentRole === 'manager') {
-            // Approver sees employees in their unit (assuming IT unit)
+            // Manager sees employees in their unit (assuming IT unit)
             filteredList = filteredList.filter(emp => emp.unit === 'IT');
         }
         // For sm_dept role, no department filtering is applied - they see all employees
