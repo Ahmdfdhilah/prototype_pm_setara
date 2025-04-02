@@ -26,7 +26,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Department = {
@@ -51,12 +51,12 @@ type Employee = {
 };
 
 const DepartmentManagementPage = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [departments, setDepartments] = useState<Department[]>([]);
@@ -222,7 +222,7 @@ const DepartmentManagementPage = () => {
                     />
 
                     {/* Combined Filter and Search Section */}
-                    <FilterSection
+                    <Filtering
                     >
                         <div className="space-y-3 space-y-3 md:col-span-2">
                             <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -239,7 +239,7 @@ const DepartmentManagementPage = () => {
                                 />
                             </div>
                         </div>
-                    </FilterSection>
+                    </Filtering>
 
                     {/* Department Table */}
                     <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mt-8">
@@ -256,7 +256,7 @@ const DepartmentManagementPage = () => {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-8">
+                        <CardContent className="p-0">
                             <div className="border border-gray-200 dark:border-gray-700 rounded-md overflow-x-auto">
                                 <table className="w-full">
                                     <thead className="bg-[#1B6131] text-white">
@@ -275,7 +275,7 @@ const DepartmentManagementPage = () => {
                                             currentItems.map((department) => (
                                                 <tr key={department.department_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                                     <td className="p-4">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                        <span className="inline-flex items-center text-[#1B6131] dark:text-white">
                                                             {department.department_code}
                                                         </span>
                                                     </td>
@@ -298,12 +298,12 @@ const DepartmentManagementPage = () => {
                                                         </div>
                                                     </td>
                                                     <td className="p-4">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                    <span className="inline-flex items-center">
                                                             {department.employee_count} employees
                                                         </span>
                                                     </td>
                                                     <td className="p-4">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                    <span className="inline-flex items-center">
                                                             {department.team_count} teams
                                                         </span>
                                                     </td>

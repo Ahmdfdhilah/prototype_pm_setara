@@ -12,7 +12,7 @@ import {
     ChevronDown as ExpandMore,
 } from 'lucide-react';
 import Header from '@/components/Header';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { dummyData } from '../lib/bscMocks';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -275,7 +275,7 @@ const BSCDashboard = () => {
                         />
 
                         {/* Filter Section */}
-                        <FilterSection
+                        <Filtering
                             startDate={startDate}
                             endDate={endDate}
                             handleStartDateChange={handleStartDateChange}
@@ -333,7 +333,7 @@ const BSCDashboard = () => {
                                     ))}
                                 </select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
 
                         {/* BSC Table Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">

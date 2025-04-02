@@ -1,12 +1,29 @@
 export type StatusType = 'On Track' | 'At Risk' | 'Behind';
 
-// Mock data for department performance by month
-export const departmentPerformanceByMonth: Record<string, Array<{
+interface DepartmentPerformance {
     department: string;
     score: number;
-    lastPeriod: number;
+    lastPeriod?: number;
     status: StatusType;
-}>> = {
+}
+
+interface IndividualPerformer {
+    name: string;
+    department: string;
+    score: number;
+    lastPeriod?: number;
+    change: number;
+}
+
+interface DashboardMocks {
+    availablePeriods: string[];
+    availableYears: string[];
+    departmentPerformanceByMonth: Record<string, DepartmentPerformance[]>;
+    individualPerformersByMonth: Record<string, IndividualPerformer[]>;
+}
+
+// Mock data for department performance by month
+export const departmentPerformanceByMonth: Record<string, DepartmentPerformance[]> = {
     'January': [
         { department: 'Finance', score: 91.4, lastPeriod: 88.5, status: 'On Track' },
         { department: 'Marketing', score: 85.7, lastPeriod: 87.2, status: 'At Risk' },
@@ -106,13 +123,7 @@ export const departmentPerformanceByMonth: Record<string, Array<{
 };
 
 // Mock data for individual performers by month
-export const individualPerformersByMonth: Record<string, Array<{
-    name: string;
-    department: string;
-    score: number;
-    lastPeriod?: number;
-    change: number;
-}>> = {
+export const individualPerformersByMonth: Record<string, IndividualPerformer[]> = {
     'January': [
         { name: 'Sarah J.', department: 'Finance', score: 96.4, change: 2.1 },
         { name: 'Michael T.', department: 'IT', score: 94.8, change: 1.5 },
@@ -199,7 +210,17 @@ export const individualPerformersByMonth: Record<string, Array<{
     ],
 };
 
-// Available periods mocks (months)
-export const availablePeriods = ['January', 'February', 'March', 'April', 'May', 'June', 
-                         'July', 'August', 'September', 'October', 'November', 'December'];
-export const availableYears = ['2023', '2024', '2025'];
+export const availablePeriods: string[] = [
+    'January', 'February', 'March', 'April', 'May', 'June', 
+    'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+export const availableYears: string[] = ['2023', '2024', '2025'];
+
+// Export the complete mock data object
+export const dashboardMocks: DashboardMocks = {
+    availablePeriods,
+    availableYears,
+    departmentPerformanceByMonth,
+    individualPerformersByMonth
+};

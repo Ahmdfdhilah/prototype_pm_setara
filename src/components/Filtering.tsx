@@ -18,7 +18,7 @@ export interface FilteringParams {
     children?: ReactNode;
 }
 
-function FilterSection({
+function Filtering({
     startDate,
     endDate,
     handleStartDateChange,
@@ -171,4 +171,4 @@ function FilterSection({
     );
 }
 
-export default FilterSection;
+export default Filtering;

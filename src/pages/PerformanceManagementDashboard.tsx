@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
@@ -26,15 +28,199 @@ import {
     Target,
     AlertTriangle,
     Award,
-    Calendar
+    Calendar,
+    ChevronDown,
+    ChevronRight
 } from 'lucide-react';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import { PerformanceChart } from '@/components/Dashboard/LineChartDashboard';
 import { StatCard, TrendIndicator } from '@/components/Dashboard/StatCard';
 import { DistributionBar } from '@/components/Dashboard/DistributionBar';
 import { availablePeriods, availableYears, departmentPerformanceByMonth, individualPerformersByMonth } from '@/lib/dashboardMocks';
 import { RankBadge } from '@/components/RankBadge';
 import { StatusIndicator } from '@/components/Dashboard/StatusIndicator';
+
+interface TrendData {
+    month: string;
+    mpm: number;
+    ipm: number;
+    target: number;
+}
+
+interface MonthlyDataCollapsibleProps {
+    period: string;
+    isOpen: boolean;
+    onToggle: () => void;
+}
+
+interface MonthlySummaryTableProps {
+    periods: string[];
+    onMonthClick: (period: string) => void;
+    activePeriod: string | null;
+}
+
+
+// New component for collapsible monthly data
+const MonthlyDataCollapsible = ({ period, isOpen, onToggle }: MonthlyDataCollapsibleProps) => {
+    return (
+        <Collapsible open={isOpen} onOpenChange={onToggle} className="mb-4">
+            <CollapsibleTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className="w-full flex justify-between items-center p-4 text-left border rounded-md bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]"
+                >
+                    <span className="font-medium text-[#1B6131] dark:text-[#46B749]">{period} Performance Data</span>
+                    {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                <Building className="mr-2" />
+                                {period} Department Performance
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[50px]">Rank</TableHead>
+                                        <TableHead>Department</TableHead>
+                                        <TableHead className="text-center">Score</TableHead>
+                                        <TableHead className="text-center">Last Period</TableHead>
+                                        <TableHead className="text-center">Trend</TableHead>
+                                        <TableHead className="text-right">Status</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {(departmentPerformanceByMonth[period] || [])
+                                        .sort((a, b) => b.score - a.score)
+                                        .slice(0, 5)
+                                        .map((dept, index) => (
+                                            <TableRow key={`${period}-dept-${index}`}>
+                                                <TableCell className="font-medium">{<RankBadge rank={index + 1} />}</TableCell>
+                                                <TableCell>{dept.department}</TableCell>
+                                                <TableCell className="text-center">{dept.score.toFixed(1)}%</TableCell>
+                                                <TableCell className="text-center">{dept.lastPeriod?.toFixed(1)}%</TableCell>
+                                                <TableCell className="text-center">
+                                                    <TrendIndicator value={dept.score - (dept.lastPeriod || 0)} />
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <StatusIndicator status={dept.status} />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                <AlertTriangle className="mr-2" />
+                                {period} Top Performers
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className='text-center'>Rank</TableHead>
+                                        <TableHead className='text-center'>Name</TableHead>
+                                        <TableHead className='text-center'>Department</TableHead>
+                                        <TableHead className="text-center">Score</TableHead>
+                                        <TableHead className="text-center">Change</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {(individualPerformersByMonth[period] || []).map((person, index) => (
+                                        <TableRow key={`${period}-person-${index}`}>
+                                            <TableCell className='text-center'>
+                                                <RankBadge rank={index + 1} />
+                                            </TableCell>
+                                            <TableCell className="text-center font-medium">{person.name}</TableCell>
+                                            <TableCell className='text-center'>{person.department}</TableCell>
+                                            <TableCell className="text-center">{person.score.toFixed(1)}</TableCell>
+                                            <TableCell className="text-center">
+                                                <TrendIndicator value={person.change} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </div>
+            </CollapsibleContent>
+        </Collapsible>
+    );
+};
+
+// Monthly summary component
+const MonthlySummaryTable = ({ periods, onMonthClick, activePeriod }: MonthlySummaryTableProps) => {
+    return (
+        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mb-6">
+            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    <Calendar className="mr-2" />
+                    Performance by Month
+                </CardTitle>
+                <CardDescription>Click on a month to view detailed performance data</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Month</TableHead>
+                            <TableHead className="text-center">Avg. Dept Score</TableHead>
+                            <TableHead className="text-center">Avg. Emp Score</TableHead>
+                            <TableHead className="text-center">Depts On Track</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {periods.map((period) => {
+                            const deptData = departmentPerformanceByMonth[period] || [];
+                            const indivData = individualPerformersByMonth[period] || [];
+
+                            const deptAvg = deptData.length > 0
+                                ? deptData.reduce((sum, dept) => sum + dept.score, 0) / deptData.length
+                                : 0;
+
+                            const indivAvg = indivData.length > 0
+                                ? indivData.reduce((sum, indiv) => sum + indiv.score, 0) / indivData.length
+                                : 0;
+                            const deptsOnTrack = deptData.filter((dept) => dept.status === 'On Track').length;
+
+                            return (
+                                <TableRow key={`summary-${period}`} className={period === activePeriod ? "bg-green-50 dark:bg-green-900/20" : ""}>
+                                    <TableCell className="font-medium">{period}</TableCell>
+                                    <TableCell className="text-center">{deptAvg.toFixed(1)}%</TableCell>
+                                    <TableCell className="text-center">{indivAvg.toFixed(1)}%</TableCell>
+                                    <TableCell className="text-center">{deptsOnTrack} of {deptData.length}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onMonthClick(period)}
+                                            className="border-[#46B749] text-[#1B6131] hover:bg-[#e6f3e6]"
+                                        >
+                                            {period === activePeriod ? "Hide Details" : "View Details"}
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+    );
+};
+
 
 const PerformanceManagementDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
@@ -51,14 +237,15 @@ const PerformanceManagementDashboard = () => {
     const [selectedYear, setSelectedYear] = useState('2025');
     const [availableEndPeriods, setAvailableEndPeriods] = useState<string[]>([]);
     const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
-    const [trendData, setTrendData] = useState<Array<{ month: string, mpm: number, ipm: number, target: number }>>([]);
+    const [trendData, setTrendData] = useState<TrendData[]>([]);
     const [useSingleMonth, setUseSingleMonth] = useState(false);
+    const [activePeriod, setActivePeriod] = useState<string | null>(null);
 
-    // Set available end periods based on start period (max 6 months)
+    // Set available end periods based on start period
     useEffect(() => {
         const startIndex = availablePeriods.indexOf(startPeriod);
-        // Maximum 6 months forward from start period
-        const endOptions = availablePeriods.slice(startIndex, startIndex + 6);
+        // Show all months, not just 6
+        const endOptions = availablePeriods.slice(startIndex);
         setAvailableEndPeriods(endOptions);
 
         // If current end period is not valid, set to max available
@@ -67,7 +254,6 @@ const PerformanceManagementDashboard = () => {
         }
     }, [startPeriod]);
 
-    // Replace the calculateAverageScore function
     const calculateAverageScore = () => {
         if (selectedPeriods.length === 0) return 0;
 
@@ -82,7 +268,6 @@ const PerformanceManagementDashboard = () => {
         return (sum / selectedPeriods.length).toFixed(1);
     };
 
-    // Replace the calculateTrend function
     const calculateTrend = () => {
         if (selectedPeriods.length < 2) return 0;
 
@@ -100,10 +285,10 @@ const PerformanceManagementDashboard = () => {
         return ((currentAvg - prevAvg) / prevAvg) * 100;
     };
 
-    // Update the trend data creation
     useEffect(() => {
         if (useSingleMonth) {
             setSelectedPeriods([selectedMonth]);
+            setActivePeriod(null);
 
             const deptData = departmentPerformanceByMonth[selectedMonth] || [];
             const indivData = individualPerformersByMonth[selectedMonth] || [];
@@ -129,6 +314,7 @@ const PerformanceManagementDashboard = () => {
             if (startIndex <= endIndex) {
                 const periods = availablePeriods.slice(startIndex, endIndex + 1);
                 setSelectedPeriods(periods);
+                setActivePeriod(null);
 
                 const newTrendData = periods.map(period => {
                     const deptData = departmentPerformanceByMonth[period] || [];
@@ -154,7 +340,11 @@ const PerformanceManagementDashboard = () => {
         }
     }, [startPeriod, endPeriod, useSingleMonth, selectedMonth]);
 
-    // Get department performance data for selected period(s)
+    const handleMonthClick = (period: string) => {
+        setActivePeriod(activePeriod === period ? null : period);
+    };
+
+
     const getDepartmentPerformance = () => {
         if (useSingleMonth) {
             return departmentPerformanceByMonth[selectedMonth] || [];
@@ -165,7 +355,6 @@ const PerformanceManagementDashboard = () => {
         return departmentPerformanceByMonth[latestMonth] || [];
     };
 
-    // Get individual performers data for selected period(s)
     const getIndividualPerformers = () => {
         if (useSingleMonth) {
             return individualPerformersByMonth[selectedMonth] || [];
@@ -204,7 +393,7 @@ const PerformanceManagementDashboard = () => {
                             showHomeIcon={true}
                         />
 
-                        <FilterSection>
+                        <Filtering>
                             <div className="flex items-center space-x-2">
                                 <Switch
                                     id="single-month-mode"
@@ -301,7 +490,7 @@ const PerformanceManagementDashboard = () => {
                                     </div>
                                 </>
                             )}
-                        </FilterSection>
+                        </Filtering>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {/* Overall Performance Score */}
@@ -396,180 +585,112 @@ const PerformanceManagementDashboard = () => {
                             />
                         )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {useSingleMonth && (
-                                <>
-                                    {/* Top Department Performance */}
-                                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                <Building className="mr-2" />
-                                                {useSingleMonth ? `${selectedMonth} Department Performance` : 'Department Performance'}
-                                            </CardTitle>
-                                            <CardDescription>Department performance ranking and status</CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="p-0">
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead className="w-[50px]">Rank</TableHead>
-                                                        <TableHead>Department</TableHead>
-                                                        <TableHead className="text-center">Score</TableHead>
-                                                        <TableHead className="text-center">Last Period</TableHead>
-                                                        <TableHead className="text-center">Trend</TableHead>
-                                                        <TableHead className="text-right">Status</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {getDepartmentPerformance()
-                                                        .sort((a, b) => b.score - a.score)
-                                                        .slice(0, 5)
-                                                        .map((dept, index) => (
-                                                            <TableRow key={`dept-${index}`}>
-                                                                <TableCell className="font-medium">{<RankBadge rank={index + 1} />}</TableCell>
-                                                                <TableCell>{dept.department}</TableCell>
-                                                                <TableCell className="text-center">{dept.score.toFixed(1)}%</TableCell>
-                                                                <TableCell className="text-center">{dept.lastPeriod.toFixed(1)}%</TableCell>
-                                                                <TableCell className="text-center">
-                                                                    <TrendIndicator value={dept.score - dept.lastPeriod} />
-                                                                </TableCell>
-                                                                <TableCell className="text-right">
-                                                                    <StatusIndicator status={dept.status} />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                </TableBody>
-                                            </Table>
-                                        </CardContent>
-                                    </Card>
-
-                                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                <AlertTriangle className="mr-2" />
-                                                {useSingleMonth ? `${selectedMonth} Top Performers` : 'Top Individual Performers'}
-                                            </CardTitle>
-                                            <CardDescription>Highest performing employees across departments</CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="p-0">
-                                            <Table>
-                                                <TableHeader>
-                                                    <TableRow>
-                                                        <TableHead className='text-center'>Rank</TableHead>
-                                                        <TableHead className='text-center'>Name</TableHead>
-                                                        <TableHead className='text-center'>Department</TableHead>
-                                                        <TableHead className="text-center">Score</TableHead>
-                                                        <TableHead className="text-center">Change</TableHead>
-                                                    </TableRow>
-                                                </TableHeader>
-                                                <TableBody>
-                                                    {getIndividualPerformers().map((person, index) => (
-                                                        <TableRow key={`person-${index}`}>
-                                                            <TableCell className='text-center'>
-                                                                <RankBadge rank={index + 1} />
-                                                            </TableCell>
-                                                            <TableCell className="text-center font-medium">{person.name}</TableCell>
-                                                            <TableCell className='text-center'>{person.department}</TableCell>
-                                                            <TableCell className="text-center">{person.score.toFixed(1)}</TableCell>
+                        {/* Single Month View */}
+                        {useSingleMonth && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Top Department Performance */}
+                                <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                    <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <Building className="mr-2" />
+                                            {selectedMonth} Department Performance
+                                        </CardTitle>
+                                        <CardDescription>Department performance ranking and status</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className="w-[50px]">Rank</TableHead>
+                                                    <TableHead>Department</TableHead>
+                                                    <TableHead className="text-center">Score</TableHead>
+                                                    <TableHead className="text-center">Last Period</TableHead>
+                                                    <TableHead className="text-center">Trend</TableHead>
+                                                    <TableHead className="text-right">Status</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {getDepartmentPerformance()
+                                                    .sort((a, b) => b.score - a.score)
+                                                    .slice(0, 5)
+                                                    .map((dept, index) => (
+                                                        <TableRow key={`dept-${index}`}>
+                                                            <TableCell className="font-medium">{<RankBadge rank={index + 1} />}</TableCell>
+                                                            <TableCell>{dept.department}</TableCell>
+                                                            <TableCell className="text-center">{dept.score.toFixed(1)}%</TableCell>
+                                                            <TableCell className="text-center">{dept.lastPeriod?.toFixed(1)}%</TableCell>
                                                             <TableCell className="text-center">
-                                                                <TrendIndicator value={person.change} />
+                                                                <TrendIndicator value={dept.score - (dept.lastPeriod || 0)} />
+                                                            </TableCell>
+                                                            <TableCell className="text-right">
+                                                                <StatusIndicator status={dept.status} />
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
-                                                </TableBody>
-                                            </Table>
-                                        </CardContent>
-                                    </Card>
+                                            </TableBody>
+                                        </Table>
+                                    </CardContent>
+                                </Card>
 
-                                </>
-                            )}
-                        </div>
-                        {/* Monthly breakdown tables when in range mode */}
-                        {!useSingleMonth && selectedPeriods.length > 1 && (
-                            <div className="space-y-6">
-                                {selectedPeriods.map((period) => (
-                                    <div key={`monthly-${period}`} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                    <Building className="mr-2" />
-                                                    {period} Department Performance
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="p-0">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead className="w-[50px]">Rank</TableHead>
-                                                            <TableHead>Department</TableHead>
-                                                            <TableHead className="text-center">Score</TableHead>
-                                                            <TableHead className="text-center">Last Period</TableHead>
-                                                            <TableHead className="text-center">Trend</TableHead>
-                                                            <TableHead className="text-right">Status</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {(departmentPerformanceByMonth[period] || [])
-                                                            .sort((a, b) => b.score - a.score)
-                                                            .slice(0, 5)
-                                                            .map((dept, index) => (
-                                                                <TableRow key={`${period}-dept-${index}`}>
-                                                                    <TableCell className="font-medium">{<RankBadge rank={index + 1} />}</TableCell>
-                                                                    <TableCell>{dept.department}</TableCell>
-                                                                    <TableCell className="text-center">{dept.score.toFixed(1)}%</TableCell>
-                                                                    <TableCell className="text-center">{dept.lastPeriod.toFixed(1)}%</TableCell>
-                                                                    <TableCell className="text-center">
-                                                                        <TrendIndicator value={dept.score - dept.lastPeriod} />
-                                                                    </TableCell>
-                                                                    <TableCell className="text-right">
-                                                                        <StatusIndicator status={dept.status} />
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </CardContent>
-                                        </Card>
-
-                                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                    <AlertTriangle className="mr-2" />
-                                                    {period} Top Performers
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent className="p-0">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead className='text-center'>Rank</TableHead>
-                                                            <TableHead className='text-center'>Name</TableHead>
-                                                            <TableHead className='text-center'>Department</TableHead>
-                                                            <TableHead className="text-center">Score</TableHead>
-                                                            <TableHead className="text-center">Change</TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {(individualPerformersByMonth[period] || []).map((person, index) => (
-                                                            <TableRow key={`${period}-person-${index}`}>
-                                                                <TableCell className='text-center'>
-                                                                    <RankBadge rank={index + 1} />
-                                                                </TableCell>
-                                                                <TableCell className="text-center font-medium">{person.name}</TableCell>
-                                                                <TableCell className='text-center'>{person.department}</TableCell>
-                                                                <TableCell className="text-center">{person.score.toFixed(1)}</TableCell>
-                                                                <TableCell className="text-center">
-                                                                    <TrendIndicator value={person.change} />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                ))}
+                                <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                    <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <AlertTriangle className="mr-2" />
+                                            {selectedMonth} Top Performers
+                                        </CardTitle>
+                                        <CardDescription>Individual performance ranking</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="p-0">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead className='text-center'>Rank</TableHead>
+                                                    <TableHead className='text-center'>Name</TableHead>
+                                                    <TableHead className='text-center'>Department</TableHead>
+                                                    <TableHead className="text-center">Score</TableHead>
+                                                    <TableHead className="text-center">Change</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {getIndividualPerformers().map((person, index) => (
+                                                    <TableRow key={`person-${index}`}>
+                                                        <TableCell className='text-center'>
+                                                            <RankBadge rank={index + 1} />
+                                                        </TableCell>
+                                                        <TableCell className="text-center font-medium">{person.name}</TableCell>
+                                                        <TableCell className='text-center'>{person.department}</TableCell>
+                                                        <TableCell className="text-center">{person.score.toFixed(1)}</TableCell>
+                                                        <TableCell className="text-center">
+                                                            <TrendIndicator value={person.change} />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </CardContent>
+                                </Card>
                             </div>
+                        )}
+
+                        {/* Monthly data view for range mode */}
+                        {!useSingleMonth && (
+                            <>
+                                {/* Summary table for all months in the range */}
+                                <MonthlySummaryTable
+                                    periods={selectedPeriods}
+                                    onMonthClick={handleMonthClick}
+                                    activePeriod={activePeriod}
+                                />
+
+                                {/* Collapsible content for the selected month */}
+                                {activePeriod && (
+                                    <MonthlyDataCollapsible
+                                        period={activePeriod}
+                                        isOpen={true}
+                                        onToggle={() => setActivePeriod(null)}
+                                    />
+                                )}
+                            </>
                         )}
                     </div>
                 </main>

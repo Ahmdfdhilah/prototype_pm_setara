@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/Pagination';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -382,7 +382,7 @@ const MPMActualList: React.FC = () => {
             />
 
             {/* Enhanced Filter Section */}
-            <FilterSection
+            <Filtering
               handlePeriodChange={setSelectedPeriod}
               selectedPeriod={selectedPeriod}
             >
@@ -425,7 +425,7 @@ const MPMActualList: React.FC = () => {
                   </Select>
                 </div>
               )}
-            </FilterSection>
+            </Filtering>
 
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
               <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">

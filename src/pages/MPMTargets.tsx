@@ -35,7 +35,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import EditMonthlyTargetDialog from '@/components/MPM/EditMonthlyTargetDialog';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import React from 'react';
 
 const MPMTargets = () => {
@@ -309,7 +309,7 @@ const MPMTargets = () => {
             />
 
             {/* Filter Section */}
-            <FilterSection
+            <Filtering
               startDate={startDate}
               endDate={endDate}
               handleStartDateChange={handleStartDateChange}
@@ -341,7 +341,7 @@ const MPMTargets = () => {
                   </SelectContent>
                 </Select>
               </div>
-            </FilterSection>
+            </Filtering>
 
             {/* Main Card */}
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
@@ -362,7 +362,7 @@ const MPMTargets = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='m-0 p-0 pb-8'>
+              <CardContent className='m-0 p-0'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">

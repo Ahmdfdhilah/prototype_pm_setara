@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
     Card,
@@ -16,10 +16,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Edit, Info } from 'lucide-react';
+import { Edit, Info, Search, PlusCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
+import Filtering from '@/components/Filtering';
+import Pagination from '@/components/Pagination';
 
 type IndividualKPIActual = {
     id: string;
@@ -44,12 +46,12 @@ const MPMActualsActionPlans: React.FC = () => {
     const month = searchParams.get('month') || 'January';
 
     // UI State
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [isAddIndividualDialogOpen, setIsAddIndividualDialogOpen] = useState(false);
@@ -89,8 +91,85 @@ const MPMActualsActionPlans: React.FC = () => {
             rootCauseAnalysis: '',
             correctiveAction: '',
             status: 'On Track'
+        },
+        {
+            id: '3',
+            name: 'Michael Johnson',
+            position: 'Sales Manager',
+            target: 50000,
+            actual: 47500,
+            achievement: 95,
+            problemIdentification: 'Team coordination issues',
+            rootCauseAnalysis: 'Lack of regular sync meetings',
+            correctiveAction: 'Implement weekly progress check-ins',
+            status: 'At Risk'
+        },
+        {
+            id: '4',
+            name: 'Emily Clark',
+            position: 'Account Executive',
+            target: 35000,
+            actual: 37000,
+            achievement: 105.71,
+            problemIdentification: '',
+            rootCauseAnalysis: '',
+            correctiveAction: '',
+            status: 'On Track'
+        },
+        {
+            id: '5',
+            name: 'Robert Wilson',
+            position: 'Junior Sales Representative',
+            target: 20000,
+            actual: 15000,
+            achievement: 75,
+            problemIdentification: 'Difficulty closing deals',
+            rootCauseAnalysis: 'Lack of negotiation skills',
+            correctiveAction: 'Negotiation training and shadowing sessions',
+            status: 'Off Track'
         }
     ]);
+
+    // Filter State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All');
+    const [achievementFilter, setAchievementFilter] = useState('All');
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
+
+    // Filter function
+    const filteredIndividuals = useMemo(() => {
+        return individualActuals.filter(individual => {
+            const matchesSearch = 
+                individual.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                individual.position.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            const matchesStatus = 
+                statusFilter === 'All' || individual.status === statusFilter;
+            
+            const matchesAchievement = 
+                achievementFilter === 'All' ||
+                (achievementFilter === 'Exceeding' && individual.achievement > 100) ||
+                (achievementFilter === 'Meeting' && individual.achievement >= 90 && individual.achievement <= 100) ||
+                (achievementFilter === 'Below' && individual.achievement < 90);
+            
+            return matchesSearch && matchesStatus && matchesAchievement;
+        });
+    }, [individualActuals, searchQuery, statusFilter, achievementFilter]);
+
+    // Pagination calculations
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredIndividuals.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredIndividuals.length / itemsPerPage);
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, statusFilter, achievementFilter]);
 
     // Calculations
     const calculateTeamTotals = useMemo(() => {
@@ -126,6 +205,15 @@ const MPMActualsActionPlans: React.FC = () => {
             )
         );
         setIsEditIndividualDialogOpen(false);
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1);
     };
 
     // Individual Dialog Component
@@ -345,6 +433,54 @@ const MPMActualsActionPlans: React.FC = () => {
                             </CardContent>
                         </Card>
 
+                        {/* Filter Section */}
+                        <Filtering>
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <Input
+                                    placeholder="Search by name or position..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                />
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Status</span>
+                                </label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                >
+                                    <option value="All">All Statuses</option>
+                                    <option value="On Track">On Track</option>
+                                    <option value="At Risk">At Risk</option>
+                                    <option value="Off Track">Off Track</option>
+                                </select>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Achievement</span>
+                                </label>
+                                <select
+                                    value={achievementFilter}
+                                    onChange={(e) => setAchievementFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                >
+                                    <option value="All">All Achievements</option>
+                                    <option value="Exceeding">Exceeding Target ({`>100%`})</option>
+                                    <option value="Meeting">Meeting Target (90-100%)</option>
+                                    <option value="Below">Below Target ({`<90%`})</option>
+                                </select>
+                            </div>
+                        </Filtering>
+
                         {/* Individual Actuals Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
@@ -352,9 +488,16 @@ const MPMActualsActionPlans: React.FC = () => {
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
                                         Individual KPI Actuals
                                     </CardTitle>
+                                    <Button 
+                                        onClick={() => setIsAddIndividualDialogOpen(true)}
+                                        className="bg-[#1B6131] hover:bg-[#46B749] dark:bg-[#46B749] dark:hover:bg-[#1B6131]"
+                                    >
+                                        <PlusCircle className="h-4 w-4 mr-2" />
+                                        Add Individual
+                                    </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className='m-0 p-0 pb-8 overflow-x-auto'>
+                            <CardContent className='m-0 p-0 overflow-x-auto'>
                                 <table className="w-full border-collapse">
                                     <thead className="bg-[#1B6131] text-white">
                                         <tr>
@@ -368,7 +511,7 @@ const MPMActualsActionPlans: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {individualActuals.map(individual => (
+                                        {currentItems.map(individual => (
                                             <tr
                                                 key={individual.id}
                                                 className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
@@ -423,6 +566,18 @@ const MPMActualsActionPlans: React.FC = () => {
                                         </tr>
                                     </tbody>
                                 </table>
+
+                                {/* Pagination Component */}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredIndividuals.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={isPaginationExpanded}
+                                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                />
                             </CardContent>
                         </Card>
                     </div>

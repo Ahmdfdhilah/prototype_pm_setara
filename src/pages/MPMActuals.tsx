@@ -25,7 +25,7 @@ import { Edit, Send, Eye, Users } from 'lucide-react';
 import Header from '@/components/Header';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import React from 'react';
 
 // Types
@@ -494,7 +494,7 @@ const MPMActuals = () => {
             />
 
             {/* Filter Section */}
-            <FilterSection
+            <Filtering
               startDate={startDate}
               endDate={endDate}
               handleStartDateChange={handleStartDateChange}
@@ -526,7 +526,7 @@ const MPMActuals = () => {
                   </SelectContent>
                 </Select>
               </div>
-            </FilterSection>
+            </Filtering>
 
             {/* Main Card */}
             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
@@ -545,7 +545,7 @@ const MPMActuals = () => {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className='m-0 p-0 pb-8'>
+              <CardContent className='m-0 p-0'>
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead className="bg-[#1B6131] text-white">

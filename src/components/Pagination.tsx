@@ -80,7 +80,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="w-full px-4 pt-2">
+    <div className="w-full px-4 pb-8">
       <div className="flex justify-end mb-2">
         <Button
           variant="ghost"
@@ -97,7 +97,7 @@ const Pagination: React.FC<PaginationProps> = ({
       </div>
 
       {expanded && (
-        <div className="p-4 border rounded-md bg-white dark:bg-gray-800 shadow-sm dark:border-gray-700">
+        <div className="p-4 border border-[#E6F5E6] rounded-md bg-white dark:bg-[#1A2A1F] shadow-sm dark:border-[#2D3D30]">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 sm:mb-0">
               <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -107,15 +107,15 @@ const Pagination: React.FC<PaginationProps> = ({
                 value={itemsPerPage.toString()}
                 onValueChange={onItemsPerPageChange}
               >
-                <SelectTrigger className="w-20 h-8 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                <SelectTrigger className="w-20 h-8 border-[#E6F5E6] dark:border-[#2D3D30] dark:bg-[#1A2A1F] dark:text-gray-200 dark:hover:bg-[#2D3D30]">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
+                <SelectContent className="dark:bg-[#1A2A1F] dark:border-[#2D3D30]">
                   {[10, 25, 50, 100].map((size) => (
                     <SelectItem
                       key={size}
                       value={size.toString()}
-                      className="dark:hover:bg-gray-600 dark:focus:bg-gray-600"
+                      className="dark:hover:bg-[#2D3D30] dark:focus:bg-[#2D3D30]"
                     >
                       {size}
                     </SelectItem>
@@ -130,7 +130,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 size="sm"
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="h-8 w-8 p-0 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-100"
+                className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -145,7 +145,7 @@ const Pagination: React.FC<PaginationProps> = ({
                     className={`h-8 w-8 p-0 ${
                       currentPage === page
                         ? "bg-[#1B6131] hover:bg-[#46B749] dark:bg-[#46B749] dark:hover:bg-[#1B6131]"
-                        : "dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600"
+                        : "border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30]"
                     }`}
                   >
                     {page}
@@ -165,7 +165,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 size="sm"
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="h-8 w-8 p-0 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-100"
+                className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -182,7 +182,7 @@ const Pagination: React.FC<PaginationProps> = ({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="h-8 w-8 p-0 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-100"
+              className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -200,7 +200,7 @@ const Pagination: React.FC<PaginationProps> = ({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="h-8 w-8 p-0 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-gray-100"
+              className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

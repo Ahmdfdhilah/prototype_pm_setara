@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Pagination from '@/components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 // Types
 type Unit = 'IT' | 'Marketing' | 'Sales' | 'Operations' | 'Customer Service' | 'Finance';
@@ -323,7 +323,7 @@ const IPMPage = () => {
                             </CardContent>
                         </Card>
 
-                        <FilterSection>
+                        <Filtering>
                             {currentRole !== 'employee' && (
                                 <>
                                     <div className="space-y-3 md:col-span-2">
@@ -406,7 +406,7 @@ const IPMPage = () => {
                                     </div>
                                 </>
                             )}
-                        </FilterSection>
+                        </Filtering>
 
                         {/* Employee List Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">

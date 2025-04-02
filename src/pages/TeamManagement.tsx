@@ -14,6 +14,7 @@ import {
     Plus,
     Search,
     Trash2,
+    Building2,
 } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
@@ -32,8 +33,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Team = {
@@ -53,12 +53,12 @@ type Department = {
 };
 
 const TeamManagementPage = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [teams, setTeams] = useState<Team[]>([]);
@@ -233,7 +233,7 @@ const TeamManagementPage = () => {
 
                     {/* Search and Filter Section */}
                     <div className="mb-6">
-                        <FilterSection
+                        <Filtering
                         >
                             <div className="space-y-3 md:col-span-2">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -269,7 +269,7 @@ const TeamManagementPage = () => {
                                     ))}
                                 </select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
                     </div>
 
                     {/* Team Table */}
@@ -285,7 +285,7 @@ const TeamManagementPage = () => {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-8">
+                        <CardContent className="p-0">
                             <div className="rounded-md border border-gray-200 dark:border-gray-700">
                                 <Table>
                                     <TableHeader>
@@ -302,22 +302,23 @@ const TeamManagementPage = () => {
                                         {currentItems.length > 0 ? (
                                             currentItems.map((team) => (
                                                 <TableRow key={team.team_id}>
-                                                    <TableCell className="font-medium">
+                                                    <TableCell>
                                                         <div className="flex items-center space-x-2">
                                                             <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
                                                             <span>{team.team_name}</span>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Badge className="bg-[#1B6131] hover:bg-[#1B6131] dark:bg-[#46B749] dark:hover:bg-[#46B749]">
-                                                            {team.department_name}
-                                                        </Badge>
+                                                        <div className="flex items-center space-x-2">
+                                                            <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                            <span>{team.department_name}</span>
+                                                        </div>
                                                     </TableCell>
                                                     <TableCell className="max-w-xs truncate">{team.team_description}</TableCell>
                                                     <TableCell>
-                                                        <Badge variant="outline" className="border-[#1B6131] text-[#1B6131] dark:border-[#46B749] dark:text-[#46B749]">
+                                                        <span className="inline-flex items-center">
                                                             {team.member_count} members
-                                                        </Badge>
+                                                        </span>
                                                     </TableCell>
                                                     <TableCell>
                                                         {new Date(team.team_created_at).toLocaleDateString()}

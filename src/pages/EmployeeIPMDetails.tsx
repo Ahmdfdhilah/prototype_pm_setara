@@ -25,7 +25,7 @@ import Pagination from '@/components/Pagination';
 import { Textarea } from '@/components/ui/textarea';
 import Breadcrumb from '@/components/Breadcrumb';
 import { useParams } from 'react-router-dom';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 // Types
 type IPMStatus = 'Pending' | 'Evidence Submitted' | 'Approved' | 'Rejected';
@@ -400,7 +400,7 @@ const EmployeeIPMDetailsPage = () => {
                                 </div>
                             </CardContent>
                         </Card>
-                        <FilterSection>
+                        <Filtering>
                             <div className="space-y-3">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <User className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
@@ -437,7 +437,7 @@ const EmployeeIPMDetailsPage = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
 
                         {/* IPM Entries */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
@@ -449,7 +449,7 @@ const EmployeeIPMDetailsPage = () => {
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className='m-0 p-0 pb-8'>
+                            <CardContent className='m-0 p-0'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full min-w-[800px]">
                                         <thead className="bg-[#1B6131] text-white">

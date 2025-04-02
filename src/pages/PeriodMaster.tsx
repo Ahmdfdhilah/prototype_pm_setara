@@ -22,7 +22,7 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type PeriodStatus = 'All' | 'Draft' | 'Active' | 'Closed';
@@ -235,7 +235,7 @@ const PeriodMaster = () => {
                             currentPage="Period Master Management"
                             showHomeIcon={true}
                         />
-                        <FilterSection
+                        <Filtering
                             handlePeriodChange={setYearFilter}
                             selectedPeriod={yearFilter}
                         >
@@ -277,7 +277,7 @@ const PeriodMaster = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
 
 
                         {/* Period Management Card */}

@@ -22,7 +22,7 @@ import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
     'July' | 'August' | 'September' | 'October' | 'November' | 'December';
@@ -83,7 +83,7 @@ const MPMActualsTeamKPI: React.FC = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(true);
+    const [paginationExpanded, setPaginationExpanded] = useState(false);
     
     // Filter state
     const [searchTerm, setSearchTerm] = useState('');
@@ -492,7 +492,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                         </Card>
 
                         {/* Filter Section */}
-                        <FilterSection>
+                        <Filtering>
                             <div className="space-y-3">
                                 <label htmlFor="searchTerm" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
@@ -524,7 +524,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                     <option value="Off Track">Off Track</option>
                                 </select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
 
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -540,7 +540,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                     </Button>
                                 </div>
                             </CardHeader>
-                            <CardContent className='m-0 p-0 pb-8'>
+                            <CardContent className='m-0 p-0'>
                                 <div className="overflow-x-auto">
                                     <table className="w-full border-collapse">
                                         <thead className="bg-[#1B6131] text-white">

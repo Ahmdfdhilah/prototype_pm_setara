@@ -16,6 +16,8 @@ import {
     Search,
     UserX,
     UserCheck,
+    Building2,
+    Users2,
 } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
@@ -35,7 +37,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import FilterSection from '@/components/Filtering';
+import Filtering from '@/components/Filtering';
 
 // Dummy data types based on your database schema
 type Employee = {
@@ -65,12 +67,12 @@ type Team = {
 };
 
 const EmployeeManagementPage = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -80,7 +82,7 @@ const EmployeeManagementPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(true);
+    const [paginationExpanded, setPaginationExpanded] = useState(false);
     const [filters, setFilters] = useState({
         department: '',
         team: '',
@@ -227,7 +229,7 @@ const EmployeeManagementPage = () => {
 
                     {/* Search and Filter Section - using the FilterSection component */}
                     <div className="mb-6">
-                        <FilterSection>
+                        <Filtering>
                             <div className="space-y-3 md:col-span-2">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
@@ -310,7 +312,7 @@ const EmployeeManagementPage = () => {
                                     <option value="no">Non-Managers</option>
                                 </select>
                             </div>
-                        </FilterSection>
+                        </Filtering>
                     </div>
 
                     {/* Employee Table */}
@@ -326,7 +328,7 @@ const EmployeeManagementPage = () => {
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-0 pb-8">
+                        <CardContent className="p-0">
                             <div className="rounded-md border border-gray-200 dark:border-gray-700">
                                 <Table>
                                     <TableHeader>
@@ -345,16 +347,12 @@ const EmployeeManagementPage = () => {
                                         {currentItems.length > 0 ? (
                                             currentItems.map((employee) => (
                                                 <TableRow key={employee.employee_id}>
-                                                    <TableCell className="font-medium">{employee.employee_number}</TableCell>
+                                                    <TableCell>{employee.employee_number}</TableCell>
                                                     <TableCell>
                                                         <div className="flex items-center space-x-2">
                                                             <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
                                                             <span>{employee.employee_name}</span>
-                                                            {employee.is_manager && (
-                                                                <Badge className="bg-[#1B6131] hover:bg-[#1B6131] dark:bg-[#46B749] dark:hover:bg-[#46B749]">
-                                                                    Manager
-                                                                </Badge>
-                                                            )}
+
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
@@ -363,8 +361,19 @@ const EmployeeManagementPage = () => {
                                                             <span>{employee.employee_email}</span>
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell>{employee.department_name}</TableCell>
-                                                    <TableCell>{employee.team_name}</TableCell>
+                                                    <TableCell>
+                                                        <div className="flex items-center space-x-2">
+                                                            <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                            <span>{employee.department_name}</span>
+                                                        </div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div className="flex items-center space-x-2">
+                                                            <Users2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                            <span>{employee.team_name}</span>
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell>
                                                         <Badge
                                                             variant={employee.employee_is_active ? 'default' : 'secondary'}
@@ -374,9 +383,7 @@ const EmployeeManagementPage = () => {
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Badge className="bg-[#1B6131] hover:bg-[#1B6131] dark:bg-[#46B749] dark:hover:bg-[#46B749]">
-                                                            {employee.is_manager ? 'Manager' : 'Employee'}
-                                                        </Badge>
+                                                        {employee.is_manager ? 'Manager' : 'Employee'}
                                                     </TableCell>
                                                     <TableCell>
                                                         <DropdownMenu>
