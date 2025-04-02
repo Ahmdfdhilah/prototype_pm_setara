@@ -52,7 +52,7 @@ const PerformanceManagementHome = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
                     <Breadcrumb
                         items={[]}
                         currentPage="Home"

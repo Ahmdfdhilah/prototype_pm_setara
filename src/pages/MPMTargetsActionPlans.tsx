@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
     Card,
@@ -7,19 +7,14 @@ import {
     CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Edit, PlusCircle, Trash2, Info } from 'lucide-react';
+import { Edit, PlusCircle, Trash2, Info, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
+import Filtering from '@/components/Filtering';
+import Pagination from '@/components/Pagination';
+import { IndividualTargetsDialog } from '@/components/IndividualTargetsDialog';
 
 // Types reflecting the multi-level performance management hierarchy
 type Perspective =
@@ -63,6 +58,7 @@ type IndividualPerformanceEntry = {
     monthlyActuals: Record<string, number>;
     weight: number;
     teamWeight: number;
+    status?: 'On Track' | 'At Risk' | 'Off Track';
 };
 
 const MPMTargetsActionPlans: React.FC = () => {
@@ -116,7 +112,8 @@ const MPMTargetsActionPlans: React.FC = () => {
                 'Mar-25': 0
             },
             weight: 5,
-            teamWeight: 20
+            teamWeight: 20,
+            status: 'At Risk'
         },
         {
             id: 'sales-2',
@@ -133,24 +130,128 @@ const MPMTargetsActionPlans: React.FC = () => {
                 'Mar-25': 0
             },
             weight: 10,
-            teamWeight: 15
+            teamWeight: 15,
+            status: 'On Track'
+        },
+        {
+            id: 'sales-3',
+            name: 'Michael Johnson',
+            position: 'Sales Manager',
+            monthlyTargets: {
+                'Jan-25': 25000,
+                'Feb-25': 27000,
+                'Mar-25': 30000
+            },
+            monthlyActuals: {
+                'Jan-25': 23500,
+                'Feb-25': 25000,
+                'Mar-25': 0
+            },
+            weight: 15,
+            teamWeight: 25,
+            status: 'At Risk'
+        },
+        {
+            id: 'sales-4',
+            name: 'Emily Clark',
+            position: 'Account Executive',
+            monthlyTargets: {
+                'Jan-25': 18000,
+                'Feb-25': 20000,
+                'Mar-25': 22000
+            },
+            monthlyActuals: {
+                'Jan-25': 18500,
+                'Feb-25': 20500,
+                'Mar-25': 0
+            },
+            weight: 8,
+            teamWeight: 18,
+            status: 'On Track'
+        },
+        {
+            id: 'sales-5',
+            name: 'Robert Wilson',
+            position: 'Junior Sales Representative',
+            monthlyTargets: {
+                'Jan-25': 12000,
+                'Feb-25': 13000,
+                'Mar-25': 15000
+            },
+            monthlyActuals: {
+                'Jan-25': 9000,
+                'Feb-25': 10500,
+                'Mar-25': 0
+            },
+            weight: 5,
+            teamWeight: 10,
+            status: 'Off Track'
         }
     ]);
 
     // UI State
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [isAddIndividualDialogOpen, setIsAddIndividualDialogOpen] = useState(false);
     const [isEditIndividualDialogOpen, setIsEditIndividualDialogOpen] = useState(false);
     const [selectedIndividual, setSelectedIndividual] = useState<IndividualPerformanceEntry | null>(null);
 
-    // Calculations
+    // Filter State - New
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All');
+    const [achievementFilter, setAchievementFilter] = useState('All');
+
+    // Pagination State - New
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
+
+    // Calculate achievement percentages for filtering
+    const getAchievementPercentage = (individual: IndividualPerformanceEntry): number => {
+        const totalTarget = individual.monthlyTargets['Jan-25'] + individual.monthlyTargets['Feb-25'];
+        const totalActual = individual.monthlyActuals['Jan-25'] + individual.monthlyActuals['Feb-25'];
+        return totalTarget > 0 ? (totalActual / totalTarget) * 100 : 0;
+    };
+
+    // Filter function - New
+    const filteredIndividuals = useMemo(() => {
+        return individuals.filter(individual => {
+            const matchesSearch =
+                individual.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                individual.position.toLowerCase().includes(searchQuery.toLowerCase());
+
+            const matchesStatus =
+                statusFilter === 'All' || individual.status === statusFilter;
+
+            const achievementPercentage = getAchievementPercentage(individual);
+            const matchesAchievement =
+                achievementFilter === 'All' ||
+                (achievementFilter === 'Exceeding' && achievementPercentage > 100) ||
+                (achievementFilter === 'Meeting' && achievementPercentage >= 90 && achievementPercentage <= 100) ||
+                (achievementFilter === 'Below' && achievementPercentage < 90);
+
+            return matchesSearch && matchesStatus && matchesAchievement;
+        });
+    }, [individuals, searchQuery, statusFilter, achievementFilter]);
+
+    // Reset pagination when filters change - New
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, statusFilter, achievementFilter]);
+
+    // Pagination calculations - New
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredIndividuals.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredIndividuals.length / itemsPerPage);
+
+    // Calculations for team totals
     const calculateIndividualTotals = useMemo(() => {
         const totals: Record<string, { target: number, actual: number }> = {
             'Jan-25': { target: 0, actual: 0 },
@@ -158,7 +259,7 @@ const MPMTargetsActionPlans: React.FC = () => {
             'Mar-25': { target: 0, actual: 0 }
         };
 
-        individuals.forEach(individual => {
+        currentItems.forEach(individual => {
             Object.keys(individual.monthlyTargets).forEach(month => {
                 totals[month].target += individual.monthlyTargets[month];
                 totals[month].actual += individual.monthlyActuals[month] || 0;
@@ -166,7 +267,7 @@ const MPMTargetsActionPlans: React.FC = () => {
         });
 
         return totals;
-    }, [individuals]);
+    }, [currentItems]);
 
     // Handlers for individual performance entries
     const handleAddIndividual = (newIndividual: IndividualPerformanceEntry) => {
@@ -197,142 +298,14 @@ const MPMTargetsActionPlans: React.FC = () => {
         );
     };
 
-    // Individual Performance Dialog Component
-    const IndividualPerformanceDialog = ({
-        isOpen,
-        onClose,
-        onSave,
-        initialData
-    }: {
-        isOpen: boolean;
-        onClose: () => void;
-        onSave: (individual: IndividualPerformanceEntry) => void;
-        initialData?: IndividualPerformanceEntry;
-    }) => {
-        const [formData, setFormData] = useState<IndividualPerformanceEntry>(initialData || {
-            id: '',
-            name: '',
-            position: '',
-            monthlyTargets: {
-                'Jan-25': 0,
-                'Feb-25': 0,
-                'Mar-25': 0
-            },
-            monthlyActuals: {
-                'Jan-25': 0,
-                'Feb-25': 0,
-                'Mar-25': 0
-            },
-            weight: 0,
-            teamWeight: teamActionPlan.teamWeight
-        });
+    // Pagination handlers - New
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
-        return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-md w-[95%] lg:max-w-xl rounded-lg overflow-y-scroll max-h-[85vh]">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {initialData ? 'Edit' : 'Add'} Individual Performance
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="grid gap-4 py-4">
-                        {/* Personal Information */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Name</Label>
-                            <Input
-                                value={formData.name}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    name: e.target.value
-                                }))}
-                                className="col-span-3"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Position</Label>
-                            <Input
-                                value={formData.position}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    position: e.target.value
-                                }))}
-                                className="col-span-3"
-                            />
-                        </div>
-
-                        {/* Individual Weight */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Individual Weight (%)</Label>
-                            <Input
-                                type="number"
-                                value={formData.weight}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    weight: Number(e.target.value)
-                                }))}
-                                className="col-span-3"
-                                max={100}
-                                min={0}
-                            />
-                        </div>
-
-                        {/* Monthly Targets and Actuals */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Monthly Targets/Actuals</Label>
-                            <div className="col-span-3 grid grid-cols-3 gap-2">
-                                {Object.keys(formData.monthlyTargets).map(month => (
-                                    <div key={month} className="space-y-2">
-                                        <Label>{month}</Label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <Label className="text-xs">Target</Label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.monthlyTargets[month]}
-                                                    onChange={(e) => setFormData(prev => ({
-                                                        ...prev,
-                                                        monthlyTargets: {
-                                                            ...prev.monthlyTargets,
-                                                            [month]: Number(e.target.value)
-                                                        }
-                                                    }))}
-                                                />
-                                            </div>
-                                            <div>
-                                                <Label className="text-xs">Actual</Label>
-                                                <Input
-                                                    type="number"
-                                                    value={formData.monthlyActuals[month]}
-                                                    onChange={(e) => setFormData(prev => ({
-                                                        ...prev,
-                                                        monthlyActuals: {
-                                                            ...prev.monthlyActuals,
-                                                            [month]: Number(e.target.value)
-                                                        }
-                                                    }))}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={onClose}>Cancel</Button>
-                        <Button
-                            onClick={() => onSave(formData)}
-                            disabled={!formData.name}
-                        >
-                            {initialData ? 'Update' : 'Create'}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        );
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1);
     };
 
     return (
@@ -367,10 +340,10 @@ const MPMTargetsActionPlans: React.FC = () => {
                                 label: 'MPM Targets',
                                 path: '/performance-management/mpm/target',
                             }, {
-                                label: 'Team KPI Action Plans',
+                                label: 'MPM Target Teams',
                                 path: `/performance-management/mpm/target/${targetId}/entri/${mpmId}/teams`,
                             }]}
-                            currentPage="Individual Performance Breakdown"
+                            currentPage="Individual Targets"
                             subtitle={`MPM Target ID: ${targetId} | Entri ID: ${mpmId} | Team ID: ${teamId}`}
                             showHomeIcon={true}
                         />
@@ -378,10 +351,19 @@ const MPMTargetsActionPlans: React.FC = () => {
                         {/* Team KPI Details Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    <Info className="mr-2 h-5 w-5" />
-                                    Team KPI Details
-                                </CardTitle>
+                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        <Info className="mr-2 h-5 w-5" />
+                                        Team KPI Details
+                                    </CardTitle>
+                                    <Button
+                                        onClick={() => setIsAddIndividualDialogOpen(true)}
+                                        className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+                                    >
+                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        Create Action Plans
+                                    </Button>
+                                </div>
                             </CardHeader>
                             <CardContent className="mt-4 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -421,21 +403,60 @@ const MPMTargetsActionPlans: React.FC = () => {
                             </CardContent>
                         </Card>
 
+                        {/* Filter Section - New */}
+                        <Filtering>
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <Input
+                                    placeholder="Search by name or position..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                />
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Status</span>
+                                </label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                >
+                                    <option value="All">All Statuses</option>
+                                    <option value="On Track">On Track</option>
+                                    <option value="At Risk">At Risk</option>
+                                    <option value="Off Track">Off Track</option>
+                                </select>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <span>Achievement</span>
+                                </label>
+                                <select
+                                    value={achievementFilter}
+                                    onChange={(e) => setAchievementFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                >
+                                    <option value="All">All Achievements</option>
+                                    <option value="Exceeding">Exceeding Target ({`>100%`})</option>
+                                    <option value="Meeting">Meeting Target (90-100%)</option>
+                                    <option value="Below">Below Target ({`<90%`})</option>
+                                </select>
+                            </div>
+                        </Filtering>
+
                         {/* Individual Performance Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center justify-between">
-                                        Individual Performance Entries
-                                    </CardTitle>
-                                    <Button
-                                        onClick={() => setIsAddIndividualDialogOpen(true)}
-                                        className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
-                                    >
-                                        <PlusCircle className="mr-2 h-4 w-4" />
-                                        Create Action Plans
-                                    </Button>
-                                </div>
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center justify-between">
+                                    Individual Performance Entries
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className='m-0 p-0 overflow-x-auto'>
                                 <table className="w-full border-collapse">
@@ -445,13 +466,14 @@ const MPMTargetsActionPlans: React.FC = () => {
                                             <th className="p-3 min-w-[150px]">Name</th>
                                             <th className="p-3 min-w-[150px]">Position</th>
                                             <th className="p-3 text-center min-w-[100px]">Weight</th>
+                                            <th className="p-3 text-center min-w-[100px]">Status</th>
                                             <th className="p-3 text-center min-w-[100px]">Jan-25</th>
                                             <th className="p-3 text-center min-w-[100px]">Feb-25</th>
                                             <th className="p-3 text-center min-w-[100px]">Mar-25</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {individuals.map(individual => (
+                                        {currentItems.map(individual => (
                                             <tr
                                                 key={individual.id}
                                                 className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
@@ -480,6 +502,14 @@ const MPMTargetsActionPlans: React.FC = () => {
                                                 <td className="p-3">{individual.name}</td>
                                                 <td className="p-3">{individual.position}</td>
                                                 <td className="p-3 text-center">{individual.weight}%</td>
+                                                <td className={`p-3 text-center font-bold ${individual.status === 'On Track'
+                                                    ? 'text-green-600'
+                                                    : individual.status === 'At Risk'
+                                                        ? 'text-amber-600'
+                                                        : 'text-red-600'
+                                                    }`}>
+                                                    {individual.status}
+                                                </td>
                                                 {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => (
                                                     <td key={month} className="p-3 text-center">
                                                         <div className="flex flex-col">
@@ -506,10 +536,8 @@ const MPMTargetsActionPlans: React.FC = () => {
                                         ))}
                                         {/* Team Totals Row */}
                                         <tr className="bg-[#1B6131] text-white font-bold">
-                                            <td colSpan={3} className="p-3 text-center">Team Total</td>
-                                            <td className="p-3 text-center">
-                                                {individuals.reduce((sum, ind) => sum + ind.weight, 0)}%
-                                            </td>
+                                            <td colSpan={4} className="p-3 text-center">Team Total</td>
+                                            <td className="p-3 text-center"></td>
                                             {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => {
                                                 const monthTotals = calculateIndividualTotals[month];
                                                 return (
@@ -538,6 +566,18 @@ const MPMTargetsActionPlans: React.FC = () => {
                                         </tr>
                                     </tbody>
                                 </table>
+
+                                {/* Pagination Component - New */}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredIndividuals.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={isPaginationExpanded}
+                                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                />
                             </CardContent>
                         </Card>
                     </div>
@@ -545,14 +585,14 @@ const MPMTargetsActionPlans: React.FC = () => {
             </div>
 
             {/* Dialogs */}
-            <IndividualPerformanceDialog
+            <IndividualTargetsDialog
                 isOpen={isAddIndividualDialogOpen}
                 onClose={() => setIsAddIndividualDialogOpen(false)}
                 onSave={handleAddIndividual}
             />
 
             {selectedIndividual && (
-                <IndividualPerformanceDialog
+                <IndividualTargetsDialog
                     isOpen={isEditIndividualDialogOpen}
                     onClose={() => setIsEditIndividualDialogOpen(false)}
                     onSave={handleEditIndividual}

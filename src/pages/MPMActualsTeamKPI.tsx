@@ -8,21 +8,15 @@ import {
     CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Edit, Eye, Info, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import Filtering from '@/components/Filtering';
+import { teamMpmActual } from '@/lib/MpmTeamMocksData';
+import { TeamActualEditDialog } from '@/components/TeamActualEditDialog';
 
 type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
     'July' | 'August' | 'September' | 'October' | 'November' | 'December';
@@ -68,23 +62,22 @@ const MPMActualsTeamKPI: React.FC = () => {
     const month = searchParams.get('month');
 
     // State for sidebar and UI
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedTeamKPI, setSelectedTeamKPI] = useState<TeamKPIActual | null>(null);
-    
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [paginationExpanded, setPaginationExpanded] = useState(false);
-    
+
     // Filter state
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
@@ -102,106 +95,21 @@ const MPMActualsTeamKPI: React.FC = () => {
         target: 100000
     });
 
-    const [teamKPIActuals, setTeamKPIActuals] = useState<TeamKPIActual[]>([
-        {
-            id: '1',
-            teamId: 1,
-            teamName: 'Sales Team',
-            month: 'January',
-            target: 50000,
-            actual: 45000,
-            achievement: 90,
-            weight: 20,
-            problemIdentification: 'Lower sales in new market segments',
-            rootCauseAnalysis: 'Limited market penetration and competitive pricing',
-            correctiveAction: 'Develop targeted marketing strategy and adjust pricing',
-            status: 'At Risk'
-        },
-        {
-            id: '2',
-            teamId: 2,
-            teamName: 'Business Development',
-            month: 'January',
-            target: 25000,
-            actual: 30000,
-            achievement: 120,
-            weight: 10,
-            problemIdentification: '',
-            rootCauseAnalysis: '',
-            correctiveAction: '',
-            status: 'On Track'
-        },
-        {
-            id: '3',
-            teamId: 3,
-            teamName: 'Marketing',
-            month: 'January',
-            target: 15000,
-            actual: 12000,
-            achievement: 80,
-            weight: 15,
-            problemIdentification: 'Campaign underperformance',
-            rootCauseAnalysis: 'Poor targeting and messaging',
-            correctiveAction: 'Refine messaging and audience targeting',
-            status: 'At Risk'
-        },
-        {
-            id: '4',
-            teamId: 4,
-            teamName: 'Product Development',
-            month: 'January',
-            target: 10000,
-            actual: 5000,
-            achievement: 50,
-            weight: 25,
-            problemIdentification: 'Product launch delays',
-            rootCauseAnalysis: 'Technical issues and resource constraints',
-            correctiveAction: 'Increase development team capacity',
-            status: 'Off Track'
-        },
-        {
-            id: '5',
-            teamId: 5,
-            teamName: 'Customer Success',
-            month: 'January',
-            target: 30000,
-            actual: 32000,
-            achievement: 107,
-            weight: 15,
-            problemIdentification: '',
-            rootCauseAnalysis: '',
-            correctiveAction: '',
-            status: 'On Track'
-        },
-        {
-            id: '6',
-            teamId: 6,
-            teamName: 'Strategic Partnerships',
-            month: 'January',
-            target: 20000,
-            actual: 18000,
-            achievement: 90,
-            weight: 15,
-            problemIdentification: 'Partner engagement issues',
-            rootCauseAnalysis: 'Insufficient partner incentives',
-            correctiveAction: 'Restructure partner program benefits',
-            status: 'At Risk'
-        }
-    ]);
+    const [teamKPIActuals, setTeamKPIActuals] = useState<TeamKPIActual[]>(teamMpmActual);
 
     // Apply filters to get filtered data
     const filteredData = useMemo(() => {
         return teamKPIActuals.filter(kpi => {
             // Apply search term filter (case insensitive)
-            const matchesSearch = searchTerm === '' || 
+            const matchesSearch = searchTerm === '' ||
                 kpi.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 kpi.problemIdentification.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 kpi.rootCauseAnalysis.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 kpi.correctiveAction.toLowerCase().includes(searchTerm.toLowerCase());
-            
+
             // Apply status filter
             const matchesStatus = statusFilter === 'All' || kpi.status === statusFilter;
-            
+
             return matchesSearch && matchesStatus;
         });
     }, [teamKPIActuals, searchTerm, statusFilter]);
@@ -217,8 +125,8 @@ const MPMActualsTeamKPI: React.FC = () => {
         return {
             total: filteredData.reduce((sum, plan) => sum + plan.actual, 0),
             totalWeight: filteredData.reduce((sum, plan) => sum + plan.weight, 0),
-            averageAchievement: filteredData.length > 0 
-                ? filteredData.reduce((sum, plan) => sum + plan.achievement, 0) / filteredData.length 
+            averageAchievement: filteredData.length > 0
+                ? filteredData.reduce((sum, plan) => sum + plan.achievement, 0) / filteredData.length
                 : 0
         };
     }, [filteredData]);
@@ -237,15 +145,6 @@ const MPMActualsTeamKPI: React.FC = () => {
         setPaginationExpanded(!paginationExpanded);
     };
 
-    // Team KPI handlers
-    const handleAddTeamKPI = (newTeamKPI: TeamKPIActual) => {
-        setTeamKPIActuals(prev => [
-            ...prev,
-            { ...newTeamKPI, id: `${prev.length + 1}` }
-        ]);
-        setIsAddDialogOpen(false);
-    };
-
     const handleEditTeamKPI = (teamKPI: TeamKPIActual) => {
         setTeamKPIActuals(prev =>
             prev.map(item =>
@@ -253,175 +152,6 @@ const MPMActualsTeamKPI: React.FC = () => {
             )
         );
         setIsEditDialogOpen(false);
-    };
-
-    const TeamKPIDialog = ({
-        isOpen,
-        onClose,
-        onSave,
-        initialData
-    }: {
-        isOpen: boolean;
-        onClose: () => void;
-        onSave: (teamKPI: TeamKPIActual) => void;
-        initialData?: TeamKPIActual;
-    }) => {
-        const [formData, setFormData] = useState<TeamKPIActual>(initialData || {
-            id: '',
-            teamId: 0,
-            teamName: '',
-            month: 'January',
-            target: 0,
-            actual: 0,
-            achievement: 0,
-            weight: 0,
-            problemIdentification: '',
-            rootCauseAnalysis: '',
-            correctiveAction: '',
-            status: 'On Track'
-        });
-
-        return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {initialData ? 'Edit' : 'Add'} Team KPI Actual
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="grid gap-4 py-4">
-                        {/* Team Name and Month */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Team Name</Label>
-                                <Input
-                                    value={formData.teamName}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        teamName: e.target.value
-                                    }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Targets and Actuals */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Target</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.target}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        target: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <Label>Actual</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.actual}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        actual: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Achievement and Weight */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Achievement (%)</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.achievement}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        achievement: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <Label>Weight (%)</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.weight}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        weight: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Problem Identification */}
-                        <div>
-                            <Label>Problem Identification</Label>
-                            <Input
-                                value={formData.problemIdentification}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    problemIdentification: e.target.value
-                                }))}
-                            />
-                        </div>
-
-                        {/* Root Cause Analysis */}
-                        <div>
-                            <Label>Root Cause Analysis</Label>
-                            <Input
-                                value={formData.rootCauseAnalysis}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    rootCauseAnalysis: e.target.value
-                                }))}
-                            />
-                        </div>
-
-                        {/* Corrective Action */}
-                        <div>
-                            <Label>Corrective Action</Label>
-                            <Input
-                                value={formData.correctiveAction}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    correctiveAction: e.target.value
-                                }))}
-                            />
-                        </div>
-
-                        {/* Status */}
-                        <div>
-                            <Label>Status</Label>
-                            <select
-                                value={formData.status}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    status: e.target.value as TeamKPIActual['status']
-                                }))}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="On Track">On Track</option>
-                                <option value="At Risk">At Risk</option>
-                                <option value="Off Track">Off Track</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button onClick={() => onSave(formData)}>
-                            {initialData ? 'Update' : 'Create'}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        );
     };
 
     return (
@@ -507,7 +237,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                     className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
                                 />
                             </div>
-                            
+
                             <div className="space-y-3">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <Info className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
@@ -528,17 +258,9 @@ const MPMActualsTeamKPI: React.FC = () => {
 
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <div className="flex flex-row justify-between items-center">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                        Team KPI Actuals
-                                    </CardTitle>
-                                    <Button 
-                                        onClick={() => setIsAddDialogOpen(true)}
-                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                                    >
-                                        Add Team KPI
-                                    </Button>
-                                </div>
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    Team KPI Actuals
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className='m-0 p-0'>
                                 <div className="overflow-x-auto">
@@ -598,7 +320,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                                     </td>
                                                 </tr>
                                             ))}
-                                            
+
                                             {/* Show message when no data is available */}
                                             {paginatedData.length === 0 && (
                                                 <tr>
@@ -607,7 +329,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                                     </td>
                                                 </tr>
                                             )}
-                                            
+
                                             {/* Total Row - only show if we have data */}
                                             {paginatedData.length > 0 && (
                                                 <tr className="bg-[#1B6131] text-white font-bold">
@@ -622,33 +344,27 @@ const MPMActualsTeamKPI: React.FC = () => {
                                         </tbody>
                                     </table>
                                 </div>
-                                
+
                                 {/* Pagination Component */}
                                 <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
-                                        itemsPerPage={itemsPerPage}
-                                        totalItems={filteredData.length}
-                                        onPageChange={handlePageChange}
-                                        onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={togglePaginationExpand}
-                                    />
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredData.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={togglePaginationExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>
                 </main>
             </div>
 
-            {/* Dialogs */}
-            <TeamKPIDialog
-                isOpen={isAddDialogOpen}
-                onClose={() => setIsAddDialogOpen(false)}
-                onSave={handleAddTeamKPI}
-            />
 
             {selectedTeamKPI && (
-                <TeamKPIDialog
+                <TeamActualEditDialog
                     isOpen={isEditDialogOpen}
                     onClose={() => setIsEditDialogOpen(false)}
                     onSave={handleEditTeamKPI}

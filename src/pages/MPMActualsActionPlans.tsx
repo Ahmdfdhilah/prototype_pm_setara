@@ -7,21 +7,14 @@ import {
     CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Edit, Info, Search, PlusCircle } from 'lucide-react';
+import { Edit, Info, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
 import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
+import { IndividualActualsDialog } from '@/components/IndividualActualsDialog';
 
 type IndividualKPIActual = {
     id: string;
@@ -54,7 +47,6 @@ const MPMActualsActionPlans: React.FC = () => {
     });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
-    const [isAddIndividualDialogOpen, setIsAddIndividualDialogOpen] = useState(false);
     const [isEditIndividualDialogOpen, setIsEditIndividualDialogOpen] = useState(false);
     const [selectedIndividual, setSelectedIndividual] = useState<IndividualKPIActual | null>(null);
 
@@ -143,19 +135,19 @@ const MPMActualsActionPlans: React.FC = () => {
     // Filter function
     const filteredIndividuals = useMemo(() => {
         return individualActuals.filter(individual => {
-            const matchesSearch = 
+            const matchesSearch =
                 individual.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 individual.position.toLowerCase().includes(searchQuery.toLowerCase());
-            
-            const matchesStatus = 
+
+            const matchesStatus =
                 statusFilter === 'All' || individual.status === statusFilter;
-            
-            const matchesAchievement = 
+
+            const matchesAchievement =
                 achievementFilter === 'All' ||
                 (achievementFilter === 'Exceeding' && individual.achievement > 100) ||
                 (achievementFilter === 'Meeting' && individual.achievement >= 90 && individual.achievement <= 100) ||
                 (achievementFilter === 'Below' && individual.achievement < 90);
-            
+
             return matchesSearch && matchesStatus && matchesAchievement;
         });
     }, [individualActuals, searchQuery, statusFilter, achievementFilter]);
@@ -180,19 +172,6 @@ const MPMActualsActionPlans: React.FC = () => {
         };
     }, [individualActuals]);
 
-    // Handlers
-    const handleAddIndividual = (newIndividual: IndividualKPIActual) => {
-        setIndividualActuals(prev => [
-            ...prev,
-            {
-                ...newIndividual,
-                id: `${prev.length + 1}`,
-                achievement: (newIndividual.actual / newIndividual.target) * 100
-            }
-        ]);
-        setIsAddIndividualDialogOpen(false);
-    };
-
     const handleEditIndividual = (updatedIndividual: IndividualKPIActual) => {
         setIndividualActuals(prev =>
             prev.map(individual =>
@@ -214,159 +193,6 @@ const MPMActualsActionPlans: React.FC = () => {
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(parseInt(value));
         setCurrentPage(1);
-    };
-
-    // Individual Dialog Component
-    const IndividualActualsDialog = ({
-        isOpen,
-        onClose,
-        onSave,
-        initialData
-    }: {
-        isOpen: boolean;
-        onClose: () => void;
-        onSave: (individual: IndividualKPIActual) => void;
-        initialData?: IndividualKPIActual;
-    }) => {
-        const [formData, setFormData] = useState<IndividualKPIActual>(initialData || {
-            id: '',
-            name: '',
-            position: '',
-            target: 0,
-            actual: 0,
-            achievement: 0,
-            problemIdentification: '',
-            rootCauseAnalysis: '',
-            correctiveAction: '',
-            status: 'On Track'
-        });
-
-        return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {initialData ? 'Edit' : 'Add'} Individual KPI Actual
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="grid gap-4 py-4">
-                        {/* Personal Information */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Name</Label>
-                                <Input
-                                    value={formData.name}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        name: e.target.value
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <Label>Position</Label>
-                                <Input
-                                    value={formData.position}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        position: e.target.value
-                                    }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Targets and Actuals */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label>Target</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.target}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        target: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                            <div>
-                                <Label>Actual</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.actual}
-                                    onChange={(e) => setFormData(prev => ({
-                                        ...prev,
-                                        actual: Number(e.target.value)
-                                    }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Problem Analysis */}
-                        <div>
-                            <Label>Problem Identification</Label>
-                            <Input
-                                value={formData.problemIdentification}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    problemIdentification: e.target.value
-                                }))}
-                                placeholder="Describe the specific problem"
-                            />
-                        </div>
-
-                        <div>
-                            <Label>Root Cause Analysis</Label>
-                            <Input
-                                value={formData.rootCauseAnalysis}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    rootCauseAnalysis: e.target.value
-                                }))}
-                                placeholder="Analyze the underlying causes"
-                            />
-                        </div>
-
-                        <div>
-                            <Label>Corrective Action</Label>
-                            <Input
-                                value={formData.correctiveAction}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    correctiveAction: e.target.value
-                                }))}
-                                placeholder="Propose solutions or improvements"
-                            />
-                        </div>
-
-                        {/* Status */}
-                        <div>
-                            <Label>Status</Label>
-                            <select
-                                value={formData.status}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    status: e.target.value as IndividualKPIActual['status']
-                                }))}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="On Track">On Track</option>
-                                <option value="At Risk">At Risk</option>
-                                <option value="Off Track">Off Track</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button onClick={() => onSave(formData)}>
-                            {initialData ? 'Update' : 'Create'}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        );
     };
 
     return (
@@ -396,9 +222,9 @@ const MPMActualsActionPlans: React.FC = () => {
                     <div className="space-y-6 mb-16">
                         <Breadcrumb
                             items={[
-                                { label: 'MPM Actuals', path: '/performance-management/mpm/actual' },
-                                { label: `${month} Actuals`, path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}`},
-                                { label: `${month} Actuals`, path: `/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams?month=${month}`}
+                                { label: 'MPM Actuals List', path: '/performance-management/mpm/actual' },
+                                { label: 'MPM Actuals', path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}` },
+                                { label: 'MPM Actual Teams', path: `/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams?month=${month}` }
                             ]}
                             currentPage="Individual Actuals"
                             subtitle={`MPM Actual ID: ${mpmActualId}  | Team ID: ${teamId} | Month: ${month}`}
@@ -447,7 +273,7 @@ const MPMActualsActionPlans: React.FC = () => {
                                     className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
                                 />
                             </div>
-                            
+
                             <div className="space-y-3">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <span>Status</span>
@@ -463,7 +289,7 @@ const MPMActualsActionPlans: React.FC = () => {
                                     <option value="Off Track">Off Track</option>
                                 </select>
                             </div>
-                            
+
                             <div className="space-y-3">
                                 <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                     <span>Achievement</span>
@@ -484,18 +310,9 @@ const MPMActualsActionPlans: React.FC = () => {
                         {/* Individual Actuals Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                        Individual KPI Actuals
-                                    </CardTitle>
-                                    <Button 
-                                        onClick={() => setIsAddIndividualDialogOpen(true)}
-                                        className="bg-[#1B6131] hover:bg-[#46B749] dark:bg-[#46B749] dark:hover:bg-[#1B6131]"
-                                    >
-                                        <PlusCircle className="h-4 w-4 mr-2" />
-                                        Add Individual
-                                    </Button>
-                                </div>
+                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    Individual KPI Actuals
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className='m-0 p-0 overflow-x-auto'>
                                 <table className="w-full border-collapse">
@@ -583,13 +400,6 @@ const MPMActualsActionPlans: React.FC = () => {
                     </div>
                 </main>
             </div>
-
-            {/* Dialogs */}
-            <IndividualActualsDialog
-                isOpen={isAddIndividualDialogOpen}
-                onClose={() => setIsAddIndividualDialogOpen(false)}
-                onSave={handleAddIndividual}
-            />
 
             {selectedIndividual && (
                 <IndividualActualsDialog

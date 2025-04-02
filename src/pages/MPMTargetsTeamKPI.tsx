@@ -8,26 +8,14 @@ import {
     CardTitle
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter
-} from '@/components/ui/dialog';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@/components/ui/select';
+import { Edit, Eye, Info, PlusCircle, Trash2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Edit, Eye, Info, PlusCircle, Trash2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
+import Pagination from '@/components/Pagination';
+import Filtering from '@/components/Filtering';
+import { TeamTargetEditDialog } from '@/components/TeamTargetEditDialog';
 
 // Enhanced Types
 type Perspective =
@@ -57,10 +45,10 @@ type TeamKPIActionPlan = {
     id?: string;
     parentKPI: MPMEntry;
     teamName: string;
-    teamWeight: number; // New: Team-specific weight allocation
+    teamWeight: number;
     teamTarget: number;
     monthlyTargets: Record<string, number>;
-    comments?: string; // Optional: Add comments for team strategy
+    comments?: string;
 };
 
 const MPMTargetsTeamKPI: React.FC = () => {
@@ -91,7 +79,7 @@ const MPMTargetsTeamKPI: React.FC = () => {
             id: '1',
             parentKPI: parentKPIs[0],
             teamName: 'Sales Team',
-            teamWeight: 20, // Can be different from parent KPI weight
+            teamWeight: 20,
             teamTarget: 50000,
             monthlyTargets: {
                 'Jan-25': 50000,
@@ -112,201 +100,120 @@ const MPMTargetsTeamKPI: React.FC = () => {
                 'Mar-25': 35000
             },
             comments: 'Explore new market segments'
+        },
+        {
+            id: '3',
+            parentKPI: parentKPIs[0],
+            teamName: 'Marketing',
+            teamWeight: 15,
+            teamTarget: 35000,
+            monthlyTargets: {
+                'Jan-25': 35000,
+                'Feb-25': 40000,
+                'Mar-25': 45000
+            },
+            comments: 'Increase brand awareness and lead generation'
+        },
+        {
+            id: '4',
+            parentKPI: parentKPIs[0],
+            teamName: 'Customer Success',
+            teamWeight: 10,
+            teamTarget: 20000,
+            monthlyTargets: {
+                'Jan-25': 20000,
+                'Feb-25': 22000,
+                'Mar-25': 25000
+            },
+            comments: 'Improve customer retention and satisfaction'
         }
     ]);
 
-
     // State for UI and dialogs
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768; 
+        }
+        return true; 
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [isAddActionPlanDialogOpen, setIsAddActionPlanDialogOpen] = useState(false);
     const [isEditActionPlanDialogOpen, setIsEditActionPlanDialogOpen] = useState(false);
     const [selectedActionPlan, setSelectedActionPlan] = useState<TeamKPIActionPlan | null>(null);
     const navigate = useNavigate();
+
+    // Pagination state - Added from Actual MPM
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [paginationExpanded, setPaginationExpanded] = useState(false);
+    
+    // Filter state - Added from Actual MPM
+    const [searchTerm, setSearchTerm] = useState('');
+    const [teamFilter, setTeamFilter] = useState('All');
+
+    // Apply filters to get filtered data - Added from Actual MPM
+    const filteredData = useMemo(() => {
+        return teamKPIActionPlans.filter(plan => {
+            // Apply search term filter (case insensitive)
+            const matchesSearch = searchTerm === '' || 
+                plan.teamName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (plan.comments && plan.comments.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            // Apply team filter
+            const matchesTeam = teamFilter === 'All' || plan.teamName === teamFilter;
+            
+            return matchesSearch && matchesTeam;
+        });
+    }, [teamKPIActionPlans, searchTerm, teamFilter]);
+
+    // Paginate the filtered data - Added from Actual MPM
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredData.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredData, currentPage, itemsPerPage]);
+
     // Calculation of totals
     const calculateTotals = useMemo(() => {
         const totals: Record<string, number> = {
             'Jan-25': 0,
             'Feb-25': 0,
             'Mar-25': 0,
-            total: 0
+            total: 0,
+            totalWeight: 0 // Added to track total weight
         };
 
-        teamKPIActionPlans.forEach(plan => {
+        filteredData.forEach(plan => {
             Object.keys(plan.monthlyTargets).forEach(month => {
                 totals[month as keyof typeof totals] += plan.monthlyTargets[month];
             });
             totals.total += plan.teamTarget;
+            totals.totalWeight += plan.teamWeight;
         });
 
         return totals;
-    }, [teamKPIActionPlans]);
+    }, [filteredData]);
 
-
-    // Dialog for adding/editing team KPI action plans
-    const TeamKPIActionPlanDialog = ({
-        isOpen,
-        onClose,
-        onSave,
-        initialData
-    }: {
-        isOpen: boolean;
-        onClose: () => void;
-        onSave: (actionPlan: TeamKPIActionPlan) => void;
-        initialData?: TeamKPIActionPlan;
-    }) => {
-        const [formData, setFormData] = useState<TeamKPIActionPlan>(initialData || {
-            parentKPI: parentKPIs[0],
-            teamName: '',
-            teamWeight: 0,
-            teamTarget: 0,
-            monthlyTargets: {
-                'Jan-25': 0,
-                'Feb-25': 0,
-                'Mar-25': 0
-            },
-            comments: ''
-        });
-
-        return (
-            <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-md w-[95%] lg:max-w-2xl rounded-lg overflow-y-scroll max-h-[85vh]">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {initialData ? 'Edit' : 'Add'} Team KPI Action Plan
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div className="grid gap-4 py-4">
-                        {/* Parent KPI Selection */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Parent KPI</Label>
-                            <Select
-                                value={formData.parentKPI.id?.toString()}
-                                onValueChange={(value) => {
-                                    const selectedKPI = parentKPIs.find(kpi => kpi.id === Number(value));
-                                    if (selectedKPI) {
-                                        setFormData(prev => ({
-                                            ...prev,
-                                            parentKPI: selectedKPI
-                                        }));
-                                    }
-                                }}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Parent KPI" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {parentKPIs.map(kpi => (
-                                        <SelectItem key={kpi.id} value={formData.parentKPI.id ? formData.parentKPI.id.toString() : ''}>
-                                            {kpi.kpi} - {kpi.perspective}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-
-                            </Select>
-                        </div>
-
-                        {/* Team Name */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Team Name</Label>
-                            <Input
-                                value={formData.teamName}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    teamName: e.target.value
-                                }))}
-                                className="col-span-3"
-                            />
-                        </div>
-
-                        {/* Team Target */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Team Target</Label>
-                            <Input
-                                type="number"
-                                value={formData.teamTarget}
-                                onChange={(e) => setFormData(prev => ({
-                                    ...prev,
-                                    teamTarget: Number(e.target.value)
-                                }))}
-                                className="col-span-3"
-                            />
-                        </div>
-
-                        {/* Monthly Targets */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label className="text-right">Monthly Targets</Label>
-                            <div className="col-span-3 grid grid-cols-3 gap-2">
-                                {Object.keys(formData.monthlyTargets).map(month => (
-                                    <div key={month}>
-                                        <Label>{month}</Label>
-                                        <Input
-                                            type="number"
-                                            value={formData.monthlyTargets[month]}
-                                            onChange={(e) => setFormData(prev => ({
-                                                ...prev,
-                                                monthlyTargets: {
-                                                    ...prev.monthlyTargets,
-                                                    [month]: Number(e.target.value)
-                                                }
-                                            }))}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Weight */}
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Team Weight (%)</Label>
-                        <Input
-                            type="number"
-                            value={formData.teamWeight}
-                            onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                teamWeight: Number(e.target.value)
-                            }))}
-                            className="col-span-3"
-                            max={100}
-                            min={0}
-                        />
-                    </div>
-
-                    {/* Optional: Comments Field */}
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Comments/Strategy</Label>
-                        <Input
-                            value={formData.comments || ''}
-                            onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                comments: e.target.value
-                            }))}
-                            className="col-span-3"
-                            placeholder="Team's strategy or comments"
-                        />
-                    </div>
-
-                    <DialogFooter>
-                        <Button variant="outline" onClick={onClose}>Cancel</Button>
-                        <Button
-                            onClick={() => onSave(formData)}
-                            disabled={!formData.teamName || formData.teamTarget <= 0}
-                        >
-                            {initialData ? 'Update' : 'Create'}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        );
+    // Pagination handlers - Added from Actual MPM
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
     };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+        setCurrentPage(1); // Reset to first page when changing items per page
+    };
+
+    const togglePaginationExpand = () => {
+        setPaginationExpanded(!paginationExpanded);
+    };
+
+    // Get unique team names for filter dropdown
+    const teamNames = useMemo(() => {
+        const names = new Set<string>();
+        teamKPIActionPlans.forEach(plan => names.add(plan.teamName));
+        return Array.from(names);
+    }, [teamKPIActionPlans]);
 
     // Handlers for action plans
     const handleAddActionPlan = (newActionPlan: TeamKPIActionPlan) => {
@@ -350,15 +257,14 @@ const MPMTargetsTeamKPI: React.FC = () => {
                 />
 
                 <main className={`
-                     flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
+                     flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
                 `}>
                     <div className="space-y-6 w-full">
                         <Breadcrumb
                             items={[{
                                 label: 'MPM Targets List',
                                 path: '/performance-management/mpm/target',
-                            }
-                            ,
+                            },
                             {
                                 label: 'MPM Targets',
                                 path: `/performance-management/mpm/target/${targetId}`,
@@ -417,6 +323,41 @@ const MPMTargetsTeamKPI: React.FC = () => {
                             </CardContent>
                         </Card>
 
+                        {/* Filter Section - Added from Actual MPM */}
+                        <Filtering>
+                            <div className="space-y-3">
+                                <label htmlFor="searchTerm" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <Input
+                                    id="searchTerm"
+                                    type="text"
+                                    placeholder="Search by team name or comments..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Info className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Team</span>
+                                </label>
+                                <select
+                                    value={teamFilter}
+                                    onChange={(e) => setTeamFilter(e.target.value)}
+                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                >
+                                    <option value="All">All Teams</option>
+                                    {teamNames.map(name => (
+                                        <option key={name} value={name}>{name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </Filtering>
+
                         {/* Main Card */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
@@ -432,15 +373,15 @@ const MPMTargetsTeamKPI: React.FC = () => {
                                                 <th className="p-4 text-center">Actions</th>
                                                 <th className="p-4 text-center">Team</th>
                                                 <th className="p-4 text-center">Team Target</th>
-                                                <th>Team Weight</th>
-                                                <th>Comments</th>
+                                                <th className="p-4 text-center">Team Weight</th>
+                                                <th className="p-4 text-center">Comments</th>
                                                 <th className="p-4 text-center">Jan-25</th>
                                                 <th className="p-4 text-center">Feb-25</th>
                                                 <th className="p-4 text-center">Mar-25</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {teamKPIActionPlans.map((plan) => (
+                                            {paginatedData.map((plan) => (
                                                 <tr
                                                     key={plan.id}
                                                     className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
@@ -475,27 +416,51 @@ const MPMTargetsTeamKPI: React.FC = () => {
                                                         </div>
                                                     </td>
                                                     <td className="p-4 text-center">{plan.teamName}</td>
-                                                    <td className="p-4 text-center">{plan.teamTarget}</td>
+                                                    <td className="p-4 text-center">{plan.teamTarget.toLocaleString()}</td>
                                                     <td className="p-4 text-center">{plan.teamWeight}%</td>
                                                     <td className="p-4 text-center">{plan.comments}</td>
-                                                    <td className="p-4 text-center">{plan.monthlyTargets['Jan-25']}</td>
-                                                    <td className="p-4 text-center">{plan.monthlyTargets['Feb-25']}</td>
-                                                    <td className="p-4 text-center">{plan.monthlyTargets['Mar-25']}</td>
+                                                    <td className="p-4 text-center">{plan.monthlyTargets['Jan-25'].toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{plan.monthlyTargets['Feb-25'].toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{plan.monthlyTargets['Mar-25'].toLocaleString()}</td>
                                                 </tr>
                                             ))}
-                                            {/* Total Row */}
-                                            <tr className="bg-[#1B6131] text-white font-bold">
-                                                <td className="p-4 text-center" colSpan={2}>Total</td>
-                                                <td className="p-4 text-center">{calculateTotals.total}</td>
-                                                <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
-                                                <td className="p-4 text-center"></td>
-                                                <td className="p-4 text-center">{calculateTotals['Jan-25']}</td>
-                                                <td className="p-4 text-center">{calculateTotals['Feb-25']}</td>
-                                                <td className="p-4 text-center">{calculateTotals['Mar-25']}</td>
-                                            </tr>
+                                            
+                                            {/* Show message when no data is available */}
+                                            {paginatedData.length === 0 && (
+                                                <tr>
+                                                    <td colSpan={8} className="p-4 text-center text-gray-500">
+                                                        No team KPIs match your search criteria.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            
+                                            {/* Total Row - only show if we have data */}
+                                            {paginatedData.length > 0 && (
+                                                <tr className="bg-[#1B6131] text-white font-bold">
+                                                    <td className="p-4 text-center" colSpan={2}>Total</td>
+                                                    <td className="p-4 text-center">{calculateTotals.total.toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
+                                                    <td className="p-4 text-center"></td>
+                                                    <td className="p-4 text-center">{calculateTotals['Jan-25'].toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{calculateTotals['Feb-25'].toLocaleString()}</td>
+                                                    <td className="p-4 text-center">{calculateTotals['Mar-25'].toLocaleString()}</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
+                                
+                                {/* Pagination Component - Added from Actual MPM */}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredData.length}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={paginationExpanded}
+                                    onToggleExpand={togglePaginationExpand}
+                                />
                             </CardContent>
                         </Card>
                     </div>
@@ -503,14 +468,14 @@ const MPMTargetsTeamKPI: React.FC = () => {
             </div>
 
             {/* Dialogs */}
-            <TeamKPIActionPlanDialog
+            <TeamTargetEditDialog
                 isOpen={isAddActionPlanDialogOpen}
                 onClose={() => setIsAddActionPlanDialogOpen(false)}
                 onSave={handleAddActionPlan}
             />
 
             {selectedActionPlan && (
-                <TeamKPIActionPlanDialog
+                <TeamTargetEditDialog
                     isOpen={isEditActionPlanDialogOpen}
                     onClose={() => setIsEditActionPlanDialogOpen(false)}
                     onSave={handleEditActionPlan}
