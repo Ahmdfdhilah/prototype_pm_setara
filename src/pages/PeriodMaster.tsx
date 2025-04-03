@@ -24,6 +24,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import Filtering from '@/components/Filtering';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Footer from '@/components/Footer';
 
 type PeriodStatus = 'All' | 'Draft' | 'Active' | 'Closed';
 
@@ -74,12 +75,12 @@ const initialPeriods: Period[] = [
 
 const PeriodMaster = () => {
     // Layout state
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
 
@@ -227,9 +228,8 @@ const PeriodMaster = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="space-y-6">
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>  <div className="space-y-6">
                         <Breadcrumb
                             items={[]}
                             currentPage="Period Master Management"
@@ -383,70 +383,72 @@ const PeriodMaster = () => {
                         </Card>
                     </div>
 
-                    {/* Create New Period Dialog */}
-                    <AlertDialog open={showNewPeriodDialog} onOpenChange={setShowNewPeriodDialog}>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Create New Period</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    Set up a new BSC period. Only one period can be active at a time.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <label className="text-right">Year</label>
-                                    <Input
-                                        type="number"
-                                        value={newPeriod.year}
-                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-                                        className="col-span-3"
-                                        min={new Date().getFullYear() - 1}
-                                        max={new Date().getFullYear() + 5}
-                                    />
+                        {/* Create New Period Dialog */}
+                        <AlertDialog open={showNewPeriodDialog} onOpenChange={setShowNewPeriodDialog}>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Create New Period</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Set up a new BSC period. Only one period can be active at a time.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <label className="text-right">Year</label>
+                                        <Input
+                                            type="number"
+                                            value={newPeriod.year}
+                                            onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
+                                            className="col-span-3"
+                                            min={new Date().getFullYear() - 1}
+                                            max={new Date().getFullYear() + 5}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <label className="text-right">Period</label>
+                                        <Input
+                                            type="text"
+                                            value={newPeriod.period}
+                                            onChange={(e) => setNewPeriod(prev => ({ ...prev, period: e.target.value }))}
+                                            className="col-span-3"
+                                            min={new Date().getFullYear() - 1}
+                                            max={new Date().getFullYear() + 5}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <label className="text-right">Start Date</label>
+                                        <Input
+                                            type="date"
+                                            value={newPeriod.startDate}
+                                            onChange={(e) => setNewPeriod(prev => ({ ...prev, startDate: e.target.value }))}
+                                            className="col-span-3"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <label className="text-right">End Date</label>
+                                        <Input
+                                            type="date"
+                                            value={newPeriod.endDate}
+                                            onChange={(e) => setNewPeriod(prev => ({ ...prev, endDate: e.target.value }))}
+                                            className="col-span-3"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <label className="text-right">Period</label>
-                                    <Input
-                                        type="text"
-                                        value={newPeriod.period}
-                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, period: e.target.value }))}
-                                        className="col-span-3"
-                                        min={new Date().getFullYear() - 1}
-                                        max={new Date().getFullYear() + 5}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <label className="text-right">Start Date</label>
-                                    <Input
-                                        type="date"
-                                        value={newPeriod.startDate}
-                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, startDate: e.target.value }))}
-                                        className="col-span-3"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <label className="text-right">End Date</label>
-                                    <Input
-                                        type="date"
-                                        value={newPeriod.endDate}
-                                        onChange={(e) => setNewPeriod(prev => ({ ...prev, endDate: e.target.value }))}
-                                        className="col-span-3"
-                                    />
-                                </div>
-                            </div>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                    onClick={handleCreatePeriod}
-                                    className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                                    disabled={!newPeriod.period || !newPeriod.startDate || !newPeriod.endDate}
-                                >
-                                    Create Period
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                </main>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={handleCreatePeriod}
+                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                        disabled={!newPeriod.period || !newPeriod.startDate || !newPeriod.endDate}
+                                    >
+                                        Create Period
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

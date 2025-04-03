@@ -27,6 +27,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import Filtering from '@/components/Filtering';
 import React from 'react';
+import Footer from '@/components/Footer';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
@@ -63,11 +64,11 @@ type Manager = {
 };
 
 const MPMActuals = () => {
-   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
+      return window.innerWidth >= 768;
     }
-    return true; 
+    return true;
   });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
@@ -83,7 +84,7 @@ const MPMActuals = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('Monthly');
   const [selectedPerspective, setSelectedPerspective] = useState<string>('');
-  
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const month = searchParams.get('month');
@@ -178,7 +179,7 @@ const MPMActuals = () => {
       if (selectedPerspective && item.perspective !== selectedPerspective) {
         return false;
       }
-      
+
       // Filter by date range if provided
       if (startDate) {
         const itemDate = new Date(`${item.month} 1, 2024`);
@@ -187,7 +188,7 @@ const MPMActuals = () => {
           return false;
         }
       }
-      
+
       if (endDate) {
         const itemDate = new Date(`${item.month} 1, 2024`);
         const filterEnd = new Date(endDate);
@@ -195,13 +196,13 @@ const MPMActuals = () => {
           return false;
         }
       }
-      
+
       // Filter by period if selected
       if (selectedPeriod && selectedPeriod !== 'All') {
         // Assuming period is year, would need adjustment for actual implementation
         return true; // Placeholder for period filtering
       }
-      
+
       return true;
     });
   }, [kpiData, selectedPerspective, startDate, endDate, selectedPeriod]);
@@ -220,29 +221,29 @@ const MPMActuals = () => {
   // Pagination calculation
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
+
   // Get paginated data
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    
+
     const result: Record<Perspective, KPIEntry[]> = {} as Record<Perspective, KPIEntry[]>;
-    
+
     // This is a simplified approach - in a real implementation you might need 
     // to handle pagination differently for grouped data
     let count = 0;
     let itemsAdded = 0;
-    
+
     for (const [perspective, items] of Object.entries(groupedData)) {
       if (count >= startIndex && count < endIndex) {
         result[perspective as Perspective] = items;
         itemsAdded += items.length;
       }
       count += items.length;
-      
+
       if (count >= endIndex) break;
     }
-    
+
     return result;
   }, [groupedData, currentPage, itemsPerPage]);
 
@@ -477,170 +478,169 @@ const MPMActuals = () => {
           system="performance-management"
         />
 
-        <main
-          className={`
-            flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-          `}
-        >
-          <div className="space-y-6 w-full">
-            <Breadcrumb
-              items={[{
-                label: 'MPM Target List',
-                path: '/performance-management/mpm/target'
-              }]}
-              currentPage={`MPM Actual - ${month}`}
-              showHomeIcon={true}
-              subtitle={`MPM Actual ID : ${mpmActualId}`}
-            />
+        <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+          <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+            <div className="space-y-6 w-full">
+              <Breadcrumb
+                items={[{
+                  label: 'MPM Target List',
+                  path: '/performance-management/mpm/target'
+                }]}
+                currentPage={`MPM Actual - ${month}`}
+                showHomeIcon={true}
+                subtitle={`MPM Actual ID : ${mpmActualId}`}
+              />
 
-            {/* Filter Section */}
-            <Filtering
-              startDate={startDate}
-              endDate={endDate}
-              handleStartDateChange={handleStartDateChange}
-              handleEndDateChange={handleEndDateChange}
-              handlePeriodChange={handlePeriodChange}
-              selectedPeriod={selectedPeriod}
-              handleTypeChange={handleTypeChange}
-              selectedType={selectedType}
-            >
-              {/* Custom filter for perspective */}
-              <div className="space-y-3">
-                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                  <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                  <span>Perspective</span>
-                </label>
-                <Select
-                  onValueChange={handlePerspectiveChange}
-                  value={selectedPerspective}
-                >
-                  <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                    <SelectValue placeholder="Select Perspective" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Perspectives</SelectItem>
-                    <SelectItem value="Financial">Financial</SelectItem>
-                    <SelectItem value="Customer">Customer</SelectItem>
-                    <SelectItem value="Internal Process">Internal Process</SelectItem>
-                    <SelectItem value="Learning and Growth">Learning and Growth</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </Filtering>
-
-            {/* Main Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
-                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                    KPI Actuals Table
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
-                    onClick={() => setSendToApproverOpen(true)}
+              {/* Filter Section */}
+              <Filtering
+                startDate={startDate}
+                endDate={endDate}
+                handleStartDateChange={handleStartDateChange}
+                handleEndDateChange={handleEndDateChange}
+                handlePeriodChange={handlePeriodChange}
+                selectedPeriod={selectedPeriod}
+                handleTypeChange={handleTypeChange}
+                selectedType={selectedType}
+              >
+                {/* Custom filter for perspective */}
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                    <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                    <span>Perspective</span>
+                  </label>
+                  <Select
+                    onValueChange={handlePerspectiveChange}
+                    value={selectedPerspective}
                   >
-                    <Send className="mr-2 h-4 w-4" />
-                    Send to Manager
-                  </Button>
+                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                      <SelectValue placeholder="Select Perspective" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Perspectives</SelectItem>
+                      <SelectItem value="Financial">Financial</SelectItem>
+                      <SelectItem value="Customer">Customer</SelectItem>
+                      <SelectItem value="Internal Process">Internal Process</SelectItem>
+                      <SelectItem value="Learning and Growth">Learning and Growth</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </CardHeader>
-              <CardContent className='m-0 p-0'>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead className="bg-[#1B6131] text-white">
-                      <tr>
-                        {[
-                          'Actions', 'KPI', 'KPI Definition', 'Weight', 'UOM',
-                          'Category', 'YTD Calculation', 'Target', 'Actual',
-                          'Achievement', 'Score', 'Problem Identification',
-                          'Corrective Action'
-                        ].map((header) => (
-                          <th
-                            key={header}
-                            className="p-4 text-center whitespace-nowrap"
-                          >
-                            {header}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(paginatedData).map(([perspective, items]) => (
-                        <React.Fragment key={perspective}>
-                          <tr className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
-                            <td colSpan={13} className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]">
-                              {perspective}
-                            </td>
-                          </tr>
-                          {items.map((item) => (
-                            <tr
-                              key={item.id}
-                              className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
+              </Filtering>
+
+              {/* Main Card */}
+              <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                      KPI Actuals Table
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      className="w-full sm:w-auto border-[#1B6131] text-[#1B6131] hover:bg-[#E4EFCF]"
+                      onClick={() => setSendToApproverOpen(true)}
+                    >
+                      <Send className="mr-2 h-4 w-4" />
+                      Send to Manager
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className='m-0 p-0'>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead className="bg-[#1B6131] text-white">
+                        <tr>
+                          {[
+                            'Actions', 'KPI', 'KPI Definition', 'Weight', 'UOM',
+                            'Category', 'YTD Calculation', 'Target', 'Actual',
+                            'Achievement', 'Score', 'Problem Identification',
+                            'Corrective Action'
+                          ].map((header) => (
+                            <th
+                              key={header}
+                              className="p-4 text-center whitespace-nowrap"
                             >
-                              <td className="p-4 text-center flex items-center justify-center space-x-2">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="hover:text-[#1B6131]"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRowClick(item);
-                                  }}
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="hover:text-[#1B6131]"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditClick(item);
-                                  }}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </td>
-                              <td className="p-4">{item.kpi}</td>
-                              <td className="p-4">{item.kpiDefinition}</td>
-                              <td className="p-4 text-center">{item.weight}%</td>
-                              <td className="p-4 text-center">{item.uom}</td>
-                              <td className="p-4 text-center">{item.category}</td>
-                              <td className="p-4 text-center">
-                                {item.ytdCalculation}
-                              </td>
-                              <td className="p-4 text-center">{item.target}</td>
-                              <td className="p-4 text-center">{item.actual}</td>
-                              <td className="p-4 text-center">
-                                {item.achievement.toFixed(2)}%
-                              </td>
-                              <td className="p-4 text-center">{item.score}</td>
-                              <td className="p-4">{item.problemIdentification}</td>
-                              <td className="p-4">{item.correctiveAction}</td>
-                            </tr>
+                              {header}
+                            </th>
                           ))}
-                        </React.Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                
-                {/* Pagination Component */}
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  itemsPerPage={itemsPerPage}
-                  totalItems={totalItems}
-                  onPageChange={handlePageChange}
-                  onItemsPerPageChange={handleItemsPerPageChange}
-                  expanded={isPaginationExpanded}
-                  onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(paginatedData).map(([perspective, items]) => (
+                          <React.Fragment key={perspective}>
+                            <tr className="bg-[#E4EFCF] dark:bg-[#1B6131]/30">
+                              <td colSpan={13} className="p-4 font-medium text-[#1B6131] dark:text-[#46B749]">
+                                {perspective}
+                              </td>
+                            </tr>
+                            {items.map((item) => (
+                              <tr
+                                key={item.id}
+                                className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
+                              >
+                                <td className="p-4 text-center flex items-center justify-center space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="hover:text-[#1B6131]"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRowClick(item);
+                                    }}
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="hover:text-[#1B6131]"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditClick(item);
+                                    }}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </td>
+                                <td className="p-4">{item.kpi}</td>
+                                <td className="p-4">{item.kpiDefinition}</td>
+                                <td className="p-4 text-center">{item.weight}%</td>
+                                <td className="p-4 text-center">{item.uom}</td>
+                                <td className="p-4 text-center">{item.category}</td>
+                                <td className="p-4 text-center">
+                                  {item.ytdCalculation}
+                                </td>
+                                <td className="p-4 text-center">{item.target}</td>
+                                <td className="p-4 text-center">{item.actual}</td>
+                                <td className="p-4 text-center">
+                                  {item.achievement.toFixed(2)}%
+                                </td>
+                                <td className="p-4 text-center">{item.score}</td>
+                                <td className="p-4">{item.problemIdentification}</td>
+                                <td className="p-4">{item.correctiveAction}</td>
+                              </tr>
+                            ))}
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination Component */}
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    onItemsPerPageChange={handleItemsPerPageChange}
+                    expanded={isPaginationExpanded}
+                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
 
       <EditKPIDialog />

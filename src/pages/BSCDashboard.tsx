@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components
 import { dummyData } from '../lib/bscMocks';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
+import Footer from '@/components/Footer';
 
 // Types
 type Period = 'Jan-25' | 'Feb-25' | 'Mar-25' | 'Apr-25' | 'All' | '2022' | '2023' | '2024' | '2025';
@@ -47,12 +48,12 @@ type BSCEntry = {
 
 const BSCDashboard = () => {
     const [selectedPeriod, setSelectedPeriod] = useState<Period>('Jan-25');
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [selectedType, setSelectedType] = useState<BSCType>('Monthly');
@@ -265,185 +266,188 @@ const BSCDashboard = () => {
                     system="performance-management"
                 />
 
-                <main className={`
-            flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="space-y-6">
-                        <Breadcrumb
-                            items={[]}
-                            currentPage="BSC Dashboard"
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6">
+                            <Breadcrumb
+                                items={[]}
+                                currentPage="BSC Dashboard"
+                                showHomeIcon={true}
+                            />
 
-                        {/* Filter Section */}
-                        <Filtering
-                            startDate={startDate}
-                            endDate={endDate}
-                            handleStartDateChange={handleStartDateChange}
-                            handleEndDateChange={handleEndDateChange}
-                            isEndDateDisabled={isEndDateDisabled}
-                            handlePeriodChange={handlePeriodChange}
-                            selectedPeriod={selectedPeriod}
-                            handleTypeChange={handleTypeChange}
-                            selectedType={selectedType}
-                        >
-                            {/* Custom Filter Options */}
-                            <div className="space-y-3 md:col-span-2">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <Input
-                                    placeholder="Search by KPI, Code, or Definition..."
-                                    value={searchTerm}
-                                    onChange={handleSearchChange}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
-                                />
-                            </div>
+                            {/* Filter Section */}
+                            <Filtering
+                                startDate={startDate}
+                                endDate={endDate}
+                                handleStartDateChange={handleStartDateChange}
+                                handleEndDateChange={handleEndDateChange}
+                                isEndDateDisabled={isEndDateDisabled}
+                                handlePeriodChange={handlePeriodChange}
+                                selectedPeriod={selectedPeriod}
+                                handleTypeChange={handleTypeChange}
+                                selectedType={selectedType}
+                            >
+                                {/* Custom Filter Options */}
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        placeholder="Search by KPI, Code, or Definition..."
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    />
+                                </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Perspective</span>
-                                </label>
-                                <select
-                                    value={selectedPerspective}
-                                    onChange={(e) => handlePerspectiveChange(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
-                                >
-                                    {perspectives.map((perspective) => (
-                                        <option key={perspective} value={perspective}>
-                                            {perspective}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Category</span>
-                                </label>
-                                <select
-                                    value={selectedCategory}
-                                    onChange={(e) => handleCategoryChange(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
-                                >
-                                    {categories.map((category) => (
-                                        <option key={category} value={category}>
-                                            {category}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </Filtering>
-
-                        {/* BSC Table Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    BSC Performance Metrics
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="dark:bg-gray-900 m-0 p-0">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <th className="p-4 text-left font-medium text-white">Perspective</th>
-                                            <th className="p-4 text-left font-medium text-white">Code</th>
-                                            <th className="p-4 text-left font-medium text-white">KPI</th>
-                                            <th className="p-4 text-left font-medium text-white">Weight</th>
-                                            <th className="p-4 text-left font-medium text-white">UOM</th>
-                                            <th className="p-4 text-left font-medium text-white">Category</th>
-                                            <th className="p-4 text-left font-medium text-white">Target</th>
-                                            <th className="p-4 text-left font-medium text-white">Actual</th>
-                                            <th className="p-4 text-left font-medium text-white">Achievement</th>
-                                            <th className="p-4 text-left font-medium text-white">Status</th>
-                                            <th className="p-4 text-left font-medium text-white">Score</th>
-                                            <th className="p-4 text-left font-medium text-white">Score Akhir</th>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {Object.entries(paginatedGroupedData).map(([perspective, items]) => (
-                                            items.map((item, index) => (
-                                                <>
-                                                    <TableRow
-                                                        key={item.code}
-                                                        onClick={() => handleRowClick(item.code)}
-                                                        className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                                    >
-                                                        {index === 0 && (
-                                                            <TableCell
-                                                                rowSpan={items.length}
-                                                                className="bg-[#E4EFCF] dark:bg-[#1B6131]/30 font-medium text-[#1B6131] dark:text-[#46B749]"
-                                                            >
-                                                                {perspective}
-                                                            </TableCell>
-                                                        )}
-                                                        <TableCell className="flex items-center gap-2 text-[#1B6131] dark:text-[#46B749]">
-                                                            {expandedRow === item.code ? (
-                                                                <ExpandMore size={16} />
-                                                            ) : (
-                                                                <ChevronRight size={16} />
-                                                            )}
-                                                            {item.code}
-                                                        </TableCell>
-                                                        <TableCell>{item.kpi}</TableCell>
-                                                        <TableCell>{item.weight}%</TableCell>
-                                                        <TableCell>{item.uom}</TableCell>
-                                                        <TableCell>{item.category}</TableCell>
-                                                        <TableCell>{item.target}</TableCell>
-                                                        <TableCell>{item.actual}</TableCell>
-                                                        <TableCell>{item.achievement}%</TableCell>
-                                                        <TableCell>
-                                                            <StatusIndicator value={item.achievement} />
-                                                        </TableCell>
-                                                        <TableCell>{item.score.toFixed(2)}</TableCell>
-                                                        <TableCell>{item.endScore.toFixed(2)}</TableCell>
-                                                    </TableRow>
-                                                    {expandedRow === item.code && (
-                                                        <TableRow className="bg-[#E4EFCF]/30 dark:bg-[#1B6131]/10">
-                                                            <TableCell colSpan={14}>
-                                                                <ExpandedContent item={item} />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
-                                                </>
-                                            ))
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Perspective</span>
+                                    </label>
+                                    <select
+                                        value={selectedPerspective}
+                                        onChange={(e) => handlePerspectiveChange(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    >
+                                        {perspectives.map((perspective) => (
+                                            <option key={perspective} value={perspective}>
+                                                {perspective}
+                                            </option>
                                         ))}
+                                    </select>
+                                </div>
 
-                                        {paginatedData.length === 0 && (
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Category</span>
+                                    </label>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => handleCategoryChange(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    >
+                                        {categories.map((category) => (
+                                            <option key={category} value={category}>
+                                                {category}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </Filtering>
+
+                            {/* BSC Table Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        BSC Performance Metrics
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="dark:bg-gray-900 m-0 p-0">
+                                    <Table>
+                                        <TableHeader>
                                             <TableRow>
-                                                <TableCell colSpan={12} className="text-center py-8 text-gray-500">
-                                                    No results found. Try adjusting your filters.
-                                                </TableCell>
+                                                <th className="p-4 text-left font-medium text-white">Perspective</th>
+                                                <th className="p-4 text-left font-medium text-white">Code</th>
+                                                <th className="p-4 text-left font-medium text-white">KPI</th>
+                                                <th className="p-4 text-left font-medium text-white">Weight</th>
+                                                <th className="p-4 text-left font-medium text-white">UOM</th>
+                                                <th className="p-4 text-left font-medium text-white">Category</th>
+                                                <th className="p-4 text-left font-medium text-white">Target</th>
+                                                <th className="p-4 text-left font-medium text-white">Actual</th>
+                                                <th className="p-4 text-left font-medium text-white">Achievement</th>
+                                                <th className="p-4 text-left font-medium text-white">Status</th>
+                                                <th className="p-4 text-left font-medium text-white">Score</th>
+                                                <th className="p-4 text-left font-medium text-white">Score Akhir</th>
                                             </TableRow>
-                                        )}
+                                        </TableHeader>
+                                        <TableBody>
+                                            {Object.entries(paginatedGroupedData).map(([perspective, items]) => (
+                                                items.map((item, index) => (
+                                                    <>
+                                                        <TableRow
+                                                            key={item.code}
+                                                            onClick={() => handleRowClick(item.code)}
+                                                            className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                        >
+                                                            {index === 0 && (
+                                                                <TableCell
+                                                                    rowSpan={items.length}
+                                                                    className="bg-[#E4EFCF] dark:bg-[#1B6131]/30 font-medium text-[#1B6131] dark:text-[#46B749]"
+                                                                >
+                                                                    {perspective}
+                                                                </TableCell>
+                                                            )}
+                                                            <TableCell className="flex items-center gap-2 text-[#1B6131] dark:text-[#46B749]">
+                                                                {expandedRow === item.code ? (
+                                                                    <ExpandMore size={16} />
+                                                                ) : (
+                                                                    <ChevronRight size={16} />
+                                                                )}
+                                                                {item.code}
+                                                            </TableCell>
+                                                            <TableCell>{item.kpi}</TableCell>
+                                                            <TableCell>{item.weight}%</TableCell>
+                                                            <TableCell>{item.uom}</TableCell>
+                                                            <TableCell>{item.category}</TableCell>
+                                                            <TableCell>{item.target}</TableCell>
+                                                            <TableCell>{item.actual}</TableCell>
+                                                            <TableCell>{item.achievement}%</TableCell>
+                                                            <TableCell>
+                                                                <StatusIndicator value={item.achievement} />
+                                                            </TableCell>
+                                                            <TableCell>{item.score.toFixed(2)}</TableCell>
+                                                            <TableCell>{item.endScore.toFixed(2)}</TableCell>
+                                                        </TableRow>
+                                                        {expandedRow === item.code && (
+                                                            <TableRow className="bg-[#E4EFCF]/30 dark:bg-[#1B6131]/10">
+                                                                <TableCell colSpan={14}>
+                                                                    <ExpandedContent item={item} />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </>
+                                                ))
+                                            ))}
 
-                                        {/* Totals Row - Only show when we have data */}
-                                        {paginatedData.length > 0 && (
-                                            <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
-                                                <TableCell colSpan={3}>Total</TableCell>
-                                                <TableCell>{totals.weight.toFixed(2)}%</TableCell>
-                                                <TableCell colSpan={6}></TableCell>
-                                                <TableCell>{totals.score.toFixed(2)}</TableCell>
-                                                <TableCell>{totals.endScore.toFixed(2)}</TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={Math.ceil(filteredData.length / itemsPerPage)}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredData.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={paginationExpanded}
-                                    onToggleExpand={handleTogglePaginationExpand}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
+                                            {paginatedData.length === 0 && (
+                                                <TableRow>
+                                                    <TableCell colSpan={12} className="text-center py-8 text-gray-500">
+                                                        No results found. Try adjusting your filters.
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+
+                                            {/* Totals Row - Only show when we have data */}
+                                            {paginatedData.length > 0 && (
+                                                <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
+                                                    <TableCell colSpan={3}>Total</TableCell>
+                                                    <TableCell>{totals.weight.toFixed(2)}%</TableCell>
+                                                    <TableCell colSpan={6}></TableCell>
+                                                    <TableCell>{totals.score.toFixed(2)}</TableCell>
+                                                    <TableCell>{totals.endScore.toFixed(2)}</TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredData.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={paginationExpanded}
+                                        onToggleExpand={handleTogglePaginationExpand}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
+
         </div>
     );
 };

@@ -17,6 +17,7 @@ import Pagination from '@/components/Pagination';
 import Filtering from '@/components/Filtering';
 import { teamMpmActual } from '@/lib/MpmTeamMocksData';
 import { TeamActualEditDialog } from '@/components/TeamActualEditDialog';
+import Footer from '@/components/Footer';
 
 type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
     'July' | 'August' | 'September' | 'October' | 'November' | 'December';
@@ -174,192 +175,192 @@ const MPMActualsTeamKPI: React.FC = () => {
                     system="performance-management"
                 />
 
-                <main className={`
-                    flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out 
-                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-                `}>
-                    <div className="space-y-6 w-full">
-                        <Breadcrumb
-                            items={[
-                                { label: 'MPM Actuals', path: '/performance-management/mpm/actual' },
-                                { label: `${month} Actuals`, path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}` }
-                            ]}
-                            currentPage={`MPM Actual ID: ${mpmActualId}`}
-                            subtitle={`MPM Actual ID: ${mpmActualId} | Month: ${month}`}
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6 w-full">
+                            <Breadcrumb
+                                items={[
+                                    { label: 'MPM Actuals', path: '/performance-management/mpm/actual' },
+                                    { label: `${month} Actuals`, path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}` }
+                                ]}
+                                currentPage={`MPM Actual ID: ${mpmActualId}`}
+                                subtitle={`MPM Actual ID: ${mpmActualId} | Month: ${month}`}
+                                showHomeIcon={true}
+                            />
 
-                        <Card className="border-[#1B6131] dark:border-[#46B749] shadow-lg">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                    <div>
-                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                            <Info className="mr-2 h-5 w-5" />
-                                            KPI Details
-                                        </CardTitle>
-                                        <CardDescription className="text-gray-600 dark:text-gray-300">
-                                            Overview of the Key Performance Indicator
-                                        </CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="mt-4 space-y-4">
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749]">KPI Information</h3>
-                                        <div className="space-y-2">
-                                            <p><strong>KPI Name:</strong> {parentKPI.kpi}</p>
-                                            <p><strong>Perspective:</strong> {parentKPI.perspective}</p>
-                                            <p><strong>KPI Number:</strong> {parentKPI.kpiNumber}</p>
-                                            <p><strong>Definition:</strong> {parentKPI.kpiDefinition}</p>
-                                            <p><strong>Weight:</strong> {parentKPI.weight}%</p>
-                                            <p><strong>Unit of Measurement:</strong> {parentKPI.uom}</p>
-                                            <p><strong>Target {month}:</strong>{parentKPI.target}</p>
+                            <Card className="border-[#1B6131] dark:border-[#46B749] shadow-lg">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+                                        <div>
+                                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                                <Info className="mr-2 h-5 w-5" />
+                                                KPI Details
+                                            </CardTitle>
+                                            <CardDescription className="text-gray-600 dark:text-gray-300">
+                                                Overview of the Key Performance Indicator
+                                            </CardDescription>
                                         </div>
                                     </div>
+                                </CardHeader>
+                                <CardContent className="mt-4 space-y-4">
+                                    <div className="flex flex-col gap-4">
+                                        <div>
+                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749]">KPI Information</h3>
+                                            <div className="space-y-2">
+                                                <p><strong>KPI Name:</strong> {parentKPI.kpi}</p>
+                                                <p><strong>Perspective:</strong> {parentKPI.perspective}</p>
+                                                <p><strong>KPI Number:</strong> {parentKPI.kpiNumber}</p>
+                                                <p><strong>Definition:</strong> {parentKPI.kpiDefinition}</p>
+                                                <p><strong>Weight:</strong> {parentKPI.weight}%</p>
+                                                <p><strong>Unit of Measurement:</strong> {parentKPI.uom}</p>
+                                                <p><strong>Target {month}:</strong>{parentKPI.target}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Filter Section */}
+                            <Filtering>
+                                <div className="space-y-3">
+                                    <label htmlFor="searchTerm" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        id="searchTerm"
+                                        type="text"
+                                        placeholder="Search by team name or action items..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                    />
                                 </div>
-                            </CardContent>
-                        </Card>
 
-                        {/* Filter Section */}
-                        <Filtering>
-                            <div className="space-y-3">
-                                <label htmlFor="searchTerm" className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <Input
-                                    id="searchTerm"
-                                    type="text"
-                                    placeholder="Search by team name or action items..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
-                                />
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Info className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Status</span>
+                                    </label>
+                                    <select
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                    >
+                                        <option value="All">All Statuses</option>
+                                        <option value="On Track">On Track</option>
+                                        <option value="At Risk">At Risk</option>
+                                        <option value="Off Track">Off Track</option>
+                                    </select>
+                                </div>
+                            </Filtering>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Info className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Status</span>
-                                </label>
-                                <select
-                                    value={statusFilter}
-                                    onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
-                                >
-                                    <option value="All">All Statuses</option>
-                                    <option value="On Track">On Track</option>
-                                    <option value="At Risk">At Risk</option>
-                                    <option value="Off Track">Off Track</option>
-                                </select>
-                            </div>
-                        </Filtering>
-
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    Team KPI Actuals
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className='m-0 p-0'>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full border-collapse">
-                                        <thead className="bg-[#1B6131] text-white">
-                                            <tr>
-                                                <th className="p-4 text-center">Actions</th>
-                                                <th className="p-4 text-center">Team</th>
-                                                <th className="p-4 text-center">Target</th>
-                                                <th className="p-4 text-center">Actual</th>
-                                                <th className="p-4 text-center">Achievement (%)</th>
-                                                <th className="p-4 text-center">Weight (%)</th>
-                                                <th className="p-4 text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {paginatedData.map((kpi) => (
-                                                <tr
-                                                    key={kpi.id}
-                                                >
-                                                    <td className="p-4 text-center">
-                                                        <div className="flex justify-center space-x-2">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="hover:text-[#1B6131]"
-                                                                onClick={() => navigate(`/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams/${kpi.teamId}`)}
-                                                            >
-                                                                <Eye className="h-4 w-4" />
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                onClick={() => {
-                                                                    setSelectedTeamKPI(kpi);
-                                                                    setIsEditDialogOpen(true);
-                                                                }}
-                                                            >
-                                                                <Edit className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                    <td className="p-4 text-center">{kpi.teamName}</td>
-                                                    <td className="p-4 text-center">{kpi.target.toLocaleString()}</td>
-                                                    <td className="p-4 text-center">{kpi.actual.toLocaleString()}</td>
-                                                    <td className="p-4 text-center">{kpi.achievement}%</td>
-                                                    <td className="p-4 text-center">{kpi.weight}%</td>
-                                                    <td className="p-4 text-center">
-                                                        <span className={`
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        Team KPI Actuals
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className='m-0 p-0'>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full border-collapse">
+                                            <thead className="bg-[#1B6131] text-white">
+                                                <tr>
+                                                    <th className="p-4 text-center">Actions</th>
+                                                    <th className="p-4 text-center">Team</th>
+                                                    <th className="p-4 text-center">Target</th>
+                                                    <th className="p-4 text-center">Actual</th>
+                                                    <th className="p-4 text-center">Achievement (%)</th>
+                                                    <th className="p-4 text-center">Weight (%)</th>
+                                                    <th className="p-4 text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {paginatedData.map((kpi) => (
+                                                    <tr
+                                                        key={kpi.id}
+                                                    >
+                                                        <td className="p-4 text-center">
+                                                            <div className="flex justify-center space-x-2">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="hover:text-[#1B6131]"
+                                                                    onClick={() => navigate(`/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams/${kpi.teamId}`)}
+                                                                >
+                                                                    <Eye className="h-4 w-4" />
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    onClick={() => {
+                                                                        setSelectedTeamKPI(kpi);
+                                                                        setIsEditDialogOpen(true);
+                                                                    }}
+                                                                >
+                                                                    <Edit className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4 text-center">{kpi.teamName}</td>
+                                                        <td className="p-4 text-center">{kpi.target.toLocaleString()}</td>
+                                                        <td className="p-4 text-center">{kpi.actual.toLocaleString()}</td>
+                                                        <td className="p-4 text-center">{kpi.achievement}%</td>
+                                                        <td className="p-4 text-center">{kpi.weight}%</td>
+                                                        <td className="p-4 text-center">
+                                                            <span className={`
                                                             px-2 py-1 rounded-full text-xs font-bold
                                                             ${kpi.status === 'On Track' ? 'bg-green-200 text-green-800' :
-                                                                kpi.status === 'At Risk' ? 'bg-yellow-200 text-yellow-800' :
-                                                                    'bg-red-200 text-red-800'}
+                                                                    kpi.status === 'At Risk' ? 'bg-yellow-200 text-yellow-800' :
+                                                                        'bg-red-200 text-red-800'}
                                                         `}>
-                                                            {kpi.status}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                                                {kpi.status}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
 
-                                            {/* Show message when no data is available */}
-                                            {paginatedData.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={7} className="p-4 text-center text-gray-500">
-                                                        No team KPIs match your search criteria.
-                                                    </td>
-                                                </tr>
-                                            )}
+                                                {/* Show message when no data is available */}
+                                                {paginatedData.length === 0 && (
+                                                    <tr>
+                                                        <td colSpan={7} className="p-4 text-center text-gray-500">
+                                                            No team KPIs match your search criteria.
+                                                        </td>
+                                                    </tr>
+                                                )}
 
-                                            {/* Total Row - only show if we have data */}
-                                            {paginatedData.length > 0 && (
-                                                <tr className="bg-[#1B6131] text-white font-bold">
-                                                    <td className="p-4 text-center" colSpan={2}>Total</td>
-                                                    <td className="p-4 text-center"></td>
-                                                    <td className="p-4 text-center">{calculateTotals.total.toLocaleString()}</td>
-                                                    <td className="p-4 text-center">{calculateTotals.averageAchievement.toFixed(2)}%</td>
-                                                    <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
-                                                    <td className="p-4 text-center"></td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                {/* Total Row - only show if we have data */}
+                                                {paginatedData.length > 0 && (
+                                                    <tr className="bg-[#1B6131] text-white font-bold">
+                                                        <td className="p-4 text-center" colSpan={2}>Total</td>
+                                                        <td className="p-4 text-center"></td>
+                                                        <td className="p-4 text-center">{calculateTotals.total.toLocaleString()}</td>
+                                                        <td className="p-4 text-center">{calculateTotals.averageAchievement.toFixed(2)}%</td>
+                                                        <td className="p-4 text-center">{calculateTotals.totalWeight}%</td>
+                                                        <td className="p-4 text-center"></td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                                {/* Pagination Component */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={Math.ceil(filteredData.length / itemsPerPage)}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredData.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={paginationExpanded}
-                                    onToggleExpand={togglePaginationExpand}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
+                                    {/* Pagination Component */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredData.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={paginationExpanded}
+                                        onToggleExpand={togglePaginationExpand}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
 

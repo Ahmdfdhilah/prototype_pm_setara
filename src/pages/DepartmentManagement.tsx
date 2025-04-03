@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import Filtering from '@/components/Filtering';
+import Footer from '@/components/Footer';
 
 // Dummy data types based on your database schema
 type Department = {
@@ -214,156 +215,159 @@ const DepartmentManagementPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <Breadcrumb
-                        items={[]}
-                        currentPage="Department Management"
-                        showHomeIcon={true}
-                    />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <Breadcrumb
+                            items={[]}
+                            currentPage="Department Management"
+                            showHomeIcon={true}
+                        />
 
-                    {/* Combined Filter and Search Section */}
-                    <Filtering
-                    >
-                        <div className="space-y-3 space-y-3 md:col-span-2">
-                            <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                <span>Search</span>
-                            </label>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                <Input
-                                    placeholder="Search by department name, code, or manager..."
-                                    className="pl-9 bg-white dark:bg-gray-800"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                    </Filtering>
-
-                    {/* Department Table */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mt-8">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
-                            <div className="flex justify-between items-center">
-                                <div className="w-full flex flex-col lg:flex-row justify-between gap-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                        Department List
-                                    </CardTitle>
-                                    <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Create Department
-                                    </Button>
+                        {/* Combined Filter and Search Section */}
+                        <Filtering
+                        >
+                            <div className="space-y-3 space-y-3 md:col-span-2">
+                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                    <span>Search</span>
+                                </label>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        placeholder="Search by department name, code, or manager..."
+                                        className="pl-9 bg-white dark:bg-gray-800"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </div>
                             </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="border border-gray-200 dark:border-gray-700 rounded-md overflow-x-auto">
-                                <table className="w-full">
-                                    <thead className="bg-[#1B6131] text-white">
-                                        <tr>
-                                            <th className="p-4 text-left font-medium">Code</th>
-                                            <th className="p-4 text-left font-medium">Department</th>
-                                            <th className="p-4 text-left font-medium">Senior Manager</th>
-                                            <th className="p-4 text-left font-medium">Manager</th>
-                                            <th className="p-4 text-left font-medium">Employees</th>
-                                            <th className="p-4 text-left font-medium">Teams</th>
-                                            <th className="p-4 text-left font-medium">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                        {currentItems.length > 0 ? (
-                                            currentItems.map((department) => (
-                                                <tr key={department.department_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                                                    <td className="p-4">
-                                                        <span className="inline-flex items-center text-[#1B6131] dark:text-white">
-                                                            {department.department_code}
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">
-                                                        <div className="flex items-center space-x-2">
-                                                            <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{department.department_name}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="p-4">
-                                                        <div className="flex items-center space-x-2">
-                                                            <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{department.manager_name}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="p-4">
-                                                        <div className="flex items-center space-x-2">
-                                                            <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{department.sm_manager_name}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td className="p-4">
-                                                    <span className="inline-flex items-center">
-                                                            {department.employee_count} employees
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">
-                                                    <span className="inline-flex items-center">
-                                                            {department.team_count} teams
-                                                        </span>
-                                                    </td>
-                                                    <td className="p-4">
-                                                        <div className="flex space-x-2">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger asChild>
-                                                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                        <span className="sr-only">Open menu</span>
-                                                                        <Edit className="h-4 w-4" />
-                                                                    </Button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem>
-                                                                        <Users className="h-4 w-4 mr-2" />
-                                                                        View Employees
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem>
-                                                                        <Building2 className="h-4 w-4 mr-2" />
-                                                                        View Teams
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem>
-                                                                        <Edit className="h-4 w-4 mr-2" />
-                                                                        Edit Department
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem className="text-red-600">
-                                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                                        Delete Department
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </div>
+                        </Filtering>
+
+                        {/* Department Table */}
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md mt-8">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
+                                <div className="flex justify-between items-center">
+                                    <div className="w-full flex flex-col lg:flex-row justify-between gap-4">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
+                                            Department List
+                                        </CardTitle>
+                                        <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Create Department
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <div className="border border-gray-200 dark:border-gray-700 rounded-md overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-[#1B6131] text-white">
+                                            <tr>
+                                                <th className="p-4 text-left font-medium">Code</th>
+                                                <th className="p-4 text-left font-medium">Department</th>
+                                                <th className="p-4 text-left font-medium">Senior Manager</th>
+                                                <th className="p-4 text-left font-medium">Manager</th>
+                                                <th className="p-4 text-left font-medium">Employees</th>
+                                                <th className="p-4 text-left font-medium">Teams</th>
+                                                <th className="p-4 text-left font-medium">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                            {currentItems.length > 0 ? (
+                                                currentItems.map((department) => (
+                                                    <tr key={department.department_id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                                        <td className="p-4">
+                                                            <span className="inline-flex items-center text-[#1B6131] dark:text-white">
+                                                                {department.department_code}
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex items-center space-x-2">
+                                                                <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{department.department_name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex items-center space-x-2">
+                                                                <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{department.manager_name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex items-center space-x-2">
+                                                                <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{department.sm_manager_name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <span className="inline-flex items-center">
+                                                                {department.employee_count} employees
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <span className="inline-flex items-center">
+                                                                {department.team_count} teams
+                                                            </span>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <div className="flex space-x-2">
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                            <span className="sr-only">Open menu</span>
+                                                                            <Edit className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end">
+                                                                        <DropdownMenuItem>
+                                                                            <Users className="h-4 w-4 mr-2" />
+                                                                            View Employees
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem>
+                                                                            <Building2 className="h-4 w-4 mr-2" />
+                                                                            View Teams
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem>
+                                                                            <Edit className="h-4 w-4 mr-2" />
+                                                                            Edit Department
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem className="text-red-600">
+                                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                                            Delete Department
+                                                                        </DropdownMenuItem>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={7} className="p-8 text-center">
+                                                        No departments found
                                                     </td>
                                                 </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan={7} className="p-8 text-center">
-                                                    No departments found
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                            {/* Pagination */}
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                itemsPerPage={itemsPerPage}
-                                totalItems={totalItems}
-                                onPageChange={handlePageChange}
-                                onItemsPerPageChange={handleItemsPerPageChange}
-                                expanded={isPaginationExpanded}
-                                onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
-                            />
-                        </CardContent>
-                    </Card>
-                </main>
+                                {/* Pagination */}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={totalItems}
+                                    onPageChange={handlePageChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={isPaginationExpanded}
+                                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                />
+                            </CardContent>
+                        </Card>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

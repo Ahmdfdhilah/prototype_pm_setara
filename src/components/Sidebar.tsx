@@ -265,7 +265,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                     </nav>
 
                     {/* Bottom Actions - Disesuaikan padding untuk mobile */}
-                    <div className="mt-auto mb-8 space-y-1 md:space-y-2">
+                    <div className="mt-auto mb-8 lg:mb-0 space-y-1 md:space-y-2">
                         <Button
                             variant="ghost"
                             onClick={() => navigate('/user-profile')}

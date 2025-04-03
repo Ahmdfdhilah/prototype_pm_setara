@@ -21,6 +21,7 @@ import Pagination from '@/components/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '@/components/Breadcrumb';
 import Filtering from '@/components/Filtering';
+import Footer from '@/components/Footer';
 
 // Types
 type Unit = 'IT' | 'Marketing' | 'Sales' | 'Operations' | 'Customer Service' | 'Finance';
@@ -39,12 +40,12 @@ interface Employee {
 }
 
 const IPMPage = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin'); // employee, manager, sm_dept
     const [currentPage, setCurrentPage] = useState(1);
@@ -260,8 +261,8 @@ const IPMPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="space-y-6 w-full">
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>    <div className="space-y-6 w-full">
                         <Breadcrumb
                             items={[]}
                             currentPage="Individual Performance Management"
@@ -474,7 +475,9 @@ const IPMPage = () => {
                             </CardContent>
                         </Card>
                     </div>
-                </main>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

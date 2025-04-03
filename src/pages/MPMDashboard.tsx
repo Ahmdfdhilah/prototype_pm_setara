@@ -26,6 +26,7 @@ import { mpmDataMock } from '@/lib/mpmMocks';
 import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Footer from '@/components/Footer';
 
 // Types
 type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
@@ -52,12 +53,12 @@ type MPMEntry = {
 };
 
 const MPMDashboard: React.FC = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [selectedYear, setSelectedYear] = useState('2025');
@@ -450,19 +451,19 @@ const MPMDashboard: React.FC = () => {
                     {viewType === 'chart' && (
                         <div className="bg-white dark:bg-gray-700 p-4 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
                             <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis yAxisId="left" />
-                                    <YAxis yAxisId="right" orientation="right" />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="target" stroke="#8884d8" name="Target" yAxisId="left" />
-                                    <Line type="monotone" dataKey="actual" stroke="#82ca9d" name="Actual" yAxisId="left" />
-                                    <Line type="monotone" dataKey="achievement" stroke="#ff7300" name="Achievement %" yAxisId="right" />
-                                </LineChart>
-                            </ResponsiveContainer>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis yAxisId="left" />
+                                        <YAxis yAxisId="right" orientation="right" />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Line type="monotone" dataKey="target" stroke="#8884d8" name="Target" yAxisId="left" />
+                                        <Line type="monotone" dataKey="actual" stroke="#82ca9d" name="Actual" yAxisId="left" />
+                                        <Line type="monotone" dataKey="achievement" stroke="#ff7300" name="Achievement %" yAxisId="right" />
+                                    </LineChart>
+                                </ResponsiveContainer>
                             </div>
                         </div>
                     )}
@@ -503,8 +504,8 @@ const MPMDashboard: React.FC = () => {
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-xs text-gray-500 dark:text-gray-400">Achievement:</span>
                                                     <span className={`font-medium text-sm ${achievement >= 100 ? 'text-green-600 dark:text-green-400' :
-                                                            achievement >= 90 ? 'text-amber-600 dark:text-amber-400' :
-                                                                'text-red-600 dark:text-red-400'
+                                                        achievement >= 90 ? 'text-amber-600 dark:text-amber-400' :
+                                                            'text-red-600 dark:text-red-400'
                                                         }`}>
                                                         {achievement}%
                                                     </span>
@@ -547,269 +548,271 @@ const MPMDashboard: React.FC = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out 
-                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="space-y-6 w-full">
-                        <Breadcrumb
-                            items={[]}
-                            currentPage="MPM Dashboard"
-                            subtitle={`MPM ${currentRole == 'admin' ? 'Company' : 'IT Department'} Dashboard`}
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6 w-full">
+                            <Breadcrumb
+                                items={[]}
+                                currentPage="MPM Dashboard"
+                                subtitle={`MPM ${currentRole == 'admin' ? 'Company' : 'IT Department'} Dashboard`}
+                                showHomeIcon={true}
+                            />
 
-                        <Filtering
-                            handlePeriodChange={setSelectedYear}
-                            selectedPeriod={selectedYear}
-                            handleTypeChange={(value) => setSelectedPeriodType(value as PeriodType)}
-                            selectedType={selectedPeriodType}
-                        />
+                            <Filtering
+                                handlePeriodChange={setSelectedYear}
+                                selectedPeriod={selectedYear}
+                                handleTypeChange={(value) => setSelectedPeriodType(value as PeriodType)}
+                                selectedType={selectedPeriodType}
+                            />
 
-                        {/* Quarterly Performance Overview */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    Performance Overview - {selectedPeriodType}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                                    {selectedPeriodType === 'Quarterly' ? (
-                                        quarterlyPerformance.map((quarter) => (
-                                            <Card key={quarter.quarter} className="shadow-sm">
+                            {/* Quarterly Performance Overview */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        Performance Overview - {selectedPeriodType}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                        {selectedPeriodType === 'Quarterly' ? (
+                                            quarterlyPerformance.map((quarter) => (
+                                                <Card key={quarter.quarter} className="shadow-sm">
+                                                    <CardHeader className="pb-2">
+                                                        <CardTitle className="text-lg">
+                                                            {quarter.quarter}
+                                                        </CardTitle>
+                                                    </CardHeader>
+                                                    <CardContent>
+                                                        <div className="space-y-4">
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="text-sm font-medium">
+                                                                    Completion
+                                                                </span>
+                                                                <span className="text-sm font-bold">
+                                                                    {quarter.completion.toFixed(1)}%
+                                                                </span>
+                                                            </div>
+                                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                                <div
+                                                                    className="bg-[#1B6131] h-2.5 rounded-full"
+                                                                    style={{ width: `${quarter.completion}%` }}
+                                                                ></div>
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                                                    <span>On Track</span>
+                                                                </div>
+                                                                <span>{quarter.onTrack}</span>
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
+                                                                    <span>At Risk</span>
+                                                                </div>
+                                                                <span>{quarter.atRisk}</span>
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                                                    <span>Off Track</span>
+                                                                </div>
+                                                                <span>{quarter.offTrack}</span>
+                                                            </div>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            ))
+                                        ) : (
+                                            <Card className="col-span-4 shadow-sm">
                                                 <CardHeader className="pb-2">
                                                     <CardTitle className="text-lg">
-                                                        {quarter.quarter}
+                                                        {selectedPeriodType} Performance - {currentPeriod}
                                                     </CardTitle>
                                                 </CardHeader>
                                                 <CardContent>
-                                                    <div className="space-y-4">
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-sm font-medium">
-                                                                Completion
-                                                            </span>
-                                                            <span className="text-sm font-bold">
-                                                                {quarter.completion.toFixed(1)}%
-                                                            </span>
-                                                        </div>
-                                                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                            <div
-                                                                className="bg-[#1B6131] h-2.5 rounded-full"
-                                                                style={{ width: `${quarter.completion}%` }}
-                                                            ></div>
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                                <span>On Track</span>
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center justify-between">
+                                                                <span className="text-sm font-medium">
+                                                                    Average Achievement
+                                                                </span>
+                                                                <span className="text-sm font-bold">
+                                                                    {mpmData.length > 0 ?
+                                                                        (mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length).toFixed(1) + '%' :
+                                                                        'N/A'}
+                                                                </span>
                                                             </div>
-                                                            <span>{quarter.onTrack}</span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                                                                <span>At Risk</span>
+                                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                                <div
+                                                                    className="bg-[#1B6131] h-2.5 rounded-full"
+                                                                    style={{
+                                                                        width: mpmData.length > 0 ?
+                                                                            `${mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length}%` :
+                                                                            '0%'
+                                                                    }}
+                                                                ></div>
                                                             </div>
-                                                            <span>{quarter.atRisk}</span>
                                                         </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                                <span>Off Track</span>
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                                                    <span>On Track KPIs</span>
+                                                                </div>
+                                                                <span>
+                                                                    {mpmData.filter(item =>
+                                                                        item.achievements[currentPeriod] >= 100
+                                                                    ).length}
+                                                                </span>
                                                             </div>
-                                                            <span>{quarter.offTrack}</span>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
+                                                                    <span>At Risk KPIs</span>
+                                                                </div>
+                                                                <span>
+                                                                    {mpmData.filter(item =>
+                                                                        item.achievements[currentPeriod] >= 90 &&
+                                                                        item.achievements[currentPeriod] < 100
+                                                                    ).length}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <div className="flex items-center">
+                                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                                                    <span>Off Track KPIs</span>
+                                                                </div>
+                                                                <span>
+                                                                    {mpmData.filter(item =>
+                                                                        item.achievements[currentPeriod] < 90
+                                                                    ).length}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <span className="font-medium">Total Weight</span>
+                                                                <span>
+                                                                    {mpmData.reduce((sum, item) => sum + item.weight, 0)}%
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <span className="font-medium">Total Score</span>
+                                                                <span>
+                                                                    {mpmData.reduce((sum, item) => {
+                                                                        const achievement = item.achievements[currentPeriod] || 0;
+                                                                        return sum + (item.weight * Math.min(achievement, 120) / 100);
+                                                                    }, 0).toFixed(1)}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </CardContent>
                                             </Card>
-                                        ))
-                                    ) : (
-                                        <Card className="col-span-4 shadow-sm">
-                                            <CardHeader className="pb-2">
-                                                <CardTitle className="text-lg">
-                                                    {selectedPeriodType} Performance - {currentPeriod}
-                                                </CardTitle>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center justify-between">
-                                                            <span className="text-sm font-medium">
-                                                                Average Achievement
-                                                            </span>
-                                                            <span className="text-sm font-bold">
-                                                                {mpmData.length > 0 ?
-                                                                    (mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length).toFixed(1) + '%' :
-                                                                    'N/A'}
-                                                            </span>
-                                                        </div>
-                                                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                            <div
-                                                                className="bg-[#1B6131] h-2.5 rounded-full"
-                                                                style={{
-                                                                    width: mpmData.length > 0 ?
-                                                                        `${mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length}%` :
-                                                                        '0%'
-                                                                }}
-                                                            ></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                                <span>On Track KPIs</span>
-                                                            </div>
-                                                            <span>
-                                                                {mpmData.filter(item =>
-                                                                    item.achievements[currentPeriod] >= 100
-                                                                ).length}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                                                                <span>At Risk KPIs</span>
-                                                            </div>
-                                                            <span>
-                                                                {mpmData.filter(item =>
-                                                                    item.achievements[currentPeriod] >= 90 &&
-                                                                    item.achievements[currentPeriod] < 100
-                                                                ).length}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <div className="flex items-center">
-                                                                <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                                <span>Off Track KPIs</span>
-                                                            </div>
-                                                            <span>
-                                                                {mpmData.filter(item =>
-                                                                    item.achievements[currentPeriod] < 90
-                                                                ).length}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <span className="font-medium">Total Weight</span>
-                                                            <span>
-                                                                {mpmData.reduce((sum, item) => sum + item.weight, 0)}%
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between text-sm">
-                                                            <span className="font-medium">Total Score</span>
-                                                            <span>
-                                                                {mpmData.reduce((sum, item) => {
-                                                                    const achievement = item.achievements[currentPeriod] || 0;
-                                                                    return sum + (item.weight * Math.min(achievement, 120) / 100);
-                                                                }, 0).toFixed(1)}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Detailed Performance by Perspective */}
-                        {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages, totalItems }]) => (
-                            <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
-                                        {perspective} Perspective
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="m-0 p-0">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow className="bg-[#1B6131] text-white">
-                                                <TableCell className="w-[50px]"></TableCell>
-                                                <TableCell>KPI</TableCell>
-                                                <TableCell className="text-center">Weight</TableCell>
-                                                <TableCell className="text-center">UOM</TableCell>
-                                                <TableCell className="text-center">Category</TableCell>
-                                                <TableCell className="text-center">Target</TableCell>
-                                                <TableCell className="text-center">Actual</TableCell>
-                                                <TableCell className="text-center">Achievement</TableCell>
-                                                <TableCell className="text-center">Score</TableCell>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {items.map((item) => (
-                                                <React.Fragment key={item.id}>
-                                                    <TableRow
-                                                        className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
-                                                        onClick={() => setExpandedRow(expandedRow === item.id ? null : item.id)}
-                                                    >
-                                                        <TableCell>
-                                                            {expandedRow === item.id ?
-                                                                <ChevronDown className="h-4 w-4" /> :
-                                                                <ChevronRight className="h-4 w-4" />}
-                                                        </TableCell>
-                                                        <TableCell>{item.kpi}</TableCell>
-                                                        <TableCell className="text-center">{item.weight}%</TableCell>
-                                                        <TableCell className="text-center">{item.uom}</TableCell>
-                                                        <TableCell className="text-center">{item.category}</TableCell>
-                                                        <TableCell className="text-center">
-                                                            {item.targets[currentPeriod] ?? 'N/A'}
-                                                        </TableCell>
-                                                        <TableCell className="text-center">
-                                                            {item.actuals[currentPeriod] ?? 'N/A'}
-                                                        </TableCell>
-                                                        <TableCell className="text-center">
-                                                            {item.achievements[currentPeriod] ?
-                                                                `${item.achievements[currentPeriod]}%` : 'N/A'}
-                                                        </TableCell>
-                                                        <TableCell className="text-center">
-                                                            {item.achievements[currentPeriod] ?
-                                                                ((item.weight * Math.min(item.achievements[currentPeriod], 120)) / 100).toFixed(1) : 'N/A'}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                    {expandedRow === item.id && (
-                                                        <TableRow>
-                                                            <TableCell colSpan={9} className="p-0">
-                                                                <ExpandedContent item={item} />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    )}
-                                                </React.Fragment>
-                                            ))}
-                                            {/* Perspective Totals */}
-                                            <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
-                                                <TableCell colSpan={2}>Total</TableCell>
-                                                <TableCell className="text-center">
-                                                    {items.reduce((sum, item) => sum + item.weight, 0)}%
-                                                </TableCell>
-                                                <TableCell colSpan={5}></TableCell>
-                                                <TableCell className="text-center">
-                                                    {items.reduce((sum, item) => {
-                                                        const achievement = item.achievements[currentPeriod] || 0;
-                                                        return sum + (item.weight * Math.min(achievement, 120) / 100);
-                                                    }, 0).toFixed(1)}
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-
-                                    {/* Updated Pagination Component */}
-                                    <Pagination
-                                        currentPage={currentPages[perspective as Perspective]}
-                                        totalPages={totalPages}
-                                        itemsPerPage={itemsPerPage[perspective as Perspective]}
-                                        totalItems={totalItems}
-                                        onPageChange={(page) => handlePageChange(perspective as Perspective, page)}
-                                        onItemsPerPageChange={(value) => handleItemsPerPageChange(perspective as Perspective, value)}
-                                        expanded={paginationExpanded[perspective as Perspective]}
-                                        onToggleExpand={() => handleTogglePaginationExpand(perspective as Perspective)}
-                                    />
+                                        )}
+                                    </div>
                                 </CardContent>
                             </Card>
-                        ))}
-                    </div>
-                </main>
+
+                            {/* Detailed Performance by Perspective */}
+                            {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages, totalItems }]) => (
+                                <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                    <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                                            {perspective} Perspective
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="m-0 p-0">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow className="bg-[#1B6131] text-white">
+                                                    <TableCell className="w-[50px]"></TableCell>
+                                                    <TableCell>KPI</TableCell>
+                                                    <TableCell className="text-center">Weight</TableCell>
+                                                    <TableCell className="text-center">UOM</TableCell>
+                                                    <TableCell className="text-center">Category</TableCell>
+                                                    <TableCell className="text-center">Target</TableCell>
+                                                    <TableCell className="text-center">Actual</TableCell>
+                                                    <TableCell className="text-center">Achievement</TableCell>
+                                                    <TableCell className="text-center">Score</TableCell>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {items.map((item) => (
+                                                    <React.Fragment key={item.id}>
+                                                        <TableRow
+                                                            className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
+                                                            onClick={() => setExpandedRow(expandedRow === item.id ? null : item.id)}
+                                                        >
+                                                            <TableCell>
+                                                                {expandedRow === item.id ?
+                                                                    <ChevronDown className="h-4 w-4" /> :
+                                                                    <ChevronRight className="h-4 w-4" />}
+                                                            </TableCell>
+                                                            <TableCell>{item.kpi}</TableCell>
+                                                            <TableCell className="text-center">{item.weight}%</TableCell>
+                                                            <TableCell className="text-center">{item.uom}</TableCell>
+                                                            <TableCell className="text-center">{item.category}</TableCell>
+                                                            <TableCell className="text-center">
+                                                                {item.targets[currentPeriod] ?? 'N/A'}
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                {item.actuals[currentPeriod] ?? 'N/A'}
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                {item.achievements[currentPeriod] ?
+                                                                    `${item.achievements[currentPeriod]}%` : 'N/A'}
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                {item.achievements[currentPeriod] ?
+                                                                    ((item.weight * Math.min(item.achievements[currentPeriod], 120)) / 100).toFixed(1) : 'N/A'}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                        {expandedRow === item.id && (
+                                                            <TableRow>
+                                                                <TableCell colSpan={9} className="p-0">
+                                                                    <ExpandedContent item={item} />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                                {/* Perspective Totals */}
+                                                <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
+                                                    <TableCell colSpan={2}>Total</TableCell>
+                                                    <TableCell className="text-center">
+                                                        {items.reduce((sum, item) => sum + item.weight, 0)}%
+                                                    </TableCell>
+                                                    <TableCell colSpan={5}></TableCell>
+                                                    <TableCell className="text-center">
+                                                        {items.reduce((sum, item) => {
+                                                            const achievement = item.achievements[currentPeriod] || 0;
+                                                            return sum + (item.weight * Math.min(achievement, 120) / 100);
+                                                        }, 0).toFixed(1)}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+
+                                        {/* Updated Pagination Component */}
+                                        <Pagination
+                                            currentPage={currentPages[perspective as Perspective]}
+                                            totalPages={totalPages}
+                                            itemsPerPage={itemsPerPage[perspective as Perspective]}
+                                            totalItems={totalItems}
+                                            onPageChange={(page) => handlePageChange(perspective as Perspective, page)}
+                                            onItemsPerPageChange={(value) => handleItemsPerPageChange(perspective as Perspective, value)}
+                                            expanded={paginationExpanded[perspective as Perspective]}
+                                            onToggleExpand={() => handleTogglePaginationExpand(perspective as Perspective)}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             <FilterDialog />

@@ -15,6 +15,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
 import { IndividualTargetsDialog } from '@/components/IndividualTargetsDialog';
+import Footer from '@/components/Footer';
 
 // Types reflecting the multi-level performance management hierarchy
 type Perspective =
@@ -328,260 +329,261 @@ const MPMTargetsActionPlans: React.FC = () => {
                     system="performance-management"
                 />
 
-                <main className={`
-                 flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-            `}>
-                    <div className="space-y-6 mb-16">
-                        <Breadcrumb
-                            items={[{
-                                label: 'MPM Targets List',
-                                path: '/performance-management/mpm/target',
-                            }, {
-                                label: 'MPM Targets',
-                                path: '/performance-management/mpm/target',
-                            }, {
-                                label: 'MPM Target Teams',
-                                path: `/performance-management/mpm/target/${targetId}/entri/${mpmId}/teams`,
-                            }]}
-                            currentPage="Individual Targets"
-                            subtitle={`MPM Target ID: ${targetId} | Entri ID: ${mpmId} | Team ID: ${teamId}`}
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6 mb-16">
+                            <Breadcrumb
+                                items={[{
+                                    label: 'MPM Targets List',
+                                    path: '/performance-management/mpm/target',
+                                }, {
+                                    label: 'MPM Targets',
+                                    path: '/performance-management/mpm/target',
+                                }, {
+                                    label: 'MPM Target Teams',
+                                    path: `/performance-management/mpm/target/${targetId}/entri/${mpmId}/teams`,
+                                }]}
+                                currentPage="Individual Targets"
+                                subtitle={`MPM Target ID: ${targetId} | Entri ID: ${mpmId} | Team ID: ${teamId}`}
+                                showHomeIcon={true}
+                            />
 
-                        {/* Team KPI Details Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                        <Info className="mr-2 h-5 w-5" />
-                                        Team KPI Details
-                                    </CardTitle>
-                                    <Button
-                                        onClick={() => setIsAddIndividualDialogOpen(true)}
-                                        className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+                            {/* Team KPI Details Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                            <Info className="mr-2 h-5 w-5" />
+                                            Team KPI Details
+                                        </CardTitle>
+                                        <Button
+                                            onClick={() => setIsAddIndividualDialogOpen(true)}
+                                            className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+                                        >
+                                            <PlusCircle className="mr-2 h-4 w-4" />
+                                            Create Action Plans
+                                        </Button>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="mt-4 space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
+                                                Team Information
+                                            </h3>
+                                            <p><strong>Team Name:</strong> {teamActionPlan.teamName}</p>
+                                            <p><strong>Team Weight:</strong> {teamActionPlan.teamWeight}%</p>
+                                            <p><strong>Team Target:</strong> {teamActionPlan.teamTarget}</p>
+                                            <p><strong>Comments:</strong> {teamActionPlan.comments}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
+                                                Parent KPI Details
+                                            </h3>
+                                            <p><strong>KPI:</strong> {teamActionPlan.parentKPI.kpi}</p>
+                                            <p><strong>Perspective:</strong> {teamActionPlan.parentKPI.perspective}</p>
+                                            <p><strong>Overall Weight:</strong> {teamActionPlan.parentKPI.weight}%</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
+                                            Monthly Targets
+                                        </h3>
+                                        <div className="grid grid-cols-3 gap-2 bg-[#f9faf9] dark:bg-gray-800 p-3 rounded-md">
+                                            {Object.entries(teamActionPlan.monthlyTargets).map(([month, target]) => (
+                                                <div key={month} className="text-center">
+                                                    <p className="font-medium">{month}</p>
+                                                    <p className="text-[#1B6131] dark:text-[#46B749]">
+                                                        {target.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Filter Section - New */}
+                            <Filtering>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        placeholder="Search by name or position..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Status</span>
+                                    </label>
+                                    <select
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
                                     >
-                                        <PlusCircle className="mr-2 h-4 w-4" />
-                                        Create Action Plans
-                                    </Button>
+                                        <option value="All">All Statuses</option>
+                                        <option value="On Track">On Track</option>
+                                        <option value="At Risk">At Risk</option>
+                                        <option value="Off Track">Off Track</option>
+                                    </select>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="mt-4 space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                            Team Information
-                                        </h3>
-                                        <p><strong>Team Name:</strong> {teamActionPlan.teamName}</p>
-                                        <p><strong>Team Weight:</strong> {teamActionPlan.teamWeight}%</p>
-                                        <p><strong>Team Target:</strong> {teamActionPlan.teamTarget}</p>
-                                        <p><strong>Comments:</strong> {teamActionPlan.comments}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                            Parent KPI Details
-                                        </h3>
-                                        <p><strong>KPI:</strong> {teamActionPlan.parentKPI.kpi}</p>
-                                        <p><strong>Perspective:</strong> {teamActionPlan.parentKPI.perspective}</p>
-                                        <p><strong>Overall Weight:</strong> {teamActionPlan.parentKPI.weight}%</p>
-                                    </div>
+
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Achievement</span>
+                                    </label>
+                                    <select
+                                        value={achievementFilter}
+                                        onChange={(e) => setAchievementFilter(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    >
+                                        <option value="All">All Achievements</option>
+                                        <option value="Exceeding">Exceeding Target ({`>100%`})</option>
+                                        <option value="Meeting">Meeting Target (90-100%)</option>
+                                        <option value="Below">Below Target ({`<90%`})</option>
+                                    </select>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                        Monthly Targets
-                                    </h3>
-                                    <div className="grid grid-cols-3 gap-2 bg-[#f9faf9] dark:bg-gray-800 p-3 rounded-md">
-                                        {Object.entries(teamActionPlan.monthlyTargets).map(([month, target]) => (
-                                            <div key={month} className="text-center">
-                                                <p className="font-medium">{month}</p>
-                                                <p className="text-[#1B6131] dark:text-[#46B749]">
-                                                    {target.toLocaleString()}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                            </Filtering>
 
-                        {/* Filter Section - New */}
-                        <Filtering>
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <Input
-                                    placeholder="Search by name or position..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                />
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Status</span>
-                                </label>
-                                <select
-                                    value={statusFilter}
-                                    onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                >
-                                    <option value="All">All Statuses</option>
-                                    <option value="On Track">On Track</option>
-                                    <option value="At Risk">At Risk</option>
-                                    <option value="Off Track">Off Track</option>
-                                </select>
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Achievement</span>
-                                </label>
-                                <select
-                                    value={achievementFilter}
-                                    onChange={(e) => setAchievementFilter(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                >
-                                    <option value="All">All Achievements</option>
-                                    <option value="Exceeding">Exceeding Target ({`>100%`})</option>
-                                    <option value="Meeting">Meeting Target (90-100%)</option>
-                                    <option value="Below">Below Target ({`<90%`})</option>
-                                </select>
-                            </div>
-                        </Filtering>
-
-                        {/* Individual Performance Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center justify-between">
-                                    Individual Performance Entries
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className='m-0 p-0 overflow-x-auto'>
-                                <table className="w-full border-collapse">
-                                    <thead className="bg-[#1B6131] text-white">
-                                        <tr>
-                                            <th className="p-3 text-center min-w-[100px]">Actions</th>
-                                            <th className="p-3 min-w-[150px]">Name</th>
-                                            <th className="p-3 min-w-[150px]">Position</th>
-                                            <th className="p-3 text-center min-w-[100px]">Weight</th>
-                                            <th className="p-3 text-center min-w-[100px]">Status</th>
-                                            <th className="p-3 text-center min-w-[100px]">Jan-25</th>
-                                            <th className="p-3 text-center min-w-[100px]">Feb-25</th>
-                                            <th className="p-3 text-center min-w-[100px]">Mar-25</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {currentItems.map(individual => (
-                                            <tr
-                                                key={individual.id}
-                                                className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                            >
-                                                <td className="p-3 text-center">
-                                                    <div className="flex justify-center space-x-2">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => {
-                                                                setSelectedIndividual(individual);
-                                                                setIsEditIndividualDialogOpen(true);
-                                                            }}
-                                                        >
-                                                            <Edit className="h-4 w-4" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => handleDeleteIndividual(individual.id)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                                <td className="p-3">{individual.name}</td>
-                                                <td className="p-3">{individual.position}</td>
-                                                <td className="p-3 text-center">{individual.weight}%</td>
-                                                <td className={`p-3 text-center font-bold ${individual.status === 'On Track'
-                                                    ? 'text-green-600'
-                                                    : individual.status === 'At Risk'
-                                                        ? 'text-amber-600'
-                                                        : 'text-red-600'
-                                                    }`}>
-                                                    {individual.status}
-                                                </td>
-                                                {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => (
-                                                    <td key={month} className="p-3 text-center">
-                                                        <div className="flex flex-col">
-                                                            <span className="dark:text-white">
-                                                                T: {individual.monthlyTargets[month]}
-                                                            </span>
-                                                            <span
-                                                                className={`
+                            {/* Individual Performance Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center justify-between">
+                                        Individual Performance Entries
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className='m-0 p-0 overflow-x-auto'>
+                                    <table className="w-full border-collapse">
+                                        <thead className="bg-[#1B6131] text-white">
+                                            <tr>
+                                                <th className="p-3 text-center min-w-[100px]">Actions</th>
+                                                <th className="p-3 min-w-[150px]">Name</th>
+                                                <th className="p-3 min-w-[150px]">Position</th>
+                                                <th className="p-3 text-center min-w-[100px]">Weight</th>
+                                                <th className="p-3 text-center min-w-[100px]">Status</th>
+                                                <th className="p-3 text-center min-w-[100px]">Jan-25</th>
+                                                <th className="p-3 text-center min-w-[100px]">Feb-25</th>
+                                                <th className="p-3 text-center min-w-[100px]">Mar-25</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {currentItems.map(individual => (
+                                                <tr
+                                                    key={individual.id}
+                                                    className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                >
+                                                    <td className="p-3 text-center">
+                                                        <div className="flex justify-center space-x-2">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => {
+                                                                    setSelectedIndividual(individual);
+                                                                    setIsEditIndividualDialogOpen(true);
+                                                                }}
+                                                            >
+                                                                <Edit className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => handleDeleteIndividual(individual.id)}
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-3">{individual.name}</td>
+                                                    <td className="p-3">{individual.position}</td>
+                                                    <td className="p-3 text-center">{individual.weight}%</td>
+                                                    <td className={`p-3 text-center font-bold ${individual.status === 'On Track'
+                                                        ? 'text-green-600'
+                                                        : individual.status === 'At Risk'
+                                                            ? 'text-amber-600'
+                                                            : 'text-red-600'
+                                                        }`}>
+                                                        {individual.status}
+                                                    </td>
+                                                    {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => (
+                                                        <td key={month} className="p-3 text-center">
+                                                            <div className="flex flex-col">
+                                                                <span className="dark:text-white">
+                                                                    T: {individual.monthlyTargets[month]}
+                                                                </span>
+                                                                <span
+                                                                    className={`
                                                                 font-bold 
                                                                 ${individual.monthlyActuals[month] >= individual.monthlyTargets[month]
-                                                                        ? 'text-green-600'
-                                                                        : individual.monthlyActuals[month] >= individual.monthlyTargets[month] * 0.8
-                                                                            ? 'text-amber-600'
-                                                                            : 'text-red-600'
-                                                                    }
+                                                                            ? 'text-green-600'
+                                                                            : individual.monthlyActuals[month] >= individual.monthlyTargets[month] * 0.8
+                                                                                ? 'text-amber-600'
+                                                                                : 'text-red-600'
+                                                                        }
                                                             `}
-                                                            >
-                                                                A: {individual.monthlyActuals[month] || '-'}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                        {/* Team Totals Row */}
-                                        <tr className="bg-[#1B6131] text-white font-bold">
-                                            <td colSpan={4} className="p-3 text-center">Team Total</td>
-                                            <td className="p-3 text-center"></td>
-                                            {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => {
-                                                const monthTotals = calculateIndividualTotals[month];
-                                                return (
-                                                    <td key={month} className="p-3 text-center">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-white">
-                                                                T: {monthTotals.target}
-                                                            </span>
-                                                            <span
-                                                                className={`
+                                                                >
+                                                                    A: {individual.monthlyActuals[month] || '-'}
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                            {/* Team Totals Row */}
+                                            <tr className="bg-[#1B6131] text-white font-bold">
+                                                <td colSpan={4} className="p-3 text-center">Team Total</td>
+                                                <td className="p-3 text-center"></td>
+                                                {(['Jan-25', 'Feb-25', 'Mar-25'] as const).map(month => {
+                                                    const monthTotals = calculateIndividualTotals[month];
+                                                    return (
+                                                        <td key={month} className="p-3 text-center">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-white">
+                                                                    T: {monthTotals.target}
+                                                                </span>
+                                                                <span
+                                                                    className={`
                                                                 font-bold 
                                                                 ${monthTotals.actual >= monthTotals.target
-                                                                        ? 'text-green-600'
-                                                                        : monthTotals.actual >= monthTotals.target * 0.8
-                                                                            ? 'text-amber-600'
-                                                                            : 'text-red-600'
-                                                                    }
+                                                                            ? 'text-green-600'
+                                                                            : monthTotals.actual >= monthTotals.target * 0.8
+                                                                                ? 'text-amber-600'
+                                                                                : 'text-red-600'
+                                                                        }
                                                             `}
-                                                            >
-                                                                A: {monthTotals.actual}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                );
-                                            })}
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                                >
+                                                                    A: {monthTotals.actual}
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
-                                {/* Pagination Component - New */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredIndividuals.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={isPaginationExpanded}
-                                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
+                                    {/* Pagination Component - New */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredIndividuals.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={isPaginationExpanded}
+                                        onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             {/* Dialogs */}

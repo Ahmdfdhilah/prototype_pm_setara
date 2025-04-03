@@ -15,6 +15,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
 import { IndividualActualsDialog } from '@/components/IndividualActualsDialog';
+import Footer from '@/components/Footer';
 
 type IndividualKPIActual = {
     id: string;
@@ -215,190 +216,190 @@ const MPMActualsActionPlans: React.FC = () => {
                     system="performance-management"
                 />
 
-                <main className={`
-                    flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out 
-                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-                `}>
-                    <div className="space-y-6 mb-16">
-                        <Breadcrumb
-                            items={[
-                                { label: 'MPM Actuals List', path: '/performance-management/mpm/actual' },
-                                { label: 'MPM Actuals', path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}` },
-                                { label: 'MPM Actual Teams', path: `/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams?month=${month}` }
-                            ]}
-                            currentPage="Individual Actuals"
-                            subtitle={`MPM Actual ID: ${mpmActualId}  | Team ID: ${teamId} | Month: ${month}`}
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6 mb-16">
+                            <Breadcrumb
+                                items={[
+                                    { label: 'MPM Actuals List', path: '/performance-management/mpm/actual' },
+                                    { label: 'MPM Actuals', path: `/performance-management/mpm/actual/${mpmActualId}?month=${month}` },
+                                    { label: 'MPM Actual Teams', path: `/performance-management/mpm/actual/${mpmActualId}/entri/${mpmId}/teams?month=${month}` }
+                                ]}
+                                currentPage="Individual Actuals"
+                                subtitle={`MPM Actual ID: ${mpmActualId}  | Team ID: ${teamId} | Month: ${month}`}
+                                showHomeIcon={true}
+                            />
 
-                        {/* Team and KPI Context Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    <Info className="mr-2 h-5 w-5" />
-                                    KPI and Team Context
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="mt-4 space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                            Team Information
-                                        </h3>
-                                        <p><strong>Team Name:</strong> {teamContext.teamName}</p>
-                                        <p><strong>Team Target:</strong> {teamContext.teamTarget.toLocaleString()}</p>
+                            {/* Team and KPI Context Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        <Info className="mr-2 h-5 w-5" />
+                                        KPI and Team Context
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="mt-4 space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
+                                                Team Information
+                                            </h3>
+                                            <p><strong>Team Name:</strong> {teamContext.teamName}</p>
+                                            <p><strong>Team Target:</strong> {teamContext.teamTarget.toLocaleString()}</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
+                                                KPI Details
+                                            </h3>
+                                            <p><strong>KPI Name:</strong> {teamContext.kpiName}</p>
+                                            <p><strong>Perspective:</strong> {teamContext.perspective}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                            KPI Details
-                                        </h3>
-                                        <p><strong>KPI Name:</strong> {teamContext.kpiName}</p>
-                                        <p><strong>Perspective:</strong> {teamContext.perspective}</p>
-                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Filter Section */}
+                            <Filtering>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        placeholder="Search by name or position..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    />
                                 </div>
-                            </CardContent>
-                        </Card>
 
-                        {/* Filter Section */}
-                        <Filtering>
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <Input
-                                    placeholder="Search by name or position..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                />
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Status</span>
+                                    </label>
+                                    <select
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    >
+                                        <option value="All">All Statuses</option>
+                                        <option value="On Track">On Track</option>
+                                        <option value="At Risk">At Risk</option>
+                                        <option value="Off Track">Off Track</option>
+                                    </select>
+                                </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Status</span>
-                                </label>
-                                <select
-                                    value={statusFilter}
-                                    onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                >
-                                    <option value="All">All Statuses</option>
-                                    <option value="On Track">On Track</option>
-                                    <option value="At Risk">At Risk</option>
-                                    <option value="Off Track">Off Track</option>
-                                </select>
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Achievement</span>
+                                    </label>
+                                    <select
+                                        value={achievementFilter}
+                                        onChange={(e) => setAchievementFilter(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                    >
+                                        <option value="All">All Achievements</option>
+                                        <option value="Exceeding">Exceeding Target ({`>100%`})</option>
+                                        <option value="Meeting">Meeting Target (90-100%)</option>
+                                        <option value="Below">Below Target ({`<90%`})</option>
+                                    </select>
+                                </div>
+                            </Filtering>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Achievement</span>
-                                </label>
-                                <select
-                                    value={achievementFilter}
-                                    onChange={(e) => setAchievementFilter(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                >
-                                    <option value="All">All Achievements</option>
-                                    <option value="Exceeding">Exceeding Target ({`>100%`})</option>
-                                    <option value="Meeting">Meeting Target (90-100%)</option>
-                                    <option value="Below">Below Target ({`<90%`})</option>
-                                </select>
-                            </div>
-                        </Filtering>
-
-                        {/* Individual Actuals Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                    Individual KPI Actuals
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className='m-0 p-0 overflow-x-auto'>
-                                <table className="w-full border-collapse">
-                                    <thead className="bg-[#1B6131] text-white">
-                                        <tr>
-                                            <th className="p-3 text-center min-w-[100px]">Actions</th>
-                                            <th className="p-3 min-w-[150px]">Name</th>
-                                            <th className="p-3 min-w-[150px]">Position</th>
-                                            <th className="p-3 text-center min-w-[100px]">Target</th>
-                                            <th className="p-3 text-center min-w-[100px]">Actual</th>
-                                            <th className="p-3 text-center min-w-[100px]">Achievement (%)</th>
-                                            <th className="p-3 text-center min-w-[100px]">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {currentItems.map(individual => (
-                                            <tr
-                                                key={individual.id}
-                                                className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                            >
-                                                <td className="p-3 text-center">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => {
-                                                            setSelectedIndividual(individual);
-                                                            setIsEditIndividualDialogOpen(true);
-                                                        }}
-                                                    >
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                </td>
-                                                <td className="p-3">{individual.name}</td>
-                                                <td className="p-3">{individual.position}</td>
-                                                <td className="p-3 text-center">{individual.target.toLocaleString()}</td>
-                                                <td className="p-3 text-center">{individual.actual.toLocaleString()}</td>
-                                                <td className={`p-3 text-center font-bold ${individual.achievement >= 100
-                                                    ? 'text-green-600'
-                                                    : individual.achievement >= 80
-                                                        ? 'text-amber-600'
-                                                        : 'text-red-600'
-                                                    }`}>
-                                                    {individual.achievement.toFixed(2)}%
-                                                </td>
-                                                <td className={`p-3 text-center font-bold ${individual.status === 'On Track'
-                                                    ? 'text-green-600'
-                                                    : individual.status === 'At Risk'
-                                                        ? 'text-amber-600'
-                                                        : 'text-red-600'
-                                                    }`}>
-                                                    {individual.status}
-                                                </td>
+                            {/* Individual Actuals Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        Individual KPI Actuals
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className='m-0 p-0 overflow-x-auto'>
+                                    <table className="w-full border-collapse">
+                                        <thead className="bg-[#1B6131] text-white">
+                                            <tr>
+                                                <th className="p-3 text-center min-w-[100px]">Actions</th>
+                                                <th className="p-3 min-w-[150px]">Name</th>
+                                                <th className="p-3 min-w-[150px]">Position</th>
+                                                <th className="p-3 text-center min-w-[100px]">Target</th>
+                                                <th className="p-3 text-center min-w-[100px]">Actual</th>
+                                                <th className="p-3 text-center min-w-[100px]">Achievement (%)</th>
+                                                <th className="p-3 text-center min-w-[100px]">Status</th>
                                             </tr>
-                                        ))}
-                                        {/* Team Totals Row */}
-                                        <tr className="bg-[#1B6131] text-white font-bold">
-                                            <td colSpan={3} className="p-3 text-center">Team Total</td>
-                                            <td className="p-3 text-center">
-                                                {calculateTeamTotals.totalTarget.toLocaleString()}
-                                            </td>
-                                            <td className="p-3 text-center">
-                                                {calculateTeamTotals.totalActual.toLocaleString()}
-                                            </td>
-                                            <td className="p-3 text-center">
-                                                {calculateTeamTotals.averageAchievement.toFixed(2)}%
-                                            </td>
-                                            <td className="p-3 text-center"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {currentItems.map(individual => (
+                                                <tr
+                                                    key={individual.id}
+                                                    className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                >
+                                                    <td className="p-3 text-center">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => {
+                                                                setSelectedIndividual(individual);
+                                                                setIsEditIndividualDialogOpen(true);
+                                                            }}
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </td>
+                                                    <td className="p-3">{individual.name}</td>
+                                                    <td className="p-3">{individual.position}</td>
+                                                    <td className="p-3 text-center">{individual.target.toLocaleString()}</td>
+                                                    <td className="p-3 text-center">{individual.actual.toLocaleString()}</td>
+                                                    <td className={`p-3 text-center font-bold ${individual.achievement >= 100
+                                                        ? 'text-green-600'
+                                                        : individual.achievement >= 80
+                                                            ? 'text-amber-600'
+                                                            : 'text-red-600'
+                                                        }`}>
+                                                        {individual.achievement.toFixed(2)}%
+                                                    </td>
+                                                    <td className={`p-3 text-center font-bold ${individual.status === 'On Track'
+                                                        ? 'text-green-600'
+                                                        : individual.status === 'At Risk'
+                                                            ? 'text-amber-600'
+                                                            : 'text-red-600'
+                                                        }`}>
+                                                        {individual.status}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            {/* Team Totals Row */}
+                                            <tr className="bg-[#1B6131] text-white font-bold">
+                                                <td colSpan={3} className="p-3 text-center">Team Total</td>
+                                                <td className="p-3 text-center">
+                                                    {calculateTeamTotals.totalTarget.toLocaleString()}
+                                                </td>
+                                                <td className="p-3 text-center">
+                                                    {calculateTeamTotals.totalActual.toLocaleString()}
+                                                </td>
+                                                <td className="p-3 text-center">
+                                                    {calculateTeamTotals.averageAchievement.toFixed(2)}%
+                                                </td>
+                                                <td className="p-3 text-center"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
-                                {/* Pagination Component */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredIndividuals.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={isPaginationExpanded}
-                                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </main>
+                                    {/* Pagination Component */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredIndividuals.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={isPaginationExpanded}
+                                        onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
 
             {selectedIndividual && (

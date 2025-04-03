@@ -39,6 +39,7 @@ import { DistributionBar } from '@/components/Dashboard/DistributionBar';
 import { availablePeriods, availableYears, departmentPerformanceByMonth, individualPerformersByMonth } from '@/lib/dashboardMocks';
 import { RankBadge } from '@/components/RankBadge';
 import { StatusIndicator } from '@/components/Dashboard/StatusIndicator';
+import Footer from '@/components/Footer';
 
 interface TrendData {
     month: string;
@@ -385,8 +386,8 @@ const PerformanceManagementDashboard = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <div className="space-y-6">
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>        <div className="space-y-6">
                         <Breadcrumb
                             items={[]}
                             currentPage="Performance Management Dashboard"
@@ -693,7 +694,9 @@ const PerformanceManagementDashboard = () => {
                             </>
                         )}
                     </div>
-                </main>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Footer from '@/components/Footer';
 
 // Types
 type YTDCalculation = 'Accumulative' | 'Average' | 'Last Value';
@@ -49,11 +50,11 @@ type ActionPlanEntry = {
 };
 
 const MPMActionPlan = () => {
-   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
+      return window.innerWidth >= 768;
     }
-    return true; 
+    return true;
   });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
@@ -656,103 +657,99 @@ const MPMActionPlan = () => {
           system="performance-management"
         />
 
-        <main
-          className={`
-            flex-1 px-4 md:px-8 pt-20 
-            transition-all duration-300 ease-in-out
-            ${isSidebarOpen ? 'md:ml-72' : 'md:ml-0'}
-            w-full
-          `}
-        >
-          <div className="space-y-6 w-full">
-            {/* Header Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
-                MPM Info - Action Plan
-              </h1>
-              <Button
-                className="w-full sm:w-auto bg-[#1B6131] hover:bg-[#0D4A1E] text-white"
-                onClick={() => setIsCreateDialogOpen(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Create Action Plan
-              </Button>
+        <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+          <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+            <div className="space-y-6 w-full">
+              {/* Header Section */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 mt-4 space-y-4 sm:space-y-0">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] w-full">
+                  MPM Info - Action Plan
+                </h1>
+                <Button
+                  className="w-full sm:w-auto bg-[#1B6131] hover:bg-[#0D4A1E] text-white"
+                  onClick={() => setIsCreateDialogOpen(true)}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Action Plan
+                </Button>
+              </div>
+
+              {/* Main Card */}
+              <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    Action Plan Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className='mt-4'>
+                  <CustomTable data={actionPlanData} />
+                </CardContent>
+              </Card>
+
+              {/* Quarterly Progress Card */}
+              <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    Quarterly Performance Overview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    {(['Q1', 'Q2', 'Q3', 'Q4'] as const).map((quarter, index) => (
+                      <Card key={quarter} className="shadow-sm">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">
+                            {quarter} 2023
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium">
+                                Completion
+                              </span>
+                              <span className="text-sm font-bold">
+                                {index < 2 ? '100%' : '0%'}
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                              <div
+                                className="bg-[#1B6131] h-2.5 rounded-full"
+                                style={{ width: index < 2 ? '100%' : '0%' }}
+                              ></div>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center">
+                                <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                <span>On Track</span>
+                              </div>
+                              <span>{index < 2 ? '1' : '0'}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center">
+                                <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
+                                <span>At Risk</span>
+                              </div>
+                              <span>{index < 2 ? '1' : '0'}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center">
+                                <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                <span>Off Track</span>
+                              </div>
+                              <span>0</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-
-            {/* Main Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                  Action Plan Management
-                </CardTitle>
-              </CardHeader>
-              <CardContent className='mt-4'>
-                <CustomTable data={actionPlanData} />
-              </CardContent>
-            </Card>
-
-            {/* Quarterly Progress Card */}
-            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                  Quarterly Performance Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  {(['Q1', 'Q2', 'Q3', 'Q4'] as const).map((quarter, index) => (
-                    <Card key={quarter} className="shadow-sm">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">
-                          {quarter} 2023
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">
-                              Completion
-                            </span>
-                            <span className="text-sm font-bold">
-                              {index < 2 ? '100%' : '0%'}
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div
-                              className="bg-[#1B6131] h-2.5 rounded-full"
-                              style={{ width: index < 2 ? '100%' : '0%' }}
-                            ></div>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                              <span>On Track</span>
-                            </div>
-                            <span>{index < 2 ? '1' : '0'}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                              <span>At Risk</span>
-                            </div>
-                            <span>{index < 2 ? '1' : '0'}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-sm">
-                            <div className="flex items-center">
-                              <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                              <span>Off Track</span>
-                            </div>
-                            <span>0</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+          </main>
+          <Footer />
+        </div>
       </div>
 
       <CreateActionPlanDialog

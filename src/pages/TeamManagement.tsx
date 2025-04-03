@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import Filtering from '@/components/Filtering';
+import Footer from '@/components/Footer';
 
 // Dummy data types based on your database schema
 type Team = {
@@ -224,161 +225,164 @@ const TeamManagementPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <Breadcrumb
-                        items={[]}
-                        currentPage="Team Management"
-                        showHomeIcon={true}
-                    />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <Breadcrumb
+                            items={[]}
+                            currentPage="Team Management"
+                            showHomeIcon={true}
+                        />
 
-                    {/* Search and Filter Section */}
-                    <div className="mb-6">
-                        <Filtering
-                        >
-                            <div className="space-y-3 md:col-span-2">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Search by team name, department, or description..."
-                                        className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                        {/* Search and Filter Section */}
+                        <div className="mb-6">
+                            <Filtering
+                            >
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <div className="relative">
+                                        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            placeholder="Search by team name, department, or description..."
+                                            className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            {/* Custom filter options for department */}
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Department</span>
-                                </label>
-                                <select
-                                    value={selectedDepartment}
-                                    onChange={(e) => handleDepartmentChange(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
-                                >
-                                    <option value="all">All Departments</option>
-                                    {departments.map(dept => (
-                                        <option key={dept.department_id} value={String(dept.department_id)}>
-                                            {dept.department_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </Filtering>
-                    </div>
+                                {/* Custom filter options for department */}
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Users className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Department</span>
+                                    </label>
+                                    <select
+                                        value={selectedDepartment}
+                                        onChange={(e) => handleDepartmentChange(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none text-gray-900 dark:text-gray-100"
+                                    >
+                                        <option value="all">All Departments</option>
+                                        {departments.map(dept => (
+                                            <option key={dept.department_id} value={String(dept.department_id)}>
+                                                {dept.department_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </Filtering>
+                        </div>
 
-                    {/* Team Table */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Team List
-                                </CardTitle>
-                                <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Create Team
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="rounded-md border border-gray-200 dark:border-gray-700">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Team Name</TableHead>
-                                            <TableHead>Department</TableHead>
-                                            <TableHead>Description</TableHead>
-                                            <TableHead>Members</TableHead>
-                                            <TableHead>Created At</TableHead>
-                                            <TableHead>Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {currentItems.length > 0 ? (
-                                            currentItems.map((team) => (
-                                                <TableRow key={team.team_id}>
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{team.team_name}</span>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{team.department_name}</span>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell className="max-w-xs truncate">{team.team_description}</TableCell>
-                                                    <TableCell>
-                                                        <span className="inline-flex items-center">
-                                                            {team.member_count} members
-                                                        </span>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {new Date(team.team_created_at).toLocaleDateString()}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex space-x-2">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger asChild>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        className="text-[#1B6131] dark:text-[#46B749]"
-                                                                    >
-                                                                        <Edit className="h-4 w-4 mr-1" />
-                                                                    </Button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuItem>
-                                                                        <Users className="h-4 w-4 mr-2" />
-                                                                        View Members
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem>
-                                                                        <Edit className="h-4 w-4 mr-2" />
-                                                                        Edit Team
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem className="text-red-600">
-                                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                                        Delete Team
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                        </div>
+                        {/* Team Table */}
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
+                                        Team List
+                                    </CardTitle>
+                                    <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Create Team
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <div className="rounded-md border border-gray-200 dark:border-gray-700">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Team Name</TableHead>
+                                                <TableHead>Department</TableHead>
+                                                <TableHead>Description</TableHead>
+                                                <TableHead>Members</TableHead>
+                                                <TableHead>Created At</TableHead>
+                                                <TableHead>Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {currentItems.length > 0 ? (
+                                                currentItems.map((team) => (
+                                                    <TableRow key={team.team_id}>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <Users className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{team.team_name}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{team.department_name}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell className="max-w-xs truncate">{team.team_description}</TableCell>
+                                                        <TableCell>
+                                                            <span className="inline-flex items-center">
+                                                                {team.member_count} members
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {new Date(team.team_created_at).toLocaleDateString()}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex space-x-2">
+                                                                <DropdownMenu>
+                                                                    <DropdownMenuTrigger asChild>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="text-[#1B6131] dark:text-[#46B749]"
+                                                                        >
+                                                                            <Edit className="h-4 w-4 mr-1" />
+                                                                        </Button>
+                                                                    </DropdownMenuTrigger>
+                                                                    <DropdownMenuContent align="end">
+                                                                        <DropdownMenuItem>
+                                                                            <Users className="h-4 w-4 mr-2" />
+                                                                            View Members
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem>
+                                                                            <Edit className="h-4 w-4 mr-2" />
+                                                                            Edit Team
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuItem className="text-red-600">
+                                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                                            Delete Team
+                                                                        </DropdownMenuItem>
+                                                                    </DropdownMenuContent>
+                                                                </DropdownMenu>
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} className="h-24 text-center">
+                                                        No teams found
                                                     </TableCell>
                                                 </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={6} className="h-24 text-center">
-                                                    No teams found
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
 
-                            {/* Updated Pagination Component */}
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                itemsPerPage={itemsPerPage}
-                                totalItems={filteredTeams.length}
-                                onPageChange={setCurrentPage}
-                                onItemsPerPageChange={handleItemsPerPageChange}
-                                expanded={isPaginationExpanded}
-                                onToggleExpand={togglePaginationExpand}
-                            />
-                        </CardContent>
-                    </Card>
-                </main>
+                                {/* Updated Pagination Component */}
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsPerPage={itemsPerPage}
+                                    totalItems={filteredTeams.length}
+                                    onPageChange={setCurrentPage}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                    expanded={isPaginationExpanded}
+                                    onToggleExpand={togglePaginationExpand}
+                                />
+                            </CardContent>
+                        </Card>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

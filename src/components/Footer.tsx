@@ -1,41 +1,45 @@
-import { Card } from '@/components/ui/card';
+import { HelpCircle, Mail, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const Footer: React.FC = () => {
+const Footer = ({ currentSystem = "Performance Management System" }) => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-black text-white py-8">
-      <div className="max-w-screen-xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-24">
-        {/* Location Column */}
-        <Card className="flex flex-col space-y-4 bg-transparent shadow-none border-none">
-          <h3 className="text-xl font-semibold text-gray-200">Lokasi Office</h3>
-          <div className="relative w-full h-60 rounded-lg overflow-hidden">
-            {/* Embed Google Maps */}
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1984.0347137635664!2d105.2714638188205!3d-5.408262528126818!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e40fbb7e2b6d8dd%3A0x2b47f10712b8979f!2sJl.%20Purnawirawan%20No.56%20Gedung%20Meneng%2C%20Bandar%20Lampung!5e0!3m2!1sen!2sid!4v1673515491810!5m2!1sen!2sid"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-            />
+    <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 font-montserrat px-4">
+      <div className="container mx-auto px-0 py-6">
+        <div className="flex flex-col md:flex-row justify-between items-center px-0">
+          {/* Left Section - System Info */}
+          <div className="flex items-center mb-4 md:mb-0">
+            <div className="mr-4 p-2 bg-[#f0f9f0] dark:bg-[#0a2e14] rounded-full">
+              <FileText className="h-5 w-5 text-[#1B6131] dark:text-[#46B749]" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-[#1B6131] dark:text-[#46B749]">{currentSystem}</h3>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Version 1.0.0</p>
+            </div>
           </div>
-          <p className="text-gray-400 mt-2">Jl. Purnawirawan No. 56 Gedung Meneng, Bandar Lampung</p>
-        </Card>
 
-        {/* Contact Us Column */}
-        <Card className="flex flex-col space-y-4 bg-transparent shadow-none border-none">
-          <h3 className="text-xl font-semibold text-gray-200">Kontak Kami</h3>
-          <p className="text-gray-400">Phone: 0821-75282776</p>
-          <p className="text-gray-400">
-            Email: <a href="mailto:setaracommodity@gmail.com" className="hover:text-gray-200">setaracommodity@gmail.com</a>
-          </p>
-          <p className="text-gray-400">
-            Social: <a href="https://twitter.com/setaracommodity" className="hover:text-gray-200">@setaracommodity</a>
-          </p>
-        </Card>
-      </div>
+          {/* Center Section - Quick Links */}
+          <div className="flex space-x-4 mb-4 md:mb-0">
+            <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-[#1B6131] hover:dark:text-[#46B749] p-0 h-auto">
+              <HelpCircle className="h-4 w-4 mr-1" />
+              <span className="text-xs">Help</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-[#1B6131] hover:dark:text-[#46B749] p-0 h-auto">
+              <FileText className="h-4 w-4 mr-1" />
+              <span className="text-xs">Documentation</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400 hover:text-[#1B6131] hover:dark:text-[#46B749] p-0 h-auto">
+              <Mail className="h-4 w-4 mr-1" />
+              <span className="text-xs">Contact</span>
+            </Button>
+          </div>
 
-      {/* Footer Copyright */}
-      <div className="text-center mt-8">
-        <p className="text-gray-400 text-sm">© 2024 Setara Commodity. All rights reserved.</p>
+          {/* Right Section - Copyright */}
+          <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center">
+            <span>&copy; {currentYear} Arga Bumi Indonesia. All rights reserved.</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

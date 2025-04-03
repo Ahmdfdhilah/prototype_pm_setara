@@ -38,6 +38,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Filtering from '@/components/Filtering';
+import Footer from '@/components/Footer';
 
 // Dummy data types based on your database schema
 type Employee = {
@@ -220,229 +221,231 @@ const EmployeeManagementPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <Breadcrumb
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>     <Breadcrumb
                         items={[]}
                         currentPage="Employee Management"
                         showHomeIcon={true}
                     />
 
-                    {/* Search and Filter Section - using the FilterSection component */}
-                    <div className="mb-6">
-                        <Filtering>
-                            <div className="space-y-3 md:col-span-2">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Search by name, employee number, or email..."
-                                        className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                        {/* Search and Filter Section - using the FilterSection component */}
+                        <div className="mb-6">
+                            <Filtering>
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <div className="relative">
+                                        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            placeholder="Search by name, employee number, or email..."
+                                            className="pl-9 bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131]"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
 
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Department</span>
-                                </label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                    value={filters.department}
-                                    onChange={(e) => handleFilterChange('department', e.target.value)}
-                                >
-                                    <option value="">All Departments</option>
-                                    {departments.map(dept => (
-                                        <option key={dept.department_id} value={String(dept.department_id)}>
-                                            {dept.department_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Department</span>
+                                    </label>
+                                    <select
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                        value={filters.department}
+                                        onChange={(e) => handleFilterChange('department', e.target.value)}
+                                    >
+                                        <option value="">All Departments</option>
+                                        {departments.map(dept => (
+                                            <option key={dept.department_id} value={String(dept.department_id)}>
+                                                {dept.department_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Team</span>
-                                </label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                    value={filters.team}
-                                    onChange={(e) => handleFilterChange('team', e.target.value)}
-                                >
-                                    <option value="">All Teams</option>
-                                    {teams.map(team => (
-                                        <option key={team.team_id} value={String(team.team_id)}>
-                                            {team.team_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Team</span>
+                                    </label>
+                                    <select
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                        value={filters.team}
+                                        onChange={(e) => handleFilterChange('team', e.target.value)}
+                                    >
+                                        <option value="">All Teams</option>
+                                        {teams.map(team => (
+                                            <option key={team.team_id} value={String(team.team_id)}>
+                                                {team.team_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Status</span>
-                                </label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                    value={filters.status}
-                                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                                >
-                                    <option value="all">All Statuses</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Status</span>
+                                    </label>
+                                    <select
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                        value={filters.status}
+                                        onChange={(e) => handleFilterChange('status', e.target.value)}
+                                    >
+                                        <option value="all">All Statuses</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
 
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <span>Role</span>
-                                </label>
-                                <select
-                                    className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
-                                    value={filters.isManager}
-                                    onChange={(e) => handleFilterChange('isManager', e.target.value)}
-                                >
-                                    <option value="all">All Roles</option>
-                                    <option value="yes">Managers</option>
-                                    <option value="no">Non-Managers</option>
-                                </select>
-                            </div>
-                        </Filtering>
-                    </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Role</span>
+                                    </label>
+                                    <select
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md"
+                                        value={filters.isManager}
+                                        onChange={(e) => handleFilterChange('isManager', e.target.value)}
+                                    >
+                                        <option value="all">All Roles</option>
+                                        <option value="yes">Managers</option>
+                                        <option value="no">Non-Managers</option>
+                                    </select>
+                                </div>
+                            </Filtering>
+                        </div>
 
-                    {/* Employee Table */}
-                    <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
-                                    Employee List Table
-                                </CardTitle>
-                                <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Add Employee
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="rounded-md border border-gray-200 dark:border-gray-700">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Employee ID</TableHead>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Email</TableHead>
-                                            <TableHead>Department</TableHead>
-                                            <TableHead>Team</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Role</TableHead>
-                                            <TableHead>Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {currentItems.length > 0 ? (
-                                            currentItems.map((employee) => (
-                                                <TableRow key={employee.employee_id}>
-                                                    <TableCell>{employee.employee_number}</TableCell>
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{employee.employee_name}</span>
+                        {/* Employee Table */}
+                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
+                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] text-lg">
+                                        Employee List Table
+                                    </CardTitle>
+                                    <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Add Employee
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <div className="rounded-md border border-gray-200 dark:border-gray-700">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Employee ID</TableHead>
+                                                <TableHead>Name</TableHead>
+                                                <TableHead>Email</TableHead>
+                                                <TableHead>Department</TableHead>
+                                                <TableHead>Team</TableHead>
+                                                <TableHead>Status</TableHead>
+                                                <TableHead>Role</TableHead>
+                                                <TableHead>Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {currentItems.length > 0 ? (
+                                                currentItems.map((employee) => (
+                                                    <TableRow key={employee.employee_id}>
+                                                        <TableCell>{employee.employee_number}</TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <User className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{employee.employee_name}</span>
 
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <Mail className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{employee.employee_email}</span>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{employee.department_name}</span>
-                                                        </div>
-                                                    </TableCell>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <Mail className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{employee.employee_email}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <Building2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{employee.department_name}</span>
+                                                            </div>
+                                                        </TableCell>
 
-                                                    <TableCell>
-                                                        <div className="flex items-center space-x-2">
-                                                            <Users2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                            <span>{employee.team_name}</span>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge
-                                                            variant={employee.employee_is_active ? 'default' : 'secondary'}
-                                                            className={employee.employee_is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}
-                                                        >
-                                                            {employee.employee_is_active ? 'Active' : 'Inactive'}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {employee.is_manager ? 'Manager' : 'Employee'}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                                    <span className="sr-only">Open menu</span>
-                                                                    <Edit className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                <DropdownMenuItem>
-                                                                    <Edit className="h-4 w-4 mr-2" />
-                                                                    Edit
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem>
-                                                                    {employee.employee_is_active ? (
-                                                                        <>
-                                                                            <UserX className="h-4 w-4 mr-2" />
-                                                                            Deactivate
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <UserCheck className="h-4 w-4 mr-2" />
-                                                                            Activate
-                                                                        </>
-                                                                    )}
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
+                                                        <TableCell>
+                                                            <div className="flex items-center space-x-2">
+                                                                <Users2 className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                <span>{employee.team_name}</span>
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Badge
+                                                                variant={employee.employee_is_active ? 'default' : 'secondary'}
+                                                                className={employee.employee_is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}
+                                                            >
+                                                                {employee.employee_is_active ? 'Active' : 'Inactive'}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {employee.is_manager ? 'Manager' : 'Employee'}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                                                        <span className="sr-only">Open menu</span>
+                                                                        <Edit className="h-4 w-4 text-[#1B6131] dark:text-[#46B749]" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem>
+                                                                        <Edit className="h-4 w-4 mr-2" />
+                                                                        Edit
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem>
+                                                                        {employee.employee_is_active ? (
+                                                                            <>
+                                                                                <UserX className="h-4 w-4 mr-2" />
+                                                                                Deactivate
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <UserCheck className="h-4 w-4 mr-2" />
+                                                                                Activate
+                                                                            </>
+                                                                        )}
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={8} className="h-24 text-center">
+                                                        No employees found
                                                     </TableCell>
                                                 </TableRow>
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={8} className="h-24 text-center">
-                                                    No employees found
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </div>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
 
-                            {/* Updated Pagination Component */}
-                            {filteredEmployees.length > 0 && (
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredEmployees.length}
-                                    onPageChange={setCurrentPage}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={paginationExpanded}
-                                    onToggleExpand={() => setPaginationExpanded(!paginationExpanded)}
-                                />
-                            )}
-                        </CardContent>
-                    </Card>
-                </main>
+                                {/* Updated Pagination Component */}
+                                {filteredEmployees.length > 0 && (
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredEmployees.length}
+                                        onPageChange={setCurrentPage}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={paginationExpanded}
+                                        onToggleExpand={() => setPaginationExpanded(!paginationExpanded)}
+                                    />
+                                )}
+                            </CardContent>
+                        </Card>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

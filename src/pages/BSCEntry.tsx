@@ -17,14 +17,15 @@ import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Filtering from '@/components/Filtering';
+import Footer from '@/components/Footer';
 
 const BSCEntryPage = () => {
-     const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
-    }
-    return true; 
-  });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return window.innerWidth >= 768;
+        }
+        return true;
+    });
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [allEntries, setAllEntries] = useState<BSCEntry[]>([]);
@@ -217,199 +218,199 @@ const BSCEntryPage = () => {
                     system="performance-management"
                 />
 
-                <main className={`
-                    flex-1 px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out 
-                    ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-                `}>
-                    <div className="space-y-6 max-w-full">
-                        <Breadcrumb
-                            items={[]}
-                            currentPage="BSC Input Data"
-                            showHomeIcon={true}
-                        />
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6 max-w-full">
+                            <Breadcrumb
+                                items={[]}
+                                currentPage="BSC Input Data"
+                                showHomeIcon={true}
+                            />
 
-                        {/* Filter Section */}
-                        <Filtering>
-                            <div className="space-y-3 md:col-span-2">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search</span>
-                                </label>
-                                <Input
-                                    type="text"
-                                    placeholder="Search KPI, Code, or PIC..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10"
-                                />
-                            </div>
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <EyeIcon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Perspective</span>
-                                </label>
-                                <Select
-                                    onValueChange={setSelectedPerspective}
-                                    value={selectedPerspective}
-                                >
-                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                                        <SelectValue placeholder="Select Perspective" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Perspectives</SelectItem>
-                                        {perspectives.map((perspective) => (
-                                            <SelectItem key={perspective} value={perspective}>{perspective}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Layers className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Category</span>
-                                </label>
-                                <Select
-                                    onValueChange={setSelectedCategory}
-                                    value={selectedCategory}
-                                >
-                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                                        <SelectValue placeholder="Select Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Categories</SelectItem>
-                                        {categories.map((category) => (
-                                            <SelectItem key={category} value={category}>{category}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </Filtering>
-
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
-                                        KPI Entries
-                                    </CardTitle>
-                                    <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto justify-start sm:justify-end">
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleFileUpload}
-                                            accept=".xlsx,.xls"
-                                            className="hidden"
-                                        />
-                                        <Button
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
-                                            size="sm"
-                                        >
-                                            <FileSpreadsheet className="mr-2 h-4 w-4" />
-                                            Import Excel
-                                        </Button>
-                                        <Button
-                                            onClick={handleSaveAll}
-                                            className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
-                                            size="sm"
-                                        >
-                                            <Save className="mr-2 h-4 w-4" />
-                                            Save All
-                                        </Button>
-                                        <Button
-                                            onClick={handleOpenCreateDialog}
-                                            className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
-                                            size="sm"
-                                        >
-                                            <Plus className="mr-2 h-4 w-4" />
-                                            Add KPI
-                                        </Button>
-                                    </div>
+                            {/* Filter Section */}
+                            <Filtering>
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Search KPI, Code, or PIC..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10"
+                                    />
                                 </div>
-                            </CardHeader>
-                            <CardContent className="dark:bg-gray-900 m-0 p-0">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full">
-                                        <thead className="bg-[#1B6131] text-white">
-                                            <tr>
-                                                <th className="p-4 text-left">Perspective</th>
-                                                <th className="p-4 text-left">Code</th>
-                                                <th className="p-4 text-left">KPI</th>
-                                                <th className="p-4 text-left">Weight</th>
-                                                <th className="p-4 text-left">UOM</th>
-                                                <th className="p-4 text-left">Category</th>
-                                                <th className="p-4 text-left">Target</th>
-                                                <th className="p-4 text-left">Related PIC</th>
-                                                <th className="p-4 text-left">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {displayedEntries.map((entry) => (
-                                                <tr key={entry.id} className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
-                                                    <td className="p-4">{entry.perspective}</td>
-                                                    <td className="p-4">{entry.code}</td>
-                                                    <td className="p-4">{entry.kpi}</td>
-                                                    <td className="p-4">{entry.weight}%</td>
-                                                    <td className="p-4">{entry.uom}</td>
-                                                    <td className="p-4">{entry.category}</td>
-                                                    <td className="p-4">{entry.target}</td>
-                                                    <td className="p-4">{entry.relatedPIC}</td>
-                                                    <td className="p-4 flex space-x-2">
-                                                        <Button
-                                                            onClick={() => handleOpenEditDialog(entry)}
-                                                            variant="outline"
-                                                            size="sm"
-                                                        >
-                                                            <Edit className="h-4 w-4" />
-                                                        </Button>
-                                                        <Button
-                                                            onClick={() => handleDeleteEntry(entry.id!)}
-                                                            variant="destructive"
-                                                            size="sm"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </td>
-                                                </tr>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <EyeIcon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Perspective</span>
+                                    </label>
+                                    <Select
+                                        onValueChange={setSelectedPerspective}
+                                        value={selectedPerspective}
+                                    >
+                                        <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                            <SelectValue placeholder="Select Perspective" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Perspectives</SelectItem>
+                                            {perspectives.map((perspective) => (
+                                                <SelectItem key={perspective} value={perspective}>{perspective}</SelectItem>
                                             ))}
-                                        </tbody>
-                                    </table>
-                                    {displayedEntries.length === 0 && (
-                                        <div className="text-center py-8 text-gray-500">
-                                            {allEntries.length === 0
-                                                ? "No KPI entries added yet. Click \"Add KPI\" to create an entry."
-                                                : "No entries match your search criteria. Try adjusting your filters."}
-                                        </div>
-                                    )}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
 
-                                {/* Pagination Controls */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredEntries.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={expanded}
-                                    onToggleExpand={toggleExpand}
-                                />
-                            </CardContent>
-                        </Card>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Layers className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Category</span>
+                                    </label>
+                                    <Select
+                                        onValueChange={setSelectedCategory}
+                                        value={selectedCategory}
+                                    >
+                                        <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                            <SelectValue placeholder="Select Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All Categories</SelectItem>
+                                            {categories.map((category) => (
+                                                <SelectItem key={category} value={category}>{category}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </Filtering>
 
-                        {/* KPI Form Dialog */}
-                        <KPIFormDialog
-                            isOpen={isDialogOpen}
-                            onClose={() => {
-                                setIsDialogOpen(false);
-                                setCurrentEditingEntry(undefined);
-                            }}
-                            onSave={handleSaveKPI}
-                            initialData={currentEditingEntry || {}}
-                            mode={dialogMode}
-                        />
-                    </div>
-                </main>
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
+                                            KPI Entries
+                                        </CardTitle>
+                                        <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto justify-start sm:justify-end">
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileUpload}
+                                                accept=".xlsx,.xls"
+                                                className="hidden"
+                                            />
+                                            <Button
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                size="sm"
+                                            >
+                                                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                                Import Excel
+                                            </Button>
+                                            <Button
+                                                onClick={handleSaveAll}
+                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                size="sm"
+                                            >
+                                                <Save className="mr-2 h-4 w-4" />
+                                                Save All
+                                            </Button>
+                                            <Button
+                                                onClick={handleOpenCreateDialog}
+                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                size="sm"
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" />
+                                                Add KPI
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="dark:bg-gray-900 m-0 p-0">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-[#1B6131] text-white">
+                                                <tr>
+                                                    <th className="p-4 text-left">Perspective</th>
+                                                    <th className="p-4 text-left">Code</th>
+                                                    <th className="p-4 text-left">KPI</th>
+                                                    <th className="p-4 text-left">Weight</th>
+                                                    <th className="p-4 text-left">UOM</th>
+                                                    <th className="p-4 text-left">Category</th>
+                                                    <th className="p-4 text-left">Target</th>
+                                                    <th className="p-4 text-left">Related PIC</th>
+                                                    <th className="p-4 text-left">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {displayedEntries.map((entry) => (
+                                                    <tr key={entry.id} className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
+                                                        <td className="p-4">{entry.perspective}</td>
+                                                        <td className="p-4">{entry.code}</td>
+                                                        <td className="p-4">{entry.kpi}</td>
+                                                        <td className="p-4">{entry.weight}%</td>
+                                                        <td className="p-4">{entry.uom}</td>
+                                                        <td className="p-4">{entry.category}</td>
+                                                        <td className="p-4">{entry.target}</td>
+                                                        <td className="p-4">{entry.relatedPIC}</td>
+                                                        <td className="p-4 flex space-x-2">
+                                                            <Button
+                                                                onClick={() => handleOpenEditDialog(entry)}
+                                                                variant="outline"
+                                                                size="sm"
+                                                            >
+                                                                <Edit className="h-4 w-4" />
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => handleDeleteEntry(entry.id!)}
+                                                                variant="destructive"
+                                                                size="sm"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        {displayedEntries.length === 0 && (
+                                            <div className="text-center py-8 text-gray-500">
+                                                {allEntries.length === 0
+                                                    ? "No KPI entries added yet. Click \"Add KPI\" to create an entry."
+                                                    : "No entries match your search criteria. Try adjusting your filters."}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Pagination Controls */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredEntries.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                        expanded={expanded}
+                                        onToggleExpand={toggleExpand}
+                                    />
+                                </CardContent>
+                            </Card>
+
+                            {/* KPI Form Dialog */}
+                            <KPIFormDialog
+                                isOpen={isDialogOpen}
+                                onClose={() => {
+                                    setIsDialogOpen(false);
+                                    setCurrentEditingEntry(undefined);
+                                }}
+                                onSave={handleSaveKPI}
+                                initialData={currentEditingEntry || {}}
+                                mode={dialogMode}
+                            />
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </div>
     );

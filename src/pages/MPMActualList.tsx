@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@/components/Pagination';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import Sidebar from '@/components/Sidebar';
 import Filtering from '@/components/Filtering';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,11 +46,11 @@ const MPMActualList: React.FC = () => {
   const navigate = useNavigate();
 
   // State Management
-   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth >= 768; 
+      return window.innerWidth >= 768;
     }
-    return true; 
+    return true;
   });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [currentRole, setCurrentRole] = useState('admin');
@@ -370,169 +371,170 @@ const MPMActualList: React.FC = () => {
           system="performance-management"
         />
 
-        <main className={`
-            flex-1 px-2  md:px-4 lg:px-6 pt-16 pb-12 mt-4 sm:pt-18 lg:pt-20 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full
-            `}>
-          <div className="space-y-6 w-full">
-            <Breadcrumb
-              items={[]}
-              currentPage="MPM Actuals List"
-              showHomeIcon={true}
-              subtitle={`Actual MPM Value ${currentRole == 'admin' ? 'Company' : 'IT Department'}`}
-            />
+        <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+          <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+            <div className="space-y-6 w-full">
+              <Breadcrumb
+                items={[]}
+                currentPage="MPM Actuals List"
+                showHomeIcon={true}
+                subtitle={`Actual MPM Value ${currentRole == 'admin' ? 'Company' : 'IT Department'}`}
+              />
 
-            {/* Enhanced Filter Section */}
-            <Filtering
-              handlePeriodChange={setSelectedPeriod}
-              selectedPeriod={selectedPeriod}
-            >
+              {/* Enhanced Filter Section */}
+              <Filtering
+                handlePeriodChange={setSelectedPeriod}
+                selectedPeriod={selectedPeriod}
+              >
 
-              <div className="space-y-3">
-                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                  <span>Status</span>
-                </label>
-                <Select onValueChange={setSelectedStatus} value={selectedStatus}>
-                  <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                    <SelectValue placeholder="All Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Submitted">Submitted</SelectItem>
-                    <SelectItem value="Approved by Senior Manager">Approved</SelectItem>
-                    <SelectItem value="Rejected by Senior Manager">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {currentRole === 'admin' && (
                 <div className="space-y-3">
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                    <span>Department</span>
+                    <span>Status</span>
                   </label>
-                  <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+                  <Select onValueChange={setSelectedStatus} value={selectedStatus}>
                     <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                      <SelectValue placeholder="All Departments" />
+                      <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Departments</SelectItem>
-                      {departments.map(dept => (
-                        <SelectItem key={dept.id} value={dept.id.toString()}>
-                          {dept.name}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="Draft">Draft</SelectItem>
+                      <SelectItem value="Submitted">Submitted</SelectItem>
+                      <SelectItem value="Approved by Senior Manager">Approved</SelectItem>
+                      <SelectItem value="Rejected by Senior Manager">Rejected</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-              )}
-            </Filtering>
 
-            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
-              <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                    MPM Actuals Table
-                  </CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className='m-0 p-0 overflow-x-auto pb-4'>
-                <table className="w-full border-collapse min-w-[800px]">
-                  <thead className="bg-[#1B6131] text-white">
-                    <tr>
-                      {['Month', 'Year', 'Department', 'Submitted By', 'Submitted At', 'Status', 'Actions'].map(header => (
-                        <th key={header} className="p-4 text-left">{header}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedMpmActuals.length > 0 ? (
-                      paginatedMpmActuals.map(actual => (
-                        <tr
-                          key={actual.id}
-                          className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer border-b border-gray-200 dark:border-gray-700"
-                          onClick={() => handleRowClick(actual)}
-                        >
-                          <td className="p-4">{actual.month}</td>
-                          <td className="p-4">{actual.year}</td>
-                          <td className="p-4">{actual.departmentName}</td>
-                          <td className="p-4">{actual.submittedBy}</td>
-                          <td className="p-4">
-                            {actual.submittedAt.toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
-                          </td>
-                          <td className="p-4">
-                            <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(actual.status)}`}>
-                              {actual.status}
-                            </span>
-                          </td>
-                          <td
-                            className="p-4 space-x-2 whitespace-nowrap"
-                            onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                {currentRole === 'admin' && (
+                  <div className="space-y-3">
+                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                      <span>Department</span>
+                    </label>
+                    <Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+                      <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                        <SelectValue placeholder="All Departments" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Departments</SelectItem>
+                        {departments.map(dept => (
+                          <SelectItem key={dept.id} value={dept.id.toString()}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </Filtering>
+
+              <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
+                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                      MPM Actuals Table
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className='m-0 p-0 overflow-x-auto pb-4'>
+                  <table className="w-full border-collapse min-w-[800px]">
+                    <thead className="bg-[#1B6131] text-white">
+                      <tr>
+                        {['Month', 'Year', 'Department', 'Submitted By', 'Submitted At', 'Status', 'Actions'].map(header => (
+                          <th key={header} className="p-4 text-left">{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedMpmActuals.length > 0 ? (
+                        paginatedMpmActuals.map(actual => (
+                          <tr
+                            key={actual.id}
+                            className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer border-b border-gray-200 dark:border-gray-700"
+                            onClick={() => handleRowClick(actual)}
                           >
-                            {currentRole === 'manager' && actual.status === 'Draft' && (
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedMpmActual(actual);
-                                  setIsSubmitModalOpen(true);
-                                }}
-                              >
-                                Submit
-                              </Button>
-                            )}
-                            {currentRole === 'sm_dept' && actual.status === 'Submitted' && (
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedMpmActual(actual);
-                                  setIsReviewModalOpen(true);
-                                }}
-                              >
-                                Review
-                              </Button>
-                            )}
-                            {currentRole === 'admin' && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleRowClick(actual)}
-                              >
-                                View Details
-                              </Button>
-                            )}
+                            <td className="p-4">{actual.month}</td>
+                            <td className="p-4">{actual.year}</td>
+                            <td className="p-4">{actual.departmentName}</td>
+                            <td className="p-4">{actual.submittedBy}</td>
+                            <td className="p-4">
+                              {actual.submittedAt.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                            </td>
+                            <td className="p-4">
+                              <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(actual.status)}`}>
+                                {actual.status}
+                              </span>
+                            </td>
+                            <td
+                              className="p-4 space-x-2 whitespace-nowrap"
+                              onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                            >
+                              {currentRole === 'manager' && actual.status === 'Draft' && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedMpmActual(actual);
+                                    setIsSubmitModalOpen(true);
+                                  }}
+                                >
+                                  Submit
+                                </Button>
+                              )}
+                              {currentRole === 'sm_dept' && actual.status === 'Submitted' && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedMpmActual(actual);
+                                    setIsReviewModalOpen(true);
+                                  }}
+                                >
+                                  Review
+                                </Button>
+                              )}
+                              {currentRole === 'admin' && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleRowClick(actual)}
+                                >
+                                  View Details
+                                </Button>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={7} className="p-4 text-center text-gray-500">
+                            No actuals found matching your criteria
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={7} className="p-4 text-center text-gray-500">
-                          No actuals found matching your criteria
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
 
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
-                  itemsPerPage={itemsPerPage}
-                  totalItems={filteredMpmActuals.length}
-                  onPageChange={setCurrentPage}
-                  onItemsPerPageChange={(value) => {
-                    setItemsPerPage(Number(value));
-                    setCurrentPage(1); 
-                  }}
-                  expanded={isPaginationExpanded}
-                  onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
-                />
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.ceil(filteredMpmActuals.length / itemsPerPage)}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={filteredMpmActuals.length}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={(value) => {
+                      setItemsPerPage(Number(value));
+                      setCurrentPage(1);
+                    }}
+                    expanded={isPaginationExpanded}
+                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
 
       {/* Submit Modal */}
