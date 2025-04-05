@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, Info, Search } from 'lucide-react';
+import { Edit, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -16,6 +16,7 @@ import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
 import { IndividualActualsDialog } from '@/components/IndividualActualsDialog';
 import Footer from '@/components/Footer';
+import KPIDetailsCard from '@/components/KPIDetails';
 
 type IndividualKPIActual = {
     id: string;
@@ -53,10 +54,16 @@ const MPMActualsActionPlans: React.FC = () => {
 
     // Team and KPI Context
     const [teamContext] = useState({
-        teamName: 'Sales Team',
-        kpiName: 'Revenue Growth',
+        id: 1,
         perspective: 'Financial',
-        teamTarget: 100000
+        kpiNumber: 1,
+        kpi: 'Revenue Growth',
+        category: 'Max',
+        ytdCalculation: 'Accumulative',
+        kpiDefinition: 'Increase overall company revenue',
+        weight: 30,
+        uom: 'Number',
+        target: 100000
     });
 
     // Individual Actuals State
@@ -231,32 +238,22 @@ const MPMActualsActionPlans: React.FC = () => {
                             />
 
                             {/* Team and KPI Context Card */}
-                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                        <Info className="mr-2 h-5 w-5" />
-                                        KPI and Team Context
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="mt-4 space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                                Team Information
-                                            </h3>
-                                            <p><strong>Team Name:</strong> {teamContext.teamName}</p>
-                                            <p><strong>Team Target:</strong> {teamContext.teamTarget.toLocaleString()}</p>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                                KPI Details
-                                            </h3>
-                                            <p><strong>KPI Name:</strong> {teamContext.kpiName}</p>
-                                            <p><strong>Perspective:</strong> {teamContext.perspective}</p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <KPIDetailsCard
+                                title="Team KPI Details"
+                                description="Overview of team performance indicators"
+                                kpi={{
+                                    name: teamContext.kpi,
+                                    perspective: teamContext.perspective,
+                                    number: teamContext.kpiNumber,
+                                    definition: teamContext.kpiDefinition,
+                                    weight: teamContext.weight,
+                                    uom: teamContext.uom,
+                                    target: teamContext.target,
+                                    category: teamContext.category,
+                                    ytdCalculation: teamContext.ytdCalculation,
+                                    status: 'On Track'
+                                }}
+                            />
 
                             {/* Filter Section */}
                             <Filtering>

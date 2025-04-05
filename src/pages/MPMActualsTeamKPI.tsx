@@ -5,7 +5,6 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-    CardDescription
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +17,7 @@ import Filtering from '@/components/Filtering';
 import { teamMpmActual } from '@/lib/MpmTeamMocksData';
 import { TeamActualEditDialog } from '@/components/TeamActualEditDialog';
 import Footer from '@/components/Footer';
+import KPIDetailsCard from '@/components/KPIDetails';
 
 type MonthType = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' |
     'July' | 'August' | 'September' | 'October' | 'November' | 'December';
@@ -33,6 +33,8 @@ type MPMEntry = {
     perspective: Perspective;
     kpiNumber: number;
     kpi: string;
+    category: string;
+    ytdCalculation: string;
     kpiDefinition: string;
     weight: number;
     uom: string;
@@ -90,6 +92,8 @@ const MPMActualsTeamKPI: React.FC = () => {
         perspective: 'Financial',
         kpiNumber: 1,
         kpi: 'Revenue Growth',
+        category:'Max',
+        ytdCalculation: 'Accumulative',
         kpiDefinition: 'Increase overall company revenue',
         weight: 30,
         uom: 'Number',
@@ -188,37 +192,22 @@ const MPMActualsTeamKPI: React.FC = () => {
                                 showHomeIcon={true}
                             />
 
-                            <Card className="border-[#1B6131] dark:border-[#46B749] shadow-lg">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                        <div>
-                                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                <Info className="mr-2 h-5 w-5" />
-                                                KPI Details
-                                            </CardTitle>
-                                            <CardDescription className="text-gray-600 dark:text-gray-300">
-                                                Overview of the Key Performance Indicator
-                                            </CardDescription>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="mt-4 space-y-4">
-                                    <div className="flex flex-col gap-4">
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749]">KPI Information</h3>
-                                            <div className="space-y-2">
-                                                <p><strong>KPI Name:</strong> {parentKPI.kpi}</p>
-                                                <p><strong>Perspective:</strong> {parentKPI.perspective}</p>
-                                                <p><strong>KPI Number:</strong> {parentKPI.kpiNumber}</p>
-                                                <p><strong>Definition:</strong> {parentKPI.kpiDefinition}</p>
-                                                <p><strong>Weight:</strong> {parentKPI.weight}%</p>
-                                                <p><strong>Unit of Measurement:</strong> {parentKPI.uom}</p>
-                                                <p><strong>Target {month}:</strong>{parentKPI.target}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <KPIDetailsCard
+                                title="KPI Details"
+                                description="Overview of the Key Performance Indicator"
+                                kpi={{
+                                    name: parentKPI.kpi,
+                                    perspective: parentKPI.perspective,
+                                    number: parentKPI.kpiNumber,
+                                    definition: parentKPI.kpiDefinition,
+                                    weight: parentKPI.weight,
+                                    uom: parentKPI.uom,
+                                    target: parentKPI.target,
+                                    category: parentKPI.category,
+                                    ytdCalculation: parentKPI.ytdCalculation,
+                                    status: 'On Track'
+                                }}
+                            />
 
                             {/* Filter Section */}
                             <Filtering>

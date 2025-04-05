@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Edit, PlusCircle, Trash2, Info, Search } from 'lucide-react';
+import { Edit, PlusCircle, Trash2, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -16,6 +16,7 @@ import Filtering from '@/components/Filtering';
 import Pagination from '@/components/Pagination';
 import { IndividualTargetsDialog } from '@/components/IndividualTargetsDialog';
 import Footer from '@/components/Footer';
+import KPIDetailsCard from '@/components/KPIDetails';
 
 // Types reflecting the multi-level performance management hierarchy
 type Perspective =
@@ -348,60 +349,30 @@ const MPMTargetsActionPlans: React.FC = () => {
                                 showHomeIcon={true}
                             />
 
-                            {/* Team KPI Details Card */}
-                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                            <Info className="mr-2 h-5 w-5" />
-                                            Team KPI Details
-                                        </CardTitle>
-                                        <Button
-                                            onClick={() => setIsAddIndividualDialogOpen(true)}
-                                            className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
-                                        >
-                                            <PlusCircle className="mr-2 h-4 w-4" />
-                                            Create Action Plans
-                                        </Button>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="mt-4 space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                                Team Information
-                                            </h3>
-                                            <p><strong>Team Name:</strong> {teamActionPlan.teamName}</p>
-                                            <p><strong>Team Weight:</strong> {teamActionPlan.teamWeight}%</p>
-                                            <p><strong>Team Target:</strong> {teamActionPlan.teamTarget}</p>
-                                            <p><strong>Comments:</strong> {teamActionPlan.comments}</p>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                                Parent KPI Details
-                                            </h3>
-                                            <p><strong>KPI:</strong> {teamActionPlan.parentKPI.kpi}</p>
-                                            <p><strong>Perspective:</strong> {teamActionPlan.parentKPI.perspective}</p>
-                                            <p><strong>Overall Weight:</strong> {teamActionPlan.parentKPI.weight}%</p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">
-                                            Monthly Targets
-                                        </h3>
-                                        <div className="grid grid-cols-3 gap-2 bg-[#f9faf9] dark:bg-gray-800 p-3 rounded-md">
-                                            {Object.entries(teamActionPlan.monthlyTargets).map(([month, target]) => (
-                                                <div key={month} className="text-center">
-                                                    <p className="font-medium">{month}</p>
-                                                    <p className="text-[#1B6131] dark:text-[#46B749]">
-                                                        {target.toLocaleString()}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <KPIDetailsCard
+                                title="Team KPI Details"
+                                description="Overview of team performance indicators"
+                                kpi={{
+                                    name: teamActionPlan.parentKPI.kpi,
+                                    perspective: teamActionPlan.parentKPI.perspective,
+                                    number: teamActionPlan.parentKPI.kpiNumber, // Assuming this is a number/ID
+                                    uom: teamActionPlan.parentKPI.uom,
+                                    weight: teamActionPlan.teamWeight,
+                                    definition: teamActionPlan.parentKPI.kpiDefinition,
+                                    pic: teamActionPlan.teamName, // Add if available
+                                    status: "On Track" // Add if available
+                                }}
+                                targets={teamActionPlan.monthlyTargets}
+                                actionButtonComponent={
+                                    <Button
+                                        onClick={() => setIsAddIndividualDialogOpen(true)}
+                                        className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+                                    >
+                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        Create Action Plans
+                                    </Button>
+                                }
+                            />
 
                             {/* Filter Section - New */}
                             <Filtering>

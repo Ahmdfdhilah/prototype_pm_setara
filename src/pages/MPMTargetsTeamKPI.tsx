@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle
 } from '@/components/ui/card';
@@ -17,6 +16,7 @@ import Pagination from '@/components/Pagination';
 import Filtering from '@/components/Filtering';
 import { TeamTargetEditDialog } from '@/components/TeamTargetEditDialog';
 import Footer from '@/components/Footer';
+import KPIDetailsCard from '@/components/KPIDetails';
 
 // Enhanced Types
 type Perspective =
@@ -237,6 +237,16 @@ const MPMTargetsTeamKPI: React.FC = () => {
         );
     };
 
+    const actionButton = (
+        <Button
+            onClick={() => setIsAddActionPlanDialogOpen(true)}
+            className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+        >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add KPI Action Plan
+        </Button>
+    );
+
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
             <Header
@@ -274,54 +284,23 @@ const MPMTargetsTeamKPI: React.FC = () => {
                                 showHomeIcon={true}
                             />
 
-                            <Card className="border-[#1B6131] dark:border-[#46B749] shadow-lg">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                                        <div>
-                                            <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                                <Info className="mr-2 h-5 w-5" />
-                                                KPI Details
-                                            </CardTitle>
-                                            <CardDescription className="text-gray-600 dark:text-gray-300">
-                                                Overview of the Key Performance Indicator
-                                            </CardDescription>
-                                        </div>
-                                        <Button
-                                            onClick={() => setIsAddActionPlanDialogOpen(true)}
-                                            className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
-                                        >
-                                            <PlusCircle className="mr-2 h-4 w-4" />
-                                            Add KPI Action Plan
-                                        </Button>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="mt-4 space-y-4">
-                                    <div className="flex flex-col gap-4">
-                                        <div>
-                                            <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749]">KPI Information</h3>
-                                            <div className="space-y-2">
-                                                <p><strong>KPI Name:</strong> {parentKPIs[0].kpi}</p>
-                                                <p><strong>Perspective:</strong> {parentKPIs[0].perspective}</p>
-                                                <p><strong>KPI Number:</strong> {parentKPIs[0].kpiNumber}</p>
-                                                <p><strong>Definition:</strong> {parentKPIs[0].kpiDefinition}</p>
-                                                <p><strong>Weight:</strong> {parentKPIs[0].weight}%</p>
-                                                <p><strong>Unit of Measurement:</strong> {parentKPIs[0].uom}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-semibold text-[#1B6131] dark:text-[#46B749] mb-2">Targets</h3>
-                                        <div className="grid grid-cols-3 gap-2 bg-[#f9faf9] dark:bg-gray-800 p-3 rounded-md">
-                                            {Object.entries(parentKPIs[0].targets).map(([month, target]) => (
-                                                <div key={month} className="text-center">
-                                                    <p className="font-medium">{month}</p>
-                                                    <p className="text-[#1B6131] dark:text-[#46B749]">{target.toLocaleString()}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <KPIDetailsCard
+                                title="KPI Details"
+                                description="Overview of the Key Performance Indicator"
+                                kpi={{
+                                    name: parentKPIs[0].kpi,
+                                    perspective: parentKPIs[0].perspective,
+                                    number: parentKPIs[0].kpiNumber,
+                                    definition: parentKPIs[0].kpiDefinition,
+                                    weight: parentKPIs[0].weight,
+                                    uom: parentKPIs[0].uom,
+                                    category: parentKPIs[0].category,
+                                    ytdCalculation: parentKPIs[0].ytdCalculation,
+                                    status: 'On Track'
+                                }}
+                                targets={parentKPIs[0].targets}
+                                actionButtonComponent={actionButton}
+                            />
 
                             {/* Filter Section - Added from Actual MPM */}
                             <Filtering>
