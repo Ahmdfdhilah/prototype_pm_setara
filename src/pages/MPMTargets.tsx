@@ -65,7 +65,6 @@ const MPMTargets = () => {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
   // Sample data untuk approvers
   const approvers: Manager[] = [
@@ -433,8 +432,7 @@ const MPMTargets = () => {
                     totalItems={totalItems}
                     onPageChange={handlePageChange}
                     onItemsPerPageChange={handleItemsPerPageChange}
-                    expanded={isPaginationExpanded}
-                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                   
                   />
                 </CardContent>
               </Card>

@@ -138,8 +138,7 @@ const MPMActualsActionPlans: React.FC = () => {
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
-
+    
     // Filter function
     const filteredIndividuals = useMemo(() => {
         return individualActuals.filter(individual => {
@@ -388,8 +387,7 @@ const MPMActualsActionPlans: React.FC = () => {
                                         totalItems={filteredIndividuals.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={isPaginationExpanded}
-                                        onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                       
                                     />
                                 </CardContent>
                             </Card>

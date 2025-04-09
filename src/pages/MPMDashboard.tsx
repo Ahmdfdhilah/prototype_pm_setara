@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import Breadcrumb from '@/components/Breadcrumb';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { mpmDataMock } from '@/lib/mpmMocks';
 import Filtering from '@/components/Filtering';
@@ -48,96 +49,58 @@ const MPMDashboard: React.FC = () => {
     const [selectedPeriodType, setSelectedPeriodType] = useState<PeriodType>('Monthly');
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
+    // Search functionality
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedPerspective, setSelectedPerspective] = useState<string>('All');
+    const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
     // Mock data
     const [mpmData, _] = useState<MPMEntry[]>(mpmDataMock);
 
-    // Group data by perspective
-    const groupedData = useMemo(() => {
-        return mpmData.reduce((acc, curr) => {
+    // Filter and search data
+    const filteredData = useMemo(() => {
+        return mpmData.filter(item => {
+            // Search term filter
+            const matchesSearch =
+                searchTerm === '' ||
+                item.kpi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.kpiDefinition.toLowerCase().includes(searchTerm.toLowerCase());
+
+            // Perspective filter
+            const matchesPerspective =
+                selectedPerspective === 'All' ||
+                item.perspective === selectedPerspective;
+
+            // Category filter
+            const matchesCategory =
+                selectedCategory === 'All' ||
+                item.category === selectedCategory;
+
+            return matchesSearch && matchesPerspective && matchesCategory;
+        });
+    }, [mpmData, searchTerm, selectedPerspective, selectedCategory]);
+
+    // Handle pagination
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return filteredData.slice(startIndex, endIndex);
+    }, [filteredData, currentPage, itemsPerPage]);
+
+    // Group paginated data by perspective for display
+    const paginatedGroupedData = useMemo(() => {
+        return paginatedData.reduce((acc, curr) => {
             if (!acc[curr.perspective]) {
                 acc[curr.perspective] = [];
             }
             acc[curr.perspective].push(curr);
             return acc;
         }, {} as Record<Perspective, MPMEntry[]>);
-    }, [mpmData]);
-
-    // Pagination state for each perspective
-    const [currentPages, setCurrentPages] = useState<Record<Perspective, number>>({
-        'Financial': 1,
-        'Customer': 1,
-        'Internal Process': 1,
-        'Learning and Growth': 1
-    });
-
-    // Items per page state for each perspective
-    const [itemsPerPage, setItemsPerPage] = useState<Record<Perspective, number>>({
-        'Financial': 5,
-        'Customer': 5,
-        'Internal Process': 5,
-        'Learning and Growth': 5
-    });
-
-    // Pagination expanded state for each perspective
-    const [paginationExpanded, setPaginationExpanded] = useState<Record<Perspective, boolean>>({
-        'Financial': false,
-        'Customer': false,
-        'Internal Process': false,
-        'Learning and Growth': false
-    });
-
-    // Paginated and grouped data
-    const paginatedGroupedData = useMemo(() => {
-        const result: Record<Perspective, { items: MPMEntry[], totalPages: number, totalItems: number }> = {} as any;
-
-        Object.entries(groupedData).forEach(([perspective, items]) => {
-            const totalItems = items.length;
-            const perspectiveItemsPerPage = itemsPerPage[perspective as Perspective];
-            const totalPages = Math.ceil(totalItems / perspectiveItemsPerPage);
-            const currentPage = currentPages[perspective as Perspective];
-            const startIndex = (currentPage - 1) * perspectiveItemsPerPage;
-            const endIndex = startIndex + perspectiveItemsPerPage;
-
-            result[perspective as Perspective] = {
-                items: items.slice(startIndex, endIndex),
-                totalPages,
-                totalItems
-            };
-        });
-
-        return result;
-    }, [groupedData, currentPages, itemsPerPage]);
-
-    // Page change handler for a specific perspective
-    const handlePageChange = (perspective: Perspective, newPage: number) => {
-        setCurrentPages(prev => ({
-            ...prev,
-            [perspective]: newPage
-        }));
-    };
-
-    // Items per page change handler for a specific perspective
-    const handleItemsPerPageChange = (perspective: Perspective, value: string) => {
-        const newItemsPerPage = parseInt(value);
-        setItemsPerPage(prev => ({
-            ...prev,
-            [perspective]: newItemsPerPage
-        }));
-
-        // Reset to page 1 when changing items per page
-        setCurrentPages(prev => ({
-            ...prev,
-            [perspective]: 1
-        }));
-    };
-
-    // Toggle pagination expanded state
-    const handleTogglePaginationExpand = (perspective: Perspective) => {
-        setPaginationExpanded(prev => ({
-            ...prev,
-            [perspective]: !prev[perspective]
-        }));
-    };
+    }, [paginatedData]);
 
     // Get current period based on selected period type
     const getCurrentPeriod = () => {
@@ -154,44 +117,63 @@ const MPMDashboard: React.FC = () => {
                 return `${month}-${selectedYear.slice(-2)}`;
         }
     };
+    // Calculate totals
+    const totals = useMemo(() => {
+        const currentPeriod = getCurrentPeriod();
+        return filteredData.reduce((acc, curr) => {
+            const achievement = curr.achievements[currentPeriod] || 0;
+            const score = (curr.weight * Math.min(achievement, 120) / 100);
+            return {
+                weight: acc.weight + curr.weight,
+                score: acc.score + score,
+            };
+        }, {
+            weight: 0,
+            score: 0,
+        });
+    }, [filteredData, selectedYear, selectedPeriodType]);
+
+    // Handler for perspective filter
+    const handlePerspectiveChange = (value: string) => {
+        setSelectedPerspective(value);
+        setCurrentPage(1); // Reset to first page when filter changes
+    };
+
+    // Handler for category filter
+    const handleCategoryChange = (value: string) => {
+        setSelectedCategory(value);
+        setCurrentPage(1); // Reset to first page when filter changes
+    };
+
+    // Handler for search
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset to first page when search changes
+    };
+
+    // Row expansion handler
+    const handleRowClick = (id: number) => {
+        setExpandedRow(expandedRow === id ? null : id);
+    };
+
+    // Pagination handlers
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handleItemsPerPageChange = (value: string) => {
+        setItemsPerPage(Number(value));
+        setCurrentPage(1); // Reset to first page when items per page changes
+    };
 
     const currentPeriod = getCurrentPeriod();
 
-    // Calculate Quarterly Performance
-    const calculateQuarterlyPerformance = () => {
-        const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-        return quarters.map((quarter) => {
-            const quarterKey = `${quarter}-${selectedYear.slice(-2)}`;
+    // Get unique perspectives for filter
+    const perspectives = ['All', ...Array.from(new Set(mpmData.map(item => item.perspective)))];
 
-            // Calculate performance metrics for each quarter
-            const onTrack = mpmData.filter(item =>
-                item.achievements[quarterKey] >= 100
-            ).length;
+    // Get unique categories for filter
+    const categories = ['All', ...Array.from(new Set(mpmData.map(item => item.category)))];
 
-            const atRisk = mpmData.filter(item =>
-                item.achievements[quarterKey] >= 90 && item.achievements[quarterKey] < 100
-            ).length;
-
-            const offTrack = mpmData.filter(item =>
-                item.achievements[quarterKey] < 90
-            ).length;
-
-            // Calculate average completion
-            const completion = mpmData.length > 0 ?
-                mpmData.reduce((sum, item) => sum + (item.achievements[quarterKey] || 0), 0) / mpmData.length :
-                0;
-
-            return {
-                quarter: quarterKey,
-                completion,
-                onTrack,
-                atRisk,
-                offTrack
-            };
-        });
-    };
-
-    const quarterlyPerformance = calculateQuarterlyPerformance();
 
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
@@ -214,7 +196,7 @@ const MPMDashboard: React.FC = () => {
                 />
 
                 <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                    <main className='flex-1 px-2 md:px-4 pt-16 pb-12 transition-all duration-300 ease-in-out w-full'>
                         <div className="space-y-6 w-full">
                             <Breadcrumb
                                 items={[]}
@@ -223,14 +205,65 @@ const MPMDashboard: React.FC = () => {
                                 showHomeIcon={true}
                             />
 
+                            {/* Enhanced Filtering with Search and Categories */}
                             <Filtering
                                 handlePeriodChange={setSelectedYear}
                                 selectedPeriod={selectedYear}
                                 handleTypeChange={(value) => setSelectedPeriodType(value as PeriodType)}
                                 selectedType={selectedPeriodType}
-                            />
+                            >
+                                {/* Search Filter */}
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search</span>
+                                    </label>
+                                    <Input
+                                        placeholder="Search by KPI or Definition..."
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    />
+                                </div>
 
-                            {/* Quarterly Performance Overview */}
+                                {/* Perspective Filter */}
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Perspective</span>
+                                    </label>
+                                    <select
+                                        value={selectedPerspective}
+                                        onChange={(e) => handlePerspectiveChange(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    >
+                                        {perspectives.map((perspective) => (
+                                            <option key={perspective} value={perspective}>
+                                                {perspective}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Category Filter */}
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <span>Category</span>
+                                    </label>
+                                    <select
+                                        value={selectedCategory}
+                                        onChange={(e) => handleCategoryChange(e.target.value)}
+                                        className="w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131] p-2 h-10 rounded-md focus:ring-2 focus:ring-[#46B749] dark:focus:ring-[#1B6131] focus:outline-none"
+                                    >
+                                        {categories.map((category) => (
+                                            <option key={category} value={category}>
+                                                {category}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </Filtering>
+
+                            {/* Performance Overview */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
                                     <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
@@ -238,242 +271,229 @@ const MPMDashboard: React.FC = () => {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                                        {selectedPeriodType === 'Quarterly' ? (
-                                            quarterlyPerformance.map((quarter) => (
-                                                <Card key={quarter.quarter} className="shadow-sm">
-                                                    <CardHeader className="pb-2">
-                                                        <CardTitle className="text-lg">
-                                                            {quarter.quarter}
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                    <CardContent>
-                                                        <div className="space-y-4">
-                                                            <div className="flex items-center justify-between">
-                                                                <span className="text-sm font-medium">
-                                                                    Completion
-                                                                </span>
-                                                                <span className="text-sm font-bold">
-                                                                    {quarter.completion.toFixed(1)}%
-                                                                </span>
-                                                            </div>
-                                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                                <div
-                                                                    className="bg-[#1B6131] h-2.5 rounded-full"
-                                                                    style={{ width: `${quarter.completion}%` }}
-                                                                ></div>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                                    <span>On Track</span>
-                                                                </div>
-                                                                <span>{quarter.onTrack}</span>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                                                                    <span>At Risk</span>
-                                                                </div>
-                                                                <span>{quarter.atRisk}</span>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                                    <span>Off Track</span>
-                                                                </div>
-                                                                <span>{quarter.offTrack}</span>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </Card>
-                                            ))
-                                        ) : (
-                                            <Card className="col-span-4 shadow-sm">
-                                                <CardHeader className="pb-2">
-                                                    <CardTitle className="text-lg">
-                                                        {selectedPeriodType} Performance - {currentPeriod}
-                                                    </CardTitle>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                        <div className="space-y-2">
-                                                            <div className="flex items-center justify-between">
-                                                                <span className="text-sm font-medium">
-                                                                    Average Achievement
-                                                                </span>
-                                                                <span className="text-sm font-bold">
-                                                                    {mpmData.length > 0 ?
-                                                                        (mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length).toFixed(1) + '%' :
-                                                                        'N/A'}
-                                                                </span>
-                                                            </div>
-                                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                                <div
-                                                                    className="bg-[#1B6131] h-2.5 rounded-full"
-                                                                    style={{
-                                                                        width: mpmData.length > 0 ?
-                                                                            `${mpmData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / mpmData.length}%` :
-                                                                            '0%'
-                                                                    }}
-                                                                ></div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                                    <span>On Track KPIs</span>
-                                                                </div>
-                                                                <span>
-                                                                    {mpmData.filter(item =>
-                                                                        item.achievements[currentPeriod] >= 100
-                                                                    ).length}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                                                                    <span>At Risk KPIs</span>
-                                                                </div>
-                                                                <span>
-                                                                    {mpmData.filter(item =>
-                                                                        item.achievements[currentPeriod] >= 90 &&
-                                                                        item.achievements[currentPeriod] < 100
-                                                                    ).length}
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                                    <span>Off Track KPIs</span>
-                                                                </div>
-                                                                <span>
-                                                                    {mpmData.filter(item =>
-                                                                        item.achievements[currentPeriod] < 90
-                                                                    ).length}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <span className="font-medium">Total Weight</span>
-                                                                <span>
-                                                                    {mpmData.reduce((sum, item) => sum + item.weight, 0)}%
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex items-center justify-between text-sm">
-                                                                <span className="font-medium">Total Score</span>
-                                                                <span>
-                                                                    {mpmData.reduce((sum, item) => {
-                                                                        const achievement = item.achievements[currentPeriod] || 0;
-                                                                        return sum + (item.weight * Math.min(achievement, 120) / 100);
-                                                                    }, 0).toFixed(1)}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        )}
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-medium">
+                                                    Average Achievement
+                                                </span>
+                                                <span className="text-sm font-bold">
+                                                    {filteredData.length > 0 ?
+                                                        (filteredData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / filteredData.length).toFixed(1) + '%' :
+                                                        'N/A'}
+                                                </span>
+                                            </div>
+                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div
+                                                    className="bg-[#1B6131] h-2.5 rounded-full"
+                                                    style={{
+                                                        width: filteredData.length > 0 ?
+                                                            `${Math.min(filteredData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / filteredData.length, 100)}%` :
+                                                            '0%'
+                                                    }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <div className="flex items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                                    <span>On Track KPIs</span>
+                                                </div>
+                                                <span>
+                                                    {filteredData.filter(item =>
+                                                        item.achievements[currentPeriod] >= 100
+                                                    ).length}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <div className="flex items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
+                                                    <span>At Risk KPIs</span>
+                                                </div>
+                                                <span>
+                                                    {filteredData.filter(item =>
+                                                        item.achievements[currentPeriod] >= 90 &&
+                                                        item.achievements[currentPeriod] < 100
+                                                    ).length}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <div className="flex items-center">
+                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                                    <span>Off Track KPIs</span>
+                                                </div>
+                                                <span>
+                                                    {filteredData.filter(item =>
+                                                        item.achievements[currentPeriod] < 90
+                                                    ).length}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="font-medium">Total Weight</span>
+                                                <span>
+                                                    {totals.weight.toFixed(1)}%
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="font-medium">Total Score</span>
+                                                <span>
+                                                    {totals.score.toFixed(1)}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            {/* Detailed Performance by Perspective */}
-                            {Object.entries(paginatedGroupedData).map(([perspective, { items, totalPages, totalItems }]) => (
-                                <Card key={perspective} className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                    <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
-                                            {perspective} Perspective
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="m-0 p-0">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow className="bg-[#1B6131] text-white">
-                                                    <TableCell className="w-[50px]"></TableCell>
-                                                    <TableCell>KPI</TableCell>
-                                                    <TableCell className="text-center">Weight</TableCell>
-                                                    <TableCell className="text-center">UOM</TableCell>
-                                                    <TableCell className="text-center">Category</TableCell>
-                                                    <TableCell className="text-center">Target</TableCell>
-                                                    <TableCell className="text-center">Actual</TableCell>
-                                                    <TableCell className="text-center">Achievement</TableCell>
-                                                    <TableCell className="text-center">Score</TableCell>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {items.map((item) => (
-                                                    <React.Fragment key={item.id}>
-                                                        <TableRow
-                                                            className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
-                                                            onClick={() => setExpandedRow(expandedRow === item.id ? null : item.id)}
-                                                        >
-                                                            <TableCell>
-                                                                {expandedRow === item.id ?
-                                                                    <ChevronDown className="h-4 w-4" /> :
-                                                                    <ChevronRight className="h-4 w-4" />}
+                            {/* MPM Table */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
+                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                        MPM Performance Metrics
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="dark:bg-gray-900 m-0 p-0">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow className="bg-[#1B6131] text-white">
+                                                <TableCell className="p-4 text-left font-medium text-white">Perspective</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">KPI</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Weight</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">UOM</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Category</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Target</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Actual</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Achievement</TableCell>
+                                                <TableCell className="p-4 text-left font-medium text-white">Score</TableCell>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {Object.entries(paginatedGroupedData).map(([perspective, items]) => {
+                                                // Create an array to track which items have expanded content
+                                                const itemsWithExpanded = items.map(item => ({
+                                                    ...item,
+                                                    isExpanded: expandedRow === item.id
+                                                }));
+
+                                                // Calculate perspective subtotals once
+                                                const perspectiveWeightTotal = items.reduce((sum, item) => sum + item.weight, 0).toFixed(1);
+                                                const perspectiveScoreTotal = items.reduce((sum, item) => {
+                                                    const achievement = item.achievements[currentPeriod] || 0;
+                                                    return sum + ((item.weight * Math.min(achievement, 120)) / 100);
+                                                }, 0).toFixed(1);
+
+                                                return (
+                                                    <React.Fragment key={perspective}>
+                                                        {/* Render each item row */}
+                                                        {itemsWithExpanded.map((item, index) => {
+                                                            const isFirstInGroup = index === 0;
+                                                            const totalRowsInPerspective = items.length +
+                                                                itemsWithExpanded.filter(i => i.isExpanded).length + 1; 
+
+                                                            return (
+                                                                <React.Fragment key={item.id}>
+                                                                    <TableRow
+                                                                        onClick={() => handleRowClick(item.id)}
+                                                                        className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20 cursor-pointer"
+                                                                    >
+                                                                        {isFirstInGroup && (
+                                                                            <TableCell
+                                                                                rowSpan={totalRowsInPerspective}
+                                                                                className="bg-[#E4EFCF] dark:bg-[#1B6131]/30 font-medium text-[#1B6131] dark:text-[#46B749]"
+                                                                            >
+                                                                                {perspective}
+                                                                            </TableCell>
+                                                                        )}
+                                                                        <TableCell className="flex items-center gap-2 text-[#1B6131] dark:text-[#46B749]">
+                                                                            {item.isExpanded ? (
+                                                                                <ChevronDown size={16} />
+                                                                            ) : (
+                                                                                <ChevronRight size={16} />
+                                                                            )}
+                                                                            {item.kpi}
+                                                                        </TableCell>
+                                                                        <TableCell>{item.weight}%</TableCell>
+                                                                        <TableCell>{item.uom}</TableCell>
+                                                                        <TableCell>{item.category}</TableCell>
+                                                                        <TableCell>
+                                                                            {item.targets[currentPeriod] ?? 'N/A'}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {item.actuals[currentPeriod] ?? 'N/A'}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {item.achievements[currentPeriod] ?
+                                                                                `${item.achievements[currentPeriod]}%` : 'N/A'}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {item.achievements[currentPeriod] ?
+                                                                                ((item.weight * Math.min(item.achievements[currentPeriod], 120)) / 100).toFixed(1) : 'N/A'}
+                                                                        </TableCell>
+                                                                    </TableRow>
+
+                                                                    {/* Show expanded content if row is expanded */}
+                                                                    {item.isExpanded && (
+                                                                        <TableRow>
+                                                                            <TableCell colSpan={9} className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50">
+                                                                                <ExpandedContent item={item} />
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )}
+                                                                </React.Fragment>
+                                                            );
+                                                        })}
+
+                                                        {/* Add perspective subtotal row ONCE per perspective group */}
+                                                        <TableRow className="bg-[#E4EFCF]/50 dark:bg-[#1B6131]/30">
+                                                            <TableCell colSpan={1} className="font-medium">
+                                                                {perspective} Subtotal
                                                             </TableCell>
-                                                            <TableCell>{item.kpi}</TableCell>
-                                                            <TableCell className="text-center">{item.weight}%</TableCell>
-                                                            <TableCell className="text-center">{item.uom}</TableCell>
-                                                            <TableCell className="text-center">{item.category}</TableCell>
-                                                            <TableCell className="text-center">
-                                                                {item.targets[currentPeriod] ?? 'N/A'}
+                                                            <TableCell className="font-medium">
+                                                                {perspectiveWeightTotal}%
                                                             </TableCell>
-                                                            <TableCell className="text-center">
-                                                                {item.actuals[currentPeriod] ?? 'N/A'}
-                                                            </TableCell>
-                                                            <TableCell className="text-center">
-                                                                {item.achievements[currentPeriod] ?
-                                                                    `${item.achievements[currentPeriod]}%` : 'N/A'}
-                                                            </TableCell>
-                                                            <TableCell className="text-center">
-                                                                {item.achievements[currentPeriod] ?
-                                                                    ((item.weight * Math.min(item.achievements[currentPeriod], 120)) / 100).toFixed(1) : 'N/A'}
+                                                            <TableCell colSpan={5}></TableCell>
+                                                            <TableCell className="font-medium">
+                                                                {perspectiveScoreTotal}
                                                             </TableCell>
                                                         </TableRow>
-                                                        {expandedRow === item.id && (
-                                                            <TableRow>
-                                                                <TableCell colSpan={9} className="p-0">
-                                                                    <ExpandedContent item={item} />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )}
                                                     </React.Fragment>
-                                                ))}
-                                                {/* Perspective Totals */}
-                                                <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
-                                                    <TableCell colSpan={2}>Total</TableCell>
-                                                    <TableCell className="text-center">
-                                                        {items.reduce((sum, item) => sum + item.weight, 0)}%
-                                                    </TableCell>
-                                                    <TableCell colSpan={5}></TableCell>
-                                                    <TableCell className="text-center">
-                                                        {items.reduce((sum, item) => {
-                                                            const achievement = item.achievements[currentPeriod] || 0;
-                                                            return sum + (item.weight * Math.min(achievement, 120) / 100);
-                                                        }, 0).toFixed(1)}
+                                                );
+                                            })}
+
+                                            {paginatedData.length === 0 && (
+                                                <TableRow>
+                                                    <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                                                        No results found. Try adjusting your filters.
                                                     </TableCell>
                                                 </TableRow>
-                                            </TableBody>
-                                        </Table>
+                                            )}
 
-                                        {/* Updated Pagination Component */}
-                                        <Pagination
-                                            currentPage={currentPages[perspective as Perspective]}
-                                            totalPages={totalPages}
-                                            itemsPerPage={itemsPerPage[perspective as Perspective]}
-                                            totalItems={totalItems}
-                                            onPageChange={(page) => handlePageChange(perspective as Perspective, page)}
-                                            onItemsPerPageChange={(value) => handleItemsPerPageChange(perspective as Perspective, value)}
-                                            expanded={paginationExpanded[perspective as Perspective]}
-                                            onToggleExpand={() => handleTogglePaginationExpand(perspective as Perspective)}
-                                        />
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                            {/* Totals Row - Only show when we have data */}
+                                            {paginatedData.length > 0 && (
+                                                <TableRow className="font-bold bg-[#1B6131] text-white dark:bg-[#1B6131]">
+                                                    <TableCell colSpan={2}>Total</TableCell>
+                                                    <TableCell>{totals.weight.toFixed(1)}%</TableCell>
+                                                    <TableCell colSpan={5}></TableCell>
+                                                    <TableCell>{totals.score.toFixed(1)}</TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(filteredData.length / itemsPerPage)}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredData.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                     
+                                    />
+                                </CardContent>
+                            </Card>
                         </div>
                     </main>
                     <Footer />

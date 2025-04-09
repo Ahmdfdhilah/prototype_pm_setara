@@ -212,7 +212,6 @@ const MPMTargetsActionPlans: React.FC = () => {
     // Pagination State - New
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
     // Calculate achievement percentages for filtering
     const getAchievementPercentage = (individual: IndividualPerformanceEntry): number => {
@@ -546,8 +545,7 @@ const MPMTargetsActionPlans: React.FC = () => {
                                         totalItems={filteredIndividuals.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={isPaginationExpanded}
-                                        onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                                      
                                     />
                                 </CardContent>
                             </Card>

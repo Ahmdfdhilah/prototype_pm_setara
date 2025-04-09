@@ -36,7 +36,6 @@ const BSCEntryPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    const [expanded, setExpanded] = useState(false);
 
     // Search and filter state
     const [searchTerm, setSearchTerm] = useState('');
@@ -114,9 +113,6 @@ const BSCEntryPage = () => {
         setCurrentPage(1);
     };
 
-    const toggleExpand = () => {
-        setExpanded(!expanded);
-    };
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -390,8 +386,7 @@ const BSCEntryPage = () => {
                                         totalItems={filteredEntries.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={expanded}
-                                        onToggleExpand={toggleExpand}
+                                       
                                     />
                                 </CardContent>
                             </Card>

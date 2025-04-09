@@ -31,7 +31,6 @@ type PeriodStatus = 'All' | 'Draft' | 'Active' | 'Closed';
 interface Period {
     id: string;
     year: number;
-    period: string;
     startDate: string;
     endDate: string;
     status: PeriodStatus;
@@ -44,7 +43,6 @@ const initialPeriods: Period[] = [
     {
         id: '1',
         year: 2023,
-        period: '2023',
         startDate: '2023-01-01',
         endDate: '2023-12-31',
         status: 'Closed',
@@ -54,7 +52,6 @@ const initialPeriods: Period[] = [
     {
         id: '2',
         year: 2024,
-        period: '2024',
         startDate: '2024-01-01',
         endDate: '2023-12-30',
         status: 'Closed',
@@ -64,7 +61,6 @@ const initialPeriods: Period[] = [
     {
         id: '3',
         year: 2025,
-        period: '2025',
         startDate: '2025-01-01',
         endDate: '2025-12-30',
         status: 'Active',
@@ -103,8 +99,6 @@ const PeriodMaster = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
-
 
     // Check if there's any active period
     const hasActivePeriod = periods.some(p => p.status === 'Active');
@@ -115,7 +109,6 @@ const PeriodMaster = () => {
 
         if (searchTerm) {
             result = result.filter(period =>
-                period.period.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 period.year.toString().includes(searchTerm) ||
                 period.status.toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -152,8 +145,7 @@ const PeriodMaster = () => {
 
     const handleCreatePeriod = () => {
         const periodExists = periods.some(p =>
-            p.year === newPeriod.year &&
-            p.period === newPeriod.period
+            p.year === newPeriod.year
         );
 
         if (periodExists) {
@@ -164,7 +156,6 @@ const PeriodMaster = () => {
         const newPeriodEntry: Period = {
             id: `${Date.now()}`,
             year: newPeriod.year,
-            period: newPeriod.period,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
             status: 'Draft',
@@ -203,11 +194,6 @@ const PeriodMaster = () => {
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(Number(value));
     };
-
-    const handleTogglePaginationExpand = () => {
-        setPaginationExpanded(!paginationExpanded);
-    };
-
 
     return (
         <div className="font-montserrat min-h-screen bg-white dark:bg-gray-900">
@@ -303,7 +289,6 @@ const PeriodMaster = () => {
                                     <table className="w-full">
                                         <thead className="bg-[#1B6131] text-white">
                                             <tr>
-                                                <th className="p-4 text-left border-b">Year</th>
                                                 <th className="p-4 text-left border-b">Period</th>
                                                 <th className="p-4 text-left border-b">Start Date</th>
                                                 <th className="p-4 text-left border-b">End Date</th>
@@ -321,7 +306,6 @@ const PeriodMaster = () => {
                                                         className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
                                                     >
                                                         <td className="p-4">{period.year}</td>
-                                                        <td className="p-4 font-medium">{period.period}</td>
                                                         <td className="p-4">{new Date(period.startDate).toLocaleDateString()}</td>
                                                         <td className="p-4">{new Date(period.endDate).toLocaleDateString()}</td>
                                                         <td className="p-4">
@@ -376,8 +360,6 @@ const PeriodMaster = () => {
                                     totalItems={filteredPeriods.length}
                                     onPageChange={handlePageChange}
                                     onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={paginationExpanded}
-                                    onToggleExpand={handleTogglePaginationExpand}
                                 />
                             </CardContent>
                         </Card>
@@ -399,17 +381,6 @@ const PeriodMaster = () => {
                                             type="number"
                                             value={newPeriod.year}
                                             onChange={(e) => setNewPeriod(prev => ({ ...prev, year: parseInt(e.target.value) }))}
-                                            className="col-span-3"
-                                            min={new Date().getFullYear() - 1}
-                                            max={new Date().getFullYear() + 5}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <label className="text-right">Period</label>
-                                        <Input
-                                            type="text"
-                                            value={newPeriod.period}
-                                            onChange={(e) => setNewPeriod(prev => ({ ...prev, period: e.target.value }))}
                                             className="col-span-3"
                                             min={new Date().getFullYear() - 1}
                                             max={new Date().getFullYear() + 5}

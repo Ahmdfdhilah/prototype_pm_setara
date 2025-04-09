@@ -34,7 +34,7 @@ export type MPMEntry = {
 };
 
 export type BSCEntry = {
-    id?: number;
+    id: number;
     perspective: Perspective;
     kpiNumber: number;
     kpi: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Select,
@@ -16,8 +16,6 @@ interface PaginationProps {
   totalItems: number;
   onPageChange: (page: number) => void;
   onItemsPerPageChange: (value: string) => void;
-  expanded?: boolean;
-  onToggleExpand?: () => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -27,8 +25,6 @@ const Pagination: React.FC<PaginationProps> = ({
   totalItems,
   onPageChange,
   onItemsPerPageChange,
-  expanded = true,
-  onToggleExpand = () => {},
 }) => {
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -80,23 +76,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="w-full px-4 pb-8">
-      <div className="flex justify-end mb-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onToggleExpand}
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          {expanded ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
-
-      {expanded && (
+    <div className="w-full px-4 pt-8">
         <div className="p-4 border border-[#E6F5E6] rounded-md bg-white dark:bg-[#1A2A1F] shadow-sm dark:border-[#2D3D30]">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 sm:mb-0">
@@ -172,41 +152,6 @@ const Pagination: React.FC<PaginationProps> = ({
             </div>
           </div>
         </div>
-      )}
-
-      {!expanded && (
-        <div className="flex justify-center">
-          <div className="flex items-center justify-center space-x-1">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-
-            <Button
-              variant="default"
-              size="sm"
-              className="h-8 px-3 bg-[#1B6131] hover:bg-[#46B749] dark:bg-[#46B749] dark:hover:bg-[#1B6131] dark:text-white"
-            >
-              {currentPage} / {totalPages}
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="h-8 w-8 p-0 border-[#E6F5E6] dark:border-[#2D3D30] dark:text-gray-200 dark:hover:bg-[#2D3D30] dark:hover:text-gray-100"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

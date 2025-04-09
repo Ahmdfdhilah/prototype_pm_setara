@@ -83,7 +83,6 @@ const EmployeeManagementPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
     const [filters, setFilters] = useState({
         department: '',
         team: '',
@@ -437,8 +436,6 @@ const EmployeeManagementPage = () => {
                                         totalItems={filteredEmployees.length}
                                         onPageChange={setCurrentPage}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={() => setPaginationExpanded(!paginationExpanded)}
                                     />
                                 )}
                             </CardContent>

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Card,
     CardContent,
@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import Sidebar from '@/components/Sidebar';
 import {
     ChevronUp, ChevronDown, Minus, ChevronRight, Search,
-    ChevronDown as ExpandMore,
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Filtering from '@/components/Filtering';
@@ -18,33 +17,12 @@ import { dummyData } from '../lib/bscMocks';
 import Breadcrumb from '@/components/Breadcrumb';
 import Pagination from '@/components/Pagination';
 import Footer from '@/components/Footer';
+import { BSCEntry } from '@/lib/types';
 
 // Types
 type Period = 'Jan-25' | 'Feb-25' | 'Mar-25' | 'Apr-25' | 'All' | '2022' | '2023' | '2024' | '2025';
 type BSCType = 'Monthly' | 'Quarterly' | 'Yearly';
 type Perspective = 'Financial' | 'Customer' | 'Internal Business Process' | 'Learning & Growth';
-type Category = 'Max' | 'Min' | 'On Target';
-type UOMType = 'Number' | '%' | 'Days' | 'Kriteria';
-
-type BSCEntry = {
-    perspective: Perspective;
-    code: string;
-    kpi: string;
-    kpiDefinition: string;
-    weight: number;
-    uom: UOMType;
-    category: Category;
-    target: number;
-    actual: number;
-    achievement: number;
-    score: number;
-    activeWeight: number;
-    totalScore: number;
-    endScore: number;
-    problemIdentification?: string;
-    correctiveAction?: string;
-    relatedPIC: string;
-};
 
 const BSCDashboard = () => {
     const [selectedPeriod, setSelectedPeriod] = useState<Period>('Jan-25');
@@ -57,7 +35,7 @@ const BSCDashboard = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [selectedType, setSelectedType] = useState<BSCType>('Monthly');
-    const [expandedRow, setExpandedRow] = useState<string | null>(null);
+    const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
     const [isEndDateDisabled, setIsEndDateDisabled] = useState<boolean>(false);
@@ -65,8 +43,7 @@ const BSCDashboard = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
-
+    
     // Search functionality
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPerspective, setSelectedPerspective] = useState<string>('All');
@@ -148,17 +125,6 @@ const BSCDashboard = () => {
         });
     }, [dummyData, searchTerm, selectedPerspective, selectedCategory]);
 
-    // Group data by perspective
-    // const groupedData = useMemo(() => {
-    //     return filteredData.reduce((acc, curr) => {
-    //         if (!acc[curr.perspective]) {
-    //             acc[curr.perspective] = [];
-    //         }
-    //         acc[curr.perspective].push(curr as BSCEntry);
-    //         return acc;
-    //     }, {} as Record<Perspective, BSCEntry[]>);
-    // }, [filteredData]);
-
     // Handle pagination
     const paginatedData = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -183,9 +149,9 @@ const BSCDashboard = () => {
     }, [itemsPerPage]);
 
     // Status indicator component
-    const StatusIndicator: React.FC<{ value: number }> = ({ value }) => {
-        if (value > 100) return <ChevronUp className="text-green-500" />;
-        if (value < 100) return <ChevronDown className="text-red-500" />;
+    const StatusIndicator: React.FC<{ value?: number }> = ({ value }) => {
+        if (value ? value > 100 : '') return <ChevronUp className="text-green-500" />;
+        if (value ? value < 100 : '') return <ChevronDown className="text-red-500" />;
         return <Minus className="text-yellow-500" />;
     };
 
@@ -206,20 +172,39 @@ const BSCDashboard = () => {
         });
     }, [filteredData]);
 
-    const handleRowClick = (code: string) => {
-        setExpandedRow(expandedRow === code ? null : code);
+    // Calculate subtotals by perspective
+    const perspectiveSubtotals = useMemo(() => {
+        return filteredData.reduce((acc, curr) => {
+            const perspective = curr.perspective;
+            if (!acc[perspective]) {
+                acc[perspective] = {
+                    weight: 0,
+                    score: 0,
+                    endScore: 0
+                };
+            }
+            
+            acc[perspective].weight += (curr.weight ?? 0);
+            acc[perspective].score += (curr.score ?? 0);
+            acc[perspective].endScore += (curr.endScore ?? 0);
+            
+            return acc;
+        }, {} as Record<string, { weight: number, score: number, endScore: number }>);
+    }, [filteredData]);
+
+    // Row expansion handler
+    const handleRowClick = (id: number) => {
+        setExpandedRow(expandedRow === id ? null : id);
     };
 
+    // Pagination handlers
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
 
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(Number(value));
-    };
-
-    const handleTogglePaginationExpand = () => {
-        setPaginationExpanded(!paginationExpanded);
+        setCurrentPage(1);
     };
 
     const ExpandedContent = ({ item }: { item: BSCEntry }) => (
@@ -362,53 +347,92 @@ const BSCDashboard = () => {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {Object.entries(paginatedGroupedData).map(([perspective, items]) => (
-                                                items.map((item, index) => (
-                                                    <>
-                                                        <TableRow
-                                                            key={item.code}
-                                                            onClick={() => handleRowClick(item.code)}
-                                                            className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                                        >
-                                                            {index === 0 && (
-                                                                <TableCell
-                                                                    rowSpan={items.length}
-                                                                    className="bg-[#E4EFCF] dark:bg-[#1B6131]/30 font-medium text-[#1B6131] dark:text-[#46B749]"
-                                                                >
-                                                                    {perspective}
-                                                                </TableCell>
-                                                            )}
-                                                            <TableCell className="flex items-center gap-2 text-[#1B6131] dark:text-[#46B749]">
-                                                                {expandedRow === item.code ? (
-                                                                    <ExpandMore size={16} />
-                                                                ) : (
-                                                                    <ChevronRight size={16} />
-                                                                )}
-                                                                {item.code}
+                                            {Object.entries(paginatedGroupedData).map(([perspective, items]) => {
+                                                // Create an array to track which items have expanded content
+                                                const itemsWithExpanded = items.map(item => ({
+                                                    ...item,
+                                                    isExpanded: expandedRow === item.id
+                                                }));
+
+                                                // Get the subtotals for this perspective
+                                                const perspectiveSubtotal = perspectiveSubtotals[perspective] || { 
+                                                    weight: 0, 
+                                                    score: 0, 
+                                                    endScore: 0 
+                                                };
+
+                                                return (
+                                                    <React.Fragment key={perspective}>
+                                                        {/* Render each item row */}
+                                                        {itemsWithExpanded.map((item, index) => {
+                                                            const isFirstInGroup = index === 0;
+                                                            const totalRowsInPerspective = items.length +
+                                                                itemsWithExpanded.filter(i => i.isExpanded).length + 1;
+                                                            return (
+                                                                <React.Fragment key={item.id}>
+                                                                    <TableRow
+                                                                        onClick={() => handleRowClick(item.id)}
+                                                                        className="hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                                    >
+                                                                        {isFirstInGroup && (
+                                                                            <TableCell
+                                                                                rowSpan={totalRowsInPerspective}
+                                                                                className="bg-[#E4EFCF] dark:bg-[#1B6131]/30 font-medium text-[#1B6131] dark:text-[#46B749]"
+                                                                            >
+                                                                                {perspective}
+                                                                            </TableCell>
+                                                                        )}
+                                                                        <TableCell className="flex items-center gap-2 text-[#1B6131] dark:text-[#46B749]">
+                                                                            {expandedRow === item.id ? (
+                                                                                <ChevronDown size={16} />
+                                                                            ) : (
+                                                                                <ChevronRight size={16} />
+                                                                            )}
+                                                                            {item.code}
+                                                                        </TableCell>
+                                                                        <TableCell>{item.kpi}</TableCell>
+                                                                        <TableCell>{item.weight}%</TableCell>
+                                                                        <TableCell>{item.uom}</TableCell>
+                                                                        <TableCell>{item.category}</TableCell>
+                                                                        <TableCell>{item.target}</TableCell>
+                                                                        <TableCell>{item.actual}</TableCell>
+                                                                        <TableCell>{item.achievement}%</TableCell>
+                                                                        <TableCell>
+                                                                            <StatusIndicator value={item.achievement} />
+                                                                        </TableCell>
+                                                                        <TableCell>{item.score?.toFixed(2)}</TableCell>
+                                                                        <TableCell>{item.endScore?.toFixed(2)}</TableCell>
+                                                                    </TableRow>
+                                                                    {expandedRow === item.id && (
+                                                                        <TableRow className="bg-[#E4EFCF]/30 dark:bg-[#1B6131]/10">
+                                                                            <TableCell colSpan={11} className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50">
+                                                                                <ExpandedContent item={item} />
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )}
+                                                                </React.Fragment>
+                                                            );
+                                                        })}
+
+                                                        {/* Render perspective subtotal row with weight, score, and score akhir */}
+                                                        <TableRow className="bg-[#E4EFCF]/50 dark:bg-[#1B6131]/30">
+                                                            <TableCell colSpan={2} className="font-medium">
+                                                                {perspective} Subtotal
                                                             </TableCell>
-                                                            <TableCell>{item.kpi}</TableCell>
-                                                            <TableCell>{item.weight}%</TableCell>
-                                                            <TableCell>{item.uom}</TableCell>
-                                                            <TableCell>{item.category}</TableCell>
-                                                            <TableCell>{item.target}</TableCell>
-                                                            <TableCell>{item.actual}</TableCell>
-                                                            <TableCell>{item.achievement}%</TableCell>
-                                                            <TableCell>
-                                                                <StatusIndicator value={item.achievement} />
+                                                            <TableCell className="font-medium">
+                                                                {perspectiveSubtotal.weight.toFixed(2)}%
                                                             </TableCell>
-                                                            <TableCell>{item.score.toFixed(2)}</TableCell>
-                                                            <TableCell>{item.endScore.toFixed(2)}</TableCell>
+                                                            <TableCell colSpan={6}></TableCell>
+                                                            <TableCell className="font-medium">
+                                                                {perspectiveSubtotal.score.toFixed(2)}
+                                                            </TableCell>
+                                                            <TableCell className="font-medium">
+                                                                {perspectiveSubtotal.endScore.toFixed(2)}
+                                                            </TableCell>
                                                         </TableRow>
-                                                        {expandedRow === item.code && (
-                                                            <TableRow className="bg-[#E4EFCF]/30 dark:bg-[#1B6131]/10">
-                                                                <TableCell colSpan={14}>
-                                                                    <ExpandedContent item={item} />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )}
-                                                    </>
-                                                ))
-                                            ))}
+                                                    </React.Fragment>
+                                                );
+                                            })}
 
                                             {paginatedData.length === 0 && (
                                                 <TableRow>
@@ -437,8 +461,6 @@ const BSCDashboard = () => {
                                         totalItems={filteredData.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={handleTogglePaginationExpand}
                                     />
                                 </CardContent>
                             </Card>

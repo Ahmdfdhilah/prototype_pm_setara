@@ -82,29 +82,7 @@ export const ExpandedContent = ({ item }: { item: MPMEntry }) => {
     };
 
     return (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800 space-y-4">
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-2">
-                <button
-                    onClick={navigateToTeamKPI}
-                    className="px-4 py-2 bg-[#1B6131] hover:bg-[#124020] text-white rounded-md flex items-center justify-center text-sm transition-colors"
-                >
-                    <span className="mr-2">
-                        <Users />
-                    </span>
-                    Team KPI Details
-                </button>
-                <button
-                    onClick={navigateToActionPlan}
-                    className="px-4 py-2 bg-[#46B749] hover:bg-[#37933A] text-white rounded-md flex items-center justify-center text-sm transition-colors"
-                >
-                    <span className="mr-2">
-                        <User />
-                    </span>
-                    Action Plan Details
-                </button>
-            </div>
-
+        <div className="p-4 space-y-4">
             {/* KPI Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -116,6 +94,7 @@ export const ExpandedContent = ({ item }: { item: MPMEntry }) => {
                     <p className="text-sm">{item.ytdCalculation}</p>
                 </div>
             </div>
+
 
             {/* Problem and Corrective Action */}
             {(item.problemIdentification || item.correctiveAction) && (
@@ -140,6 +119,27 @@ export const ExpandedContent = ({ item }: { item: MPMEntry }) => {
                     )}
                 </div>
             )}
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-2">
+                <button
+                    onClick={navigateToTeamKPI}
+                    className="px-4 py-2 bg-[#1B6131] hover:bg-[#124020] text-white rounded-md flex items-center justify-center text-sm transition-colors"
+                >
+                    <span className="mr-2">
+                        <Users />
+                    </span>
+                    Team KPI Details
+                </button>
+                <button
+                    onClick={navigateToActionPlan}
+                    className="px-4 py-2 bg-[#46B749] hover:bg-[#37933A] text-white rounded-md flex items-center justify-center text-sm transition-colors"
+                >
+                    <span className="mr-2">
+                        <User />
+                    </span>
+                    Action Plan Details
+                </button>
+            </div>
 
             {/* Monthly Details Section */}
             <div className="mt-6">

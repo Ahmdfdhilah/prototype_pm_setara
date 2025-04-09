@@ -69,7 +69,6 @@ const TeamManagementPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [selectedDepartment, setSelectedDepartment] = useState('all');
-    const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
 
     // Generate dummy data
     useEffect(() => {
@@ -199,11 +198,6 @@ const TeamManagementPage = () => {
         setItemsPerPage(parseInt(value));
         setCurrentPage(1); // Reset to first page when items per page changes
     };
-
-    const togglePaginationExpand = () => {
-        setIsPaginationExpanded(!isPaginationExpanded);
-    };
-
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat">
@@ -375,8 +369,7 @@ const TeamManagementPage = () => {
                                     totalItems={filteredTeams.length}
                                     onPageChange={setCurrentPage}
                                     onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={isPaginationExpanded}
-                                    onToggleExpand={togglePaginationExpand}
+                                    
                                 />
                             </CardContent>
                         </Card>

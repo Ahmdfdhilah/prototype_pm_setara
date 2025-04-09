@@ -52,145 +52,142 @@ const IPMPage = () => {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [filterUnit, setFilterUnit] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
     const navigate = useNavigate();
+
+    // Employee (Regular Employee)
+    const employeeData: Employee = {
+        id: '2',
+        name: 'Jane Smith',
+        employeeNumber: 'EMP002',
+        department: 'Customer Experience',
+        position: 'Employee',
+        unit: 'Customer Service',
+        pendingPlans: 1,
+        inProgressPlans: 2,
+        completedPlans: 0,
+        totalPlans: 3
+    };
+
+    // Manager
+    const managerData: Employee = {
+        id: '3',
+        name: 'John Anderson',
+        employeeNumber: 'EMP003',
+        department: 'Customer Experience',
+        position: 'Manager',
+        unit: 'Customer Service',
+        pendingPlans: 0,
+        inProgressPlans: 1,
+        completedPlans: 2,
+        totalPlans: 3
+    };
+
+    // Senior Manager
+    const seniorManagerData: Employee = {
+        id: '4',
+        name: 'Sarah Johnson',
+        employeeNumber: 'EMP004',
+        department: 'Customer Experience',
+        position: 'Senior Manager',
+        unit: 'Customer Service',
+        pendingPlans: 1,
+        inProgressPlans: 0,
+        completedPlans: 1,
+        totalPlans: 2
+    };
+
+    // Admin
+    const adminData: Employee = {
+        id: '12',
+        name: 'Admin User',
+        employeeNumber: 'ADM001',
+        department: 'IT',
+        position: 'Admin',
+        unit: 'IT',
+        pendingPlans: 0,
+        inProgressPlans: 0,
+        completedPlans: 0,
+        totalPlans: 0
+    };
+
+    const getCurrentUser = (): Employee => {
+        switch (currentRole) {
+            case 'admin':
+                return adminData;
+            case 'manager':
+                return managerData;
+            case 'sm_dept':
+                return seniorManagerData;
+            default:
+                return employeeData;
+        }
+    };
+
+    const currentUser = getCurrentUser();
+
+    // Check if current user can view an employee's data based on permission matrix
+    const canViewEmployee = (employee: Employee): boolean => {
+        const entryOwnerRole = employee.position.toLowerCase().includes('manager') 
+            ? 'manager' 
+            : employee.position.toLowerCase().includes('senior manager') 
+                ? 'sm_dept' 
+                : 'employee';
+
+        const viewerRole = currentRole;
+
+        // Admin can view everything
+        if (viewerRole === 'admin') return true;
+
+        // Employee viewing their own data
+        if (viewerRole === 'employee' && employee.id === currentUser.id) return true;
+
+        // Manager viewing employees in same unit
+        if (viewerRole === 'manager' && entryOwnerRole === 'employee' && employee.unit === currentUser.unit) return true;
+
+        // Manager viewing their own data
+        if (viewerRole === 'manager' && entryOwnerRole === 'manager' && employee.id === currentUser.id) return true;
+
+        // SM Dept viewing employees in same department
+        if (viewerRole === 'sm_dept' && 
+            (entryOwnerRole === 'employee' || entryOwnerRole === 'manager') && 
+            employee.department === currentUser.department) return true;
+
+        // SM Dept viewing their own data
+        if (viewerRole === 'sm_dept' && entryOwnerRole === 'sm_dept' && employee.id === currentUser.id) return true;
+
+        return false;
+    };
 
     // Mock data for employees with action plan counts
     const [employees, _setEmployees] = useState<Employee[]>([
-        {
-            id: '1',
-            name: 'John Doe',
-            employeeNumber: 'EMP001',
-            department: 'Technology',
-            position: 'Software Engineer',
-            unit: 'IT',
-            pendingPlans: 2,
-            inProgressPlans: 1,
-            completedPlans: 3,
-            totalPlans: 6
-        },
-        {
-            id: '2',
-            name: 'Jane Smith',
-            employeeNumber: 'EMP002',
-            department: 'Customer Experience',
-            position: 'Customer Support Specialist',
-            unit: 'Customer Service',
-            pendingPlans: 1,
-            inProgressPlans: 2,
-            completedPlans: 0,
-            totalPlans: 3
-        },
-        {
-            id: '3',
-            name: 'Robert Johnson',
-            employeeNumber: 'EMP003',
-            department: 'Finance',
-            position: 'Financial Analyst',
-            unit: 'Finance',
-            pendingPlans: 0,
-            inProgressPlans: 1,
-            completedPlans: 2,
-            totalPlans: 3
-        },
-        {
-            id: '4',
-            name: 'Maria Garcia',
-            employeeNumber: 'EMP004',
-            department: 'Marketing',
-            position: 'Marketing Specialist',
-            unit: 'Marketing',
-            pendingPlans: 1,
-            inProgressPlans: 0,
-            completedPlans: 1,
-            totalPlans: 2
-        },
-        {
-            id: '5',
-            name: 'David Kim',
-            employeeNumber: 'EMP005',
-            department: 'Technology',
-            position: 'UX Designer',
-            unit: 'IT',
-            pendingPlans: 2,
-            inProgressPlans: 1,
-            completedPlans: 0,
-            totalPlans: 3
-        },
-        {
-            id: '6',
-            name: 'Sarah Johnson',
-            employeeNumber: 'EMP006',
-            department: 'Sales',
-            position: 'Sales Representative',
-            unit: 'Sales',
-            pendingPlans: 0,
-            inProgressPlans: 2,
-            completedPlans: 1,
-            totalPlans: 3
-        },
-        {
-            id: '7',
-            name: 'Michael Chen',
-            employeeNumber: 'EMP007',
-            department: 'Operations',
-            position: 'Operations Manager',
-            unit: 'Operations',
-            pendingPlans: 1,
-            inProgressPlans: 3,
-            completedPlans: 2,
-            totalPlans: 6
-        }
+        employeeData,
+        managerData,
+        seniorManagerData,
     ]);
 
-    // Calculate dashboard metrics based on role and data
+    // Calculate dashboard metrics based on visible employees
     const calculateDashboardMetrics = () => {
-        if (currentRole === 'employee') {
-            // For employee role - only show data for John Doe (id: '1')
-            const employeeData = employees.find(emp => emp.id === '1');
-            return {
-                pending: employeeData?.pendingPlans || 0,
-                inProgress: employeeData?.inProgressPlans || 0,
-                completed: employeeData?.completedPlans || 0,
-                total: employeeData?.totalPlans || 0
-            };
-        } else if (currentRole === 'manager') {
-            // For manager - show all employees in their unit (assuming IT department)
-            const unitEmployees = employees.filter(emp => emp.unit === 'IT');
-            return {
-                pending: unitEmployees.reduce((sum, emp) => sum + emp.pendingPlans, 0),
-                inProgress: unitEmployees.reduce((sum, emp) => sum + emp.inProgressPlans, 0),
-                completed: unitEmployees.reduce((sum, emp) => sum + emp.completedPlans, 0),
-                total: unitEmployees.reduce((sum, emp) => sum + emp.totalPlans, 0),
-                needsReview: unitEmployees.reduce((sum, emp) => sum + emp.inProgressPlans, 0) // For simplicity, using inProgress as needsReview
-            };
-        } else {
-            // For SM - show all employees
-            return {
-                pending: employees.reduce((sum, emp) => sum + emp.pendingPlans, 0),
-                inProgress: employees.reduce((sum, emp) => sum + emp.inProgressPlans, 0),
-                completed: employees.reduce((sum, emp) => sum + emp.completedPlans, 0),
-                total: employees.reduce((sum, emp) => sum + emp.totalPlans, 0),
-                needsValidation: employees.reduce((sum, emp) => sum + emp.inProgressPlans, 0) // For simplicity, using inProgress as needsValidation
-            };
-        }
+        const visibleEmployees = employees.filter(emp => canViewEmployee(emp));
+        
+        return {
+            pending: visibleEmployees.reduce((sum, emp) => sum + emp.pendingPlans, 0),
+            inProgress: visibleEmployees.reduce((sum, emp) => sum + emp.inProgressPlans, 0),
+            completed: visibleEmployees.reduce((sum, emp) => sum + emp.completedPlans, 0),
+            total: visibleEmployees.reduce((sum, emp) => sum + emp.totalPlans, 0),
+            needsReview: currentRole === 'manager' 
+                ? visibleEmployees.reduce((sum, emp) => sum + emp.inProgressPlans, 0)
+                : 0,
+            needsValidation: currentRole === 'sm_dept'
+                ? visibleEmployees.reduce((sum, emp) => sum + emp.inProgressPlans, 0)
+                : 0
+        };
     };
 
     const dashboardMetrics = calculateDashboardMetrics();
 
-    // Filter employees based on selected filters and role
+    // Filter employees based on selected filters and permissions
     const getFilteredEmployees = () => {
-        let filteredList = [...employees];
-
-        // Filter by role
-        if (currentRole === 'employee') {
-            // Employee sees only themselves
-            filteredList = filteredList.filter(emp => emp.id === '1');
-        } else if (currentRole === 'manager') {
-            // Manager sees employees in their unit (assuming IT unit)
-            filteredList = filteredList.filter(emp => emp.unit === 'IT');
-        }
-        // For sm_dept role, no department filtering is applied - they see all employees
+        let filteredList = employees.filter(emp => canViewEmployee(emp));
 
         // Additional filters - apply only if a specific unit (not 'all') is selected
         if (filterUnit && filterUnit !== 'all') {
@@ -234,11 +231,6 @@ const IPMPage = () => {
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(parseInt(value));
         setCurrentPage(1); // Reset to first page when changing items per page
-    };
-
-    // Toggle pagination expanded state
-    const togglePaginationExpand = () => {
-        setPaginationExpanded(!paginationExpanded);
     };
 
     return (
@@ -368,20 +360,12 @@ const IPMPage = () => {
                                             <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                             <span>Team</span>
                                         </label>
-                                        <Select
-                                        // value={filters.team}
-                                        // onValueChange={(value) => handleFilterChange('team', value)}
-                                        >
+                                        <Select>
                                             <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
                                                 <SelectValue placeholder="All Teams" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="all">All Teams</SelectItem>
-                                                {/* {teams.map(team => (
-                                                    <SelectItem key={team.team_id} value={String(team.team_id)}>
-                                                        {team.team_name}
-                                                    </SelectItem>
-                                                ))} */}
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -391,10 +375,7 @@ const IPMPage = () => {
                                             <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                             <span>Status</span>
                                         </label>
-                                        <Select
-                                        // value={filters.status}
-                                        // onValueChange={(value) => handleFilterChange('status', value)}
-                                        >
+                                        <Select>
                                             <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
                                                 <SelectValue placeholder="All Statuses" />
                                             </SelectTrigger>
@@ -469,8 +450,6 @@ const IPMPage = () => {
                                     totalItems={filteredEmployees.length}
                                     onPageChange={setCurrentPage}
                                     onItemsPerPageChange={handleItemsPerPageChange}
-                                    expanded={paginationExpanded}
-                                    onToggleExpand={togglePaginationExpand}
                                 />
                             </CardContent>
                         </Card>

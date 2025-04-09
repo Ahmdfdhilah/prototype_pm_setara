@@ -18,6 +18,7 @@ import {
     Eye,
     AlertCircle,
     User,
+    Calendar,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -59,6 +60,8 @@ interface IPMEntry {
     actualValue?: number;
     weight: number;
     perspective: Perspective;
+    periodYear: number;
+    periodMonth: number;
     employee: Employee;
     evidence: Evidence[];
 }
@@ -79,22 +82,72 @@ const EmployeeIPMDetailsPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, _] = useState(false);
-    const [expanded, setExpanded] = useState(true);
 
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPerspective, setFilterPerspective] = useState('');
+    const [filterYear, setFilterYear] = useState('');
+    const [filterMonth, setFilterMonth] = useState('');
     const [actualValueInput, setActualValueInput] = useState<{ [key: string]: number }>({});
 
-    // Mock data for employee - would normally fetch based on employeeId
-    const [employee, _setEmployee] = useState<Employee>({
+    // Employee (Regular Employee)
+    const employeeData: Employee = {
         id: '2',
         name: 'Jane Smith',
         employeeNumber: 'EMP002',
         department: 'Customer Experience',
         position: 'Employee',
         unit: 'Customer Service'
+    };
+
+    // Manager
+    const managerData: Employee = {
+        id: '3',
+        name: 'John Anderson',
+        employeeNumber: 'EMP003',
+        department: 'Customer Experience',
+        position: 'Manager',
+        unit: 'Customer Service'
+    };
+
+    // Senior Manager
+    const seniorManagerData: Employee = {
+        id: '4',
+        name: 'Sarah Johnson',
+        employeeNumber: 'EMP004',
+        department: 'Customer Experience',
+        position: 'Senior Manager',
+        unit: 'Customer Service'
+    };
+
+    // Mock data for employee - would normally fetch based on employeeId
+    const [employee, _setEmployee] = useState<Employee>(() => {
+        if (employeeId === '3') return managerData;
+        if (employeeId === '4') return seniorManagerData;
+        return employeeData;
     });
+
+
+    const getCurrentUser = (): Employee => {
+        switch (currentRole) {
+            case 'admin':
+                return {
+                    id: '12',
+                    name: 'Admin User',
+                    employeeNumber: 'ADM001',
+                    department: 'IT',
+                    position: 'Admin',
+                    unit: 'IT'
+                };
+            case 'manager':
+                return managerData;
+            case 'sm_dept':
+                return seniorManagerData
+            default:
+                return employeeData;
+        }
+    };
+
+    const currentUser = getCurrentUser();
 
     // Mock data for action plans from MPM for this specific employee
     const [entries, setEntries] = useState<IPMEntry[]>([
@@ -106,7 +159,9 @@ const EmployeeIPMDetailsPage = () => {
             targetValue: 90,
             weight: 30,
             perspective: 'Customer',
-            employee: employee,
+            periodYear: 2025,
+            periodMonth: 4, // April
+            employee: employeeData,
             evidence: []
         },
         {
@@ -117,7 +172,9 @@ const EmployeeIPMDetailsPage = () => {
             targetValue: 2,
             weight: 25,
             perspective: 'Internal Business Process',
-            employee: employee,
+            periodYear: 2025,
+            periodMonth: 3, // March
+            employee: employeeData,
             evidence: [
                 {
                     id: '1001',
@@ -136,7 +193,9 @@ const EmployeeIPMDetailsPage = () => {
             actualValue: 1,
             weight: 15,
             perspective: 'Learning & Growth',
-            employee: employee,
+            periodYear: 2025,
+            periodMonth: 2, // February
+            employee: employeeData,
             evidence: [
                 {
                     id: '1002',
@@ -155,7 +214,9 @@ const EmployeeIPMDetailsPage = () => {
             actualValue: 1,
             weight: 20,
             perspective: 'Internal Business Process',
-            employee: employee,
+            periodYear: 2025,
+            periodMonth: 1, // January
+            employee: employeeData,
             evidence: [
                 {
                     id: '1003',
@@ -173,21 +234,96 @@ const EmployeeIPMDetailsPage = () => {
             targetValue: 15,
             weight: 10,
             perspective: 'Financial',
-            employee: employee,
+            periodYear: 2025,
+            periodMonth: 3, // March
+            employee: employeeData,
             evidence: []
+        },
+        // Manager KPIs
+        {
+            id: '6',
+            title: 'Team Performance Improvement',
+            description: 'Increase team productivity metrics by 20% through coaching and process improvements',
+            status: 'Pending',
+            targetValue: 20,
+            weight: 25,
+            perspective: 'Internal Business Process',
+            periodYear: 2025,
+            periodMonth: 4, // April
+            employee: managerData,
+            evidence: []
+        },
+        {
+            id: '7',
+            title: 'Customer Retention Strategy Implementation',
+            description: 'Develop and implement a comprehensive customer retention strategy',
+            status: 'Evidence Submitted',
+            targetValue: 1,
+            weight: 30,
+            perspective: 'Customer',
+            periodYear: 2025,
+            periodMonth: 3, // March
+            employee: managerData,
+            evidence: [
+                {
+                    id: '1004',
+                    fileName: 'retention_strategy_doc.pdf',
+                    uploadDate: '2025-03-20',
+                    comments: 'First draft of the strategy document with implementation roadmap'
+                }
+            ]
+        },
+        // Senior Manager KPIs
+        {
+            id: '8',
+            title: 'Department Cost Optimization',
+            description: 'Reduce operational costs by 15% while maintaining service quality',
+            status: 'Pending',
+            targetValue: 15,
+            weight: 35,
+            perspective: 'Financial',
+            periodYear: 2025,
+            periodMonth: 4, // April
+            employee: seniorManagerData,
+            evidence: []
+        },
+        {
+            id: '9',
+            title: 'Strategic Partnership Development',
+            description: 'Establish at least 2 new strategic partnerships to enhance service offerings',
+            status: 'Evidence Submitted',
+            targetValue: 2,
+            weight: 30,
+            perspective: 'Customer',
+            periodYear: 2025,
+            periodMonth: 2, // February
+            employee: seniorManagerData,
+            evidence: [
+                {
+                    id: '1005',
+                    fileName: 'partnership_agreement_draft.pdf',
+                    uploadDate: '2025-02-28',
+                    comments: 'Draft agreement with potential partner company'
+                }
+            ]
         }
     ]);
 
-    // Get summary counts
-    const pendingCount = entries.filter(e => e.status === 'Pending').length;
-    const inProgressCount = entries.filter(e => e.status === 'Evidence Submitted').length;
-    const completedCount = entries.filter(e => e.status === 'Approved').length;
+    // Filter entries for this specific employee based on their ID
+    const employeeEntries = entries.filter(entry => entry.employee.id === employeeId);
+
+    // Get summary counts for this employee
+    const pendingCount = employeeEntries.filter(e => e.status === 'Pending').length;
+    const inProgressCount = employeeEntries.filter(e => e.status === 'Evidence Submitted').length;
+    const completedCount = employeeEntries.filter(e => e.status === 'Approved').length;
 
     // Filter entries based on selected filters
-    const filteredEntries = entries.filter(entry => {
+    const filteredEntries = employeeEntries.filter(entry => {
         const statusMatch = filterStatus ? entry.status === filterStatus : true;
         const perspectiveMatch = filterPerspective ? entry.perspective === filterPerspective : true;
-        return statusMatch && perspectiveMatch;
+        const yearMatch = filterYear ? entry.periodYear === parseInt(filterYear) : true;
+        const monthMatch = filterMonth ? entry.periodMonth === parseInt(filterMonth) : true;
+        return statusMatch && perspectiveMatch && yearMatch && monthMatch;
     });
 
     // Get current entries for pagination
@@ -204,10 +340,6 @@ const EmployeeIPMDetailsPage = () => {
         setCurrentPage(1);
     };
 
-    const toggleExpand = () => {
-        setExpanded(!expanded);
-    };
-
     // Handler for file selection
     const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -218,6 +350,9 @@ const EmployeeIPMDetailsPage = () => {
     // Handler for evidence upload
     const handleUploadEvidence = (entryId: string) => {
         if (!selectedFile) return;
+
+        const entry = entries.find(e => e.id === entryId);
+        if (!entry || entry.status !== 'Pending') return;
 
         const newEvidence: Evidence = {
             id: Date.now().toString(),
@@ -242,7 +377,7 @@ const EmployeeIPMDetailsPage = () => {
 
     const handleReviewActionPlan = (entryId: string, action: 'approve' | 'reject') => {
         const entry = entries.find(e => e.id === entryId);
-        if (!entry) return;
+        if (!entry || entry.status !== 'Evidence Submitted') return;
 
         // Check if current user has permission to approve this entry
         const canApprove = checkApprovalPermission(currentRole, entry.employee.position);
@@ -281,15 +416,15 @@ const EmployeeIPMDetailsPage = () => {
             return entry;
         }));
 
-        // Tutup dialog setelah aksi
+        // Close dialog after action
         setReviewDialogOpen(prev => ({ ...prev, [entryId]: false }));
     };
 
-    // Add this helper function to check approval permissions
+    // Helper function to check approval permissions
     const checkApprovalPermission = (currentRole: string, employeePosition: Position): boolean => {
         switch (currentRole) {
             case 'admin':
-                return true; // Admin can approve everything
+                return employeePosition !== 'Admin';
             case 'sm_dept':
                 return employeePosition === 'Manager' || employeePosition === 'Employee';
             case 'manager':
@@ -315,22 +450,79 @@ const EmployeeIPMDetailsPage = () => {
         }
     };
 
-    const canReviewEntry = (entry: IPMEntry): boolean => {
-        // Admin can review all
-        if (currentRole === 'admin') return true;
+    // Update the canUploadEvidence function
+    const canUploadEvidence = (entry: IPMEntry, viewer: Employee): boolean => {
+        // Only the entry owner can upload evidence, regardless of role
+        return entry.employee.id === viewer.id && entry.status === 'Pending';
+    };
 
-        // Senior Manager can review Manager and Employee
-        if (currentRole === 'sm_dept') {
-            return entry.employee.position === 'Manager' || entry.employee.position === 'Employee';
+    // Update the canReviewEntry function
+    const canReviewEntry = (entry: IPMEntry, viewer: Employee): boolean => {
+        // Never allow self-review
+        if (entry.employee.id === viewer.id) return false;
+
+        // Check status first
+        if (entry.status !== 'Evidence Submitted') return false;
+
+        // Admin can review all except other admins
+        if (viewer.position === 'Admin') {
+            return entry.employee.position !== 'Admin';
         }
 
-        // Manager can only review Employee
-        if (currentRole === 'manager') {
-            return entry.employee.position === 'Employee';
+        // Senior Manager entries can only be reviewed by admin
+        if (entry.employee.position === 'Senior Manager') {
+            return false;
+        }
+
+        // Senior Manager can review Manager and Employee in same department
+        if (viewer.position === 'Senior Manager') {
+            return (entry.employee.position === 'Manager' || entry.employee.position === 'Employee') &&
+                entry.employee.department === viewer.department;
+        }
+
+        // Manager can only review Employee in same unit
+        if (viewer.position === 'Manager') {
+            return entry.employee.position === 'Employee' &&
+                entry.employee.unit === viewer.unit;
         }
 
         return false;
     };
+    const canViewEntry = (entry: IPMEntry, viewer: Employee): boolean => {
+        // Admin can view all
+        if (viewer.position === 'Admin') return true;
+        
+        // Senior Manager can view same department
+        if (viewer.position === 'Senior Manager') {
+            return entry.employee.department === viewer.department;
+        }
+        
+        // Manager can view same unit
+        if (viewer.position === 'Manager') {
+            return entry.employee.unit === viewer.unit && 
+                   (entry.employee.position === 'Employee' || entry.employee.position === 'Manager');
+        }
+        
+        // Employee can only view their own entries
+        return false;
+    };
+    
+    // Then filter the entries when displaying:
+    const visibleEntries = currentEntries.filter(entry => canViewEntry(entry, currentUser));
+
+    // Helper function to get month name
+    const getMonthName = (month: number): string => {
+        const months = [
+            'January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December'
+        ];
+        return months[month - 1] || '';
+    };
+
+    // Available period years and months for filtering
+    const availableYears = Array.from(new Set(entries.map(entry => entry.periodYear)));
+    const availableMonths = Array.from(new Set(entries.map(entry => entry.periodMonth)));
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 font-montserrat overflow-x-hidden">
@@ -353,7 +545,7 @@ const EmployeeIPMDetailsPage = () => {
                 />
 
                 <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                    <main className='flex-1 px-2 md:px-4 pt-16 pb-12 transition-all duration-300 ease-in-out w-full'>
                         <div className="space-y-6 w-full">
                             <Breadcrumb
                                 items={[{
@@ -364,9 +556,6 @@ const EmployeeIPMDetailsPage = () => {
                                 subtitle={`Employee ID: ${employeeId}`}
                                 showHomeIcon={true}
                             />
-
-                            <h1 className="text-xl md:text-2xl font-bold text-[#1B6131] dark:text-[#46B749] mt-4">
-                            </h1>
 
                             {/* Employee Info Card */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
@@ -381,7 +570,9 @@ const EmployeeIPMDetailsPage = () => {
                                         <div className="mb-4 md:mb-0">
                                             <h2 className="text-lg md:text-xl font-semibold">{employee.name}</h2>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">{employee.employeeNumber}</p>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">{employee.position}</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                {employee.position} • {currentRole.toUpperCase()} (Current View)
+                                            </p>
                                             <p className="text-sm text-gray-600 dark:text-gray-400">{employee.department} • {employee.unit}</p>
                                         </div>
 
@@ -413,29 +604,63 @@ const EmployeeIPMDetailsPage = () => {
                                             <SelectValue placeholder="Filter Status" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="all">All Statuses</SelectItem>
+                                            <SelectItem value="All">All Statuses</SelectItem>
                                             <SelectItem value="Pending">Pending</SelectItem>
                                             <SelectItem value="Evidence Submitted">Evidence Submitted</SelectItem>
                                             <SelectItem value="Approved">Approved</SelectItem>
-                                            <SelectItem value="Completed">Completed</SelectItem>
+                                            <SelectItem value="Rejected">Rejected</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-3">
                                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                         <User className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                        <span>Status</span>
+                                        <span>Perspective</span>
                                     </label>
                                     <Select value={filterPerspective} onValueChange={setFilterPerspective}>
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Filter Perspective" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="all">All Perspectives</SelectItem>
+                                            <SelectItem value="All">All Perspectives</SelectItem>
                                             <SelectItem value="Financial">Financial</SelectItem>
                                             <SelectItem value="Customer">Customer</SelectItem>
                                             <SelectItem value="Internal Business Process">Internal Business Process</SelectItem>
                                             <SelectItem value="Learning & Growth">Learning & Growth</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Calendar className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Year</span>
+                                    </label>
+                                    <Select value={filterYear} onValueChange={setFilterYear}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Filter Year" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="All">All Years</SelectItem>
+                                            {availableYears.map(year => (
+                                                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Calendar className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Month</span>
+                                    </label>
+                                    <Select value={filterMonth} onValueChange={setFilterMonth}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Filter Month" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="All">All Months</SelectItem>
+                                            {availableMonths.map(month => (
+                                                <SelectItem key={month} value={month.toString()}>{getMonthName(month)}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -451,13 +676,14 @@ const EmployeeIPMDetailsPage = () => {
                                         </div>
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className='m-0 p-0'>
+                                <CardContent className='m-0 p-0 pb-4'>
                                     <div className="overflow-x-auto">
                                         <table className="w-full min-w-[800px]">
                                             <thead className="bg-[#1B6131] text-white">
                                                 <tr>
                                                     <th className="p-2 md:p-4 text-left text-xs md:text-sm">Title</th>
                                                     <th className="p-2 md:p-4 text-left text-xs md:text-sm">Perspective</th>
+                                                    <th className="p-2 md:p-4 text-left text-xs md:text-sm">Period</th>
                                                     <th className="p-2 md:p-4 text-left text-xs md:text-sm">Target</th>
                                                     <th className="p-2 md:p-4 text-left text-xs md:text-sm">Actual</th>
                                                     <th className="p-2 md:p-4 text-left text-xs md:text-sm">Weight</th>
@@ -466,14 +692,18 @@ const EmployeeIPMDetailsPage = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {currentEntries.length > 0 ? (
-                                                    currentEntries.map((entry) => (
+                                                {visibleEntries.length > 0 ? (
+                                                    visibleEntries.map((entry) => (
                                                         <tr key={entry.id} className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20">
                                                             <td className="p-2 md:p-4">
                                                                 <p className="font-medium text-xs md:text-sm">{entry.title}</p>
                                                                 <p className="text-xs text-gray-500 mt-1">{entry.description}</p>
                                                             </td>
                                                             <td className="p-2 md:p-4 text-xs md:text-sm">{entry.perspective}</td>
+                                                            <td className="p-2 md:p-4">
+                                                                <p className="font-medium text-xs md:text-sm">{entry.periodYear}</p>
+                                                                <p className="text-xs text-gray-500 mt-1">{getMonthName(entry.periodMonth)}</p>
+                                                            </td>
                                                             <td className="p-2 md:p-4 text-xs md:text-sm">{entry.targetValue}</td>
                                                             <td className="p-2 md:p-4 text-xs md:text-sm">
                                                                 {entry.actualValue !== undefined ? (
@@ -494,6 +724,7 @@ const EmployeeIPMDetailsPage = () => {
                                                             </td>
                                                             <td className="p-4">
                                                                 <div className="flex space-x-2">
+
                                                                     <Dialog>
                                                                         <DialogTrigger asChild>
                                                                             <Button
@@ -570,8 +801,8 @@ const EmployeeIPMDetailsPage = () => {
                                                                         </DialogContent>
                                                                     </Dialog>
 
-                                                                    {/* Evidence Upload Button - Only for employee role */}
-                                                                    {currentRole === 'employee' && entry.status !== 'Approved' && (
+                                                                    {/* Evidence Upload Button - Only for matchingid */}
+                                                                    {canUploadEvidence(entry, currentUser) && (
                                                                         <Dialog>
                                                                             <DialogTrigger asChild>
                                                                                 <Button
@@ -627,7 +858,7 @@ const EmployeeIPMDetailsPage = () => {
                                                                         </Dialog>
                                                                     )}
 
-                                                                    {canReviewEntry(entry) && entry.evidence.length > 0 && (
+                                                                    {canReviewEntry(entry, currentUser) && (
                                                                         <Dialog
                                                                             open={reviewDialogOpen[entry.id] || false}
                                                                             onOpenChange={(open) => setReviewDialogOpen(prev => ({ ...prev, [entry.id]: open }))}>
@@ -667,7 +898,6 @@ const EmployeeIPMDetailsPage = () => {
                                                                                                     [entry.id]: parseFloat(e.target.value)
                                                                                                 });
                                                                                             }}
-                                                                                            disabled={!canReviewEntry(entry)}
                                                                                         />
                                                                                     </div>
 
@@ -690,27 +920,25 @@ const EmployeeIPMDetailsPage = () => {
                                                                                                 </div>
                                                                                             </div>
                                                                                         ))}
-                                                                                        {canReviewEntry(entry) && (
-                                                                                            <div className="flex justify-end space-x-2 mt-3">
-                                                                                                <Button
-                                                                                                    variant="outline"
-                                                                                                    size="sm"
-                                                                                                    onClick={() => handleReviewActionPlan(entry.id, 'reject')}
-                                                                                                    className="border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
-                                                                                                >
-                                                                                                    <XCircle className="h-4 w-4 mr-1" />
-                                                                                                    Reject
-                                                                                                </Button>
-                                                                                                <Button
-                                                                                                    size="sm"
-                                                                                                    onClick={() => handleReviewActionPlan(entry.id, 'approve')}
-                                                                                                    className="bg-[#1B6131] hover:bg-[#46B749]"
-                                                                                                >
-                                                                                                    <CheckCircle2 className="h-4 w-4 mr-1" />
-                                                                                                    Approve
-                                                                                                </Button>
-                                                                                            </div>
-                                                                                        )}
+                                                                                        <div className="flex justify-end space-x-2 mt-3">
+                                                                                            <Button
+                                                                                                variant="outline"
+                                                                                                size="sm"
+                                                                                                onClick={() => handleReviewActionPlan(entry.id, 'reject')}
+                                                                                                className="border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                                                                                            >
+                                                                                                <XCircle className="h-4 w-4 mr-1" />
+                                                                                                Reject
+                                                                                            </Button>
+                                                                                            <Button
+                                                                                                size="sm"
+                                                                                                onClick={() => handleReviewActionPlan(entry.id, 'approve')}
+                                                                                                className="bg-[#1B6131] hover:bg-[#46B749]"
+                                                                                            >
+                                                                                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                                                                                Approve
+                                                                                            </Button>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </DialogContent>
@@ -739,8 +967,7 @@ const EmployeeIPMDetailsPage = () => {
                                         totalItems={filteredEntries.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={toggleExpand}
+
                                     />
                                 </CardContent>
                             </Card>

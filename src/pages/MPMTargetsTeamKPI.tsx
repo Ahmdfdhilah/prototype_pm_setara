@@ -147,7 +147,6 @@ const MPMTargetsTeamKPI: React.FC = () => {
     // Pagination state - Added from Actual MPM
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
 
     // Filter state - Added from Actual MPM
     const [searchTerm, setSearchTerm] = useState('');
@@ -203,10 +202,6 @@ const MPMTargetsTeamKPI: React.FC = () => {
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(Number(value));
         setCurrentPage(1); // Reset to first page when changing items per page
-    };
-
-    const togglePaginationExpand = () => {
-        setPaginationExpanded(!paginationExpanded);
     };
 
     // Get unique team names for filter dropdown
@@ -437,8 +432,7 @@ const MPMTargetsTeamKPI: React.FC = () => {
                                         totalItems={filteredData.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={togglePaginationExpand}
+                                       
                                     />
                                 </CardContent>
                             </Card>

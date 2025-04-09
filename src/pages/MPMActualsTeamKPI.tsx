@@ -79,8 +79,7 @@ const MPMActualsTeamKPI: React.FC = () => {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
-    const [paginationExpanded, setPaginationExpanded] = useState(false);
-
+    
     // Filter state
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
@@ -144,10 +143,6 @@ const MPMActualsTeamKPI: React.FC = () => {
     const handleItemsPerPageChange = (value: string) => {
         setItemsPerPage(Number(value));
         setCurrentPage(1); // Reset to first page when changing items per page
-    };
-
-    const togglePaginationExpand = () => {
-        setPaginationExpanded(!paginationExpanded);
     };
 
     const handleEditTeamKPI = (teamKPI: TeamKPIActual) => {
@@ -341,8 +336,7 @@ const MPMActualsTeamKPI: React.FC = () => {
                                         totalItems={filteredData.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                        expanded={paginationExpanded}
-                                        onToggleExpand={togglePaginationExpand}
+                                     
                                     />
                                 </CardContent>
                             </Card>

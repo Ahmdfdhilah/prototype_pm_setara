@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, User, BarChart3, Building2, LineChart, Target, Rocket, Trophy, ChevronDown, ChevronRight, Home, Calendar, SquareKanban, Building } from 'lucide-react';
+import { LogOut, User, BarChart3, Building2, LineChart, Target, Trophy, ChevronDown, ChevronRight, Home, Calendar, SquareKanban, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
@@ -108,12 +108,12 @@ const performanceMenus: MenuItem[] = [
             }
         ]
     },
-    {
-        title: 'Strategic Initiative',
-        path: '#',
-        icon: Rocket,
-        roles: ['admin', 'manager', 'sm_dept'],
-    }
+    // {
+    //     title: 'Strategic Initiative',
+    //     path: '#',
+    //     icon: Rocket,
+    //     roles: ['admin', 'manager', 'sm_dept'],
+    // }
 ];
 
 const systems = [
@@ -190,9 +190,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
                 overflow-y-auto
             `}>
-                <div className="relative h-full p-4 md:p-6 flex flex-col">
+                <div className="relative h-full p-4  flex flex-col">
                     {/* Profile Section - Disesuaikan padding untuk mobile */}
-                    <div className="flex flex-col items-center mt-4 md:mt-8">
+                    <div className="flex flex-col items-center mt-2 md:mt-4">
                         <img
                             src="https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg"
                             alt="Profile"
@@ -265,7 +265,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, syst
                     </nav>
 
                     {/* Bottom Actions - Disesuaikan padding untuk mobile */}
-                    <div className="mt-auto mb-8 lg:mb-0 space-y-1 md:space-y-2">
+                    <div className="mt-auto mb-4 lg:mb-0 space-y-1 md:space-y-2">
                         <Button
                             variant="ghost"
                             onClick={() => navigate('/user-profile')}

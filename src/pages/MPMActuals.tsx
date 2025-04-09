@@ -78,7 +78,6 @@ const MPMActuals = () => {
   const [selectedApprover, setSelectedApprover] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
@@ -632,8 +631,7 @@ const MPMActuals = () => {
                     totalItems={totalItems}
                     onPageChange={handlePageChange}
                     onItemsPerPageChange={handleItemsPerPageChange}
-                    expanded={isPaginationExpanded}
-                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                   
                   />
                 </CardContent>
               </Card>

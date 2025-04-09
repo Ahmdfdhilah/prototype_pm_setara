@@ -74,8 +74,6 @@ const MPMActualList: React.FC = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [isPaginationExpanded, setIsPaginationExpanded] = useState(false);
-
 
   // Modal States
   const [selectedMpmActual, setSelectedMpmActual] = useState<MpmActual | null>(null);
@@ -526,8 +524,7 @@ const MPMActualList: React.FC = () => {
                       setItemsPerPage(Number(value));
                       setCurrentPage(1);
                     }}
-                    expanded={isPaginationExpanded}
-                    onToggleExpand={() => setIsPaginationExpanded(!isPaginationExpanded)}
+                  
                   />
                 </CardContent>
               </Card>
