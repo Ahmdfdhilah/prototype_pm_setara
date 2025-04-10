@@ -491,22 +491,22 @@ const EmployeeIPMDetailsPage = () => {
     const canViewEntry = (entry: IPMEntry, viewer: Employee): boolean => {
         // Admin can view all
         if (viewer.position === 'Admin') return true;
-        
+
         // Senior Manager can view same department
         if (viewer.position === 'Senior Manager') {
             return entry.employee.department === viewer.department;
         }
-        
+
         // Manager can view same unit
         if (viewer.position === 'Manager') {
-            return entry.employee.unit === viewer.unit && 
-                   (entry.employee.position === 'Employee' || entry.employee.position === 'Manager');
+            return entry.employee.unit === viewer.unit &&
+                (entry.employee.position === 'Employee' || entry.employee.position === 'Manager');
         }
-        
+
         // Employee can only view their own entries
         return false;
     };
-    
+
     // Then filter the entries when displaying:
     const visibleEntries = currentEntries.filter(entry => canViewEntry(entry, currentUser));
 
@@ -544,7 +544,7 @@ const EmployeeIPMDetailsPage = () => {
                     system="performance-management"
                 />
 
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
                     <main className='flex-1 px-2 md:px-4 pt-16 pb-12 transition-all duration-300 ease-in-out w-full'>
                         <div className="space-y-6 w-full">
                             <Breadcrumb
@@ -560,7 +560,7 @@ const EmployeeIPMDetailsPage = () => {
                             {/* Employee Info Card */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                    <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    <CardTitle className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-200 flex items-center">
                                         <User className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                         Employee Information
                                     </CardTitle>
@@ -669,9 +669,8 @@ const EmployeeIPMDetailsPage = () => {
                             {/* IPM Entries */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md w-full">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                    <CardTitle className="text-base md:text-lg text-[#1B6131] dark:text-[#46B749] flex flex-col sm:flex-row justify-between items-center">
+                                    <CardTitle className="text-base md:text-lg text-gray-700 dark:text-gray-200 flex flex-col sm:flex-row justify-between items-center">
                                         <div className="flex items-center mb-2 sm:mb-0">
-                                            <FileText className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                                             Action Plans
                                         </div>
                                     </CardTitle>

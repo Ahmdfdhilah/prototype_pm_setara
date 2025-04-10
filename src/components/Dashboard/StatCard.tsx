@@ -68,7 +68,7 @@ export const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, tren
     };
 
     return (
-        <Card className={`${colorClasses[color].border} shadow-md`}>
+        <Card className={`${colorClasses[color].border} shadow-md dark:bg-gray-800`}>
             <CardHeader className="pb-2">
                 <CardTitle className={`${colorClasses[color].text} text-lg flex items-center`}>
                     {icon && <span className="mr-2 h-5 w-5">{icon}</span>}

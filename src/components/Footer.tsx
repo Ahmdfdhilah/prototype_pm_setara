@@ -5,7 +5,7 @@ const Footer = ({ currentSystem = "Performance Management System" }) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 font-montserrat px-4">
+    <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 font-montserrat lg:px-12">
       <div className="container mx-auto px-0 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center px-0">
           {/* Left Section - System Info */}
@@ -36,7 +36,13 @@ const Footer = ({ currentSystem = "Performance Management System" }) => {
           </div>
 
           {/* Right Section - Copyright */}
-          <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center">
+          <div className="hidden lg:block text-xs text-gray-600 dark:text-gray-400 flex items-center">
+            <span>&copy; {currentYear} Arga Bumi Indonesia. All rights reserved.</span>
+          </div>
+        </div>
+        <div className="flex">
+          {/* Mobile only center - Copyright */}
+          <div className="lg:hidden mx-auto text-xs text-gray-600 dark:text-gray-400 flex items-center sm:mt-2">
             <span>&copy; {currentYear} Arga Bumi Indonesia. All rights reserved.</span>
           </div>
         </div>

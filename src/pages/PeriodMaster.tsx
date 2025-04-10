@@ -214,156 +214,157 @@ const PeriodMaster = () => {
                     role={currentRole}
                     system="performance-management"
                 />
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
-                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>  <div className="space-y-6">
-                        <Breadcrumb
-                            items={[]}
-                            currentPage="Period Master Management"
-                            showHomeIcon={true}
-                        />
-                        <Filtering
-                            handlePeriodChange={setYearFilter}
-                            selectedPeriod={yearFilter}
-                        >
-                            {/* Search Input */}
-                            <div className="space-y-3  md:col-span-2">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Search Periods</span>
-                                </label>
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Search periods..."
-                                        className="pl-10 w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131]"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Status Filter */}
-                            <div className="space-y-3">
-                                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
-                                    <span>Status</span>
-                                </label>
-                                <Select
-                                    onValueChange={(value: PeriodStatus | 'All') => setStatusFilter(value)}
-                                    value={statusFilter}
-                                >
-                                    <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
-                                        <SelectValue placeholder="Select Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="All">All Statuses</SelectItem>
-                                        <SelectItem value="Draft">Draft</SelectItem>
-                                        <SelectItem value="Active">Active</SelectItem>
-                                        <SelectItem value="Closed">Closed</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </Filtering>
-
-
-                        {/* Period Management Card */}
-                        <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
-                                        Period Table
-                                    </CardTitle>
-                                    <div className="flex items-center space-x-2">
-                                        <Button
-                                            onClick={() => setShowNewPeriodDialog(true)}
-                                            className="bg-[#1B6131] hover:bg-[#46B749] text-white"
-                                        >
-                                            <Plus className="mr-2 h-4 w-4" />
-                                            Create New Period
-                                        </Button>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
+                    <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
+                        <div className="space-y-6">
+                            <Breadcrumb
+                                items={[]}
+                                currentPage="Period Master Management"
+                                showHomeIcon={true}
+                            />
+                            <Filtering
+                                handlePeriodChange={setYearFilter}
+                                selectedPeriod={yearFilter}
+                            >
+                                {/* Search Input */}
+                                <div className="space-y-3  md:col-span-2">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Search Periods</span>
+                                    </label>
+                                    <div className="relative">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                        <Input
+                                            placeholder="Search periods..."
+                                            className="pl-10 w-full bg-white dark:bg-gray-800 border border-[#46B749] dark:border-[#1B6131]"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
                                     </div>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="dark:bg-gray-900 m-0 p-0">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full">
-                                        <thead className="bg-[#1B6131] text-white">
-                                            <tr>
-                                                <th className="p-4 text-left border-b">Period</th>
-                                                <th className="p-4 text-left border-b">Start Date</th>
-                                                <th className="p-4 text-left border-b">End Date</th>
-                                                <th className="p-4 text-left border-b">Status</th>
-                                                <th className="p-4 text-left border-b">Created By</th>
-                                                <th className="p-4 text-left border-b">Created At</th>
-                                                <th className="p-4 text-left border-b">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {currentItems.length > 0 ? (
-                                                currentItems.map((period) => (
-                                                    <tr
-                                                        key={period.id}
-                                                        className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
-                                                    >
-                                                        <td className="p-4">{period.year}</td>
-                                                        <td className="p-4">{new Date(period.startDate).toLocaleDateString()}</td>
-                                                        <td className="p-4">{new Date(period.endDate).toLocaleDateString()}</td>
-                                                        <td className="p-4">
-                                                            <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(period.status)}`}>
-                                                                {period.status}
-                                                            </span>
-                                                        </td>
-                                                        <td className="p-4">{period.createdBy}</td>
-                                                        <td className="p-4">
-                                                            {new Date(period.createdAt).toLocaleDateString()}
-                                                        </td>
-                                                        <td className="p-4 space-x-2">
-                                                            {period.status === 'Draft' && (
-                                                                <Button
-                                                                    onClick={() => handleStatusChange(period.id, 'Active')}
-                                                                    className="mr-2 bg-green-500 hover:bg-green-600 text-white"
-                                                                    size="sm"
-                                                                    title="Activate Period"
-                                                                >
-                                                                    <CheckCircle className="h-4 w-4" />
-                                                                </Button>
-                                                            )}
-                                                            {period.status === 'Active' && (
-                                                                <Button
-                                                                    onClick={() => handleStatusChange(period.id, 'Closed')}
-                                                                    className="bg-gray-500 hover:bg-gray-600 text-white"
-                                                                    size="sm"
-                                                                    title="Close Period"
-                                                                >
-                                                                    <XCircle className="h-4 w-4" />
-                                                                </Button>
-                                                            )}
+
+                                {/* Status Filter */}
+                                <div className="space-y-3">
+                                    <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        <BarChart2Icon className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
+                                        <span>Status</span>
+                                    </label>
+                                    <Select
+                                        onValueChange={(value: PeriodStatus | 'All') => setStatusFilter(value)}
+                                        value={statusFilter}
+                                    >
+                                        <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-[#46B749] dark:border-[#1B6131] h-10">
+                                            <SelectValue placeholder="Select Status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="All">All Statuses</SelectItem>
+                                            <SelectItem value="Draft">Draft</SelectItem>
+                                            <SelectItem value="Active">Active</SelectItem>
+                                            <SelectItem value="Closed">Closed</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </Filtering>
+
+
+                            {/* Period Management Card */}
+                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
+                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                        <CardTitle className="text-gray-700 dark:text-gray-200  flex p-0">
+                                            Period Table
+                                        </CardTitle>
+                                        <div className="flex items-center space-x-2">
+                                            <Button
+                                                onClick={() => setShowNewPeriodDialog(true)}
+                                                className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" />
+                                                Create New Period
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="dark:bg-gray-900 m-0 p-0">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-[#1B6131] text-white">
+                                                <tr>
+                                                    <th className="p-4 text-left border-b">Period</th>
+                                                    <th className="p-4 text-left border-b">Start Date</th>
+                                                    <th className="p-4 text-left border-b">End Date</th>
+                                                    <th className="p-4 text-left border-b">Status</th>
+                                                    <th className="p-4 text-left border-b">Created By</th>
+                                                    <th className="p-4 text-left border-b">Created At</th>
+                                                    <th className="p-4 text-left border-b">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {currentItems.length > 0 ? (
+                                                    currentItems.map((period) => (
+                                                        <tr
+                                                            key={period.id}
+                                                            className="border-b hover:bg-[#E4EFCF]/50 dark:hover:bg-[#1B6131]/20"
+                                                        >
+                                                            <td className="p-4">{period.year}</td>
+                                                            <td className="p-4">{new Date(period.startDate).toLocaleDateString()}</td>
+                                                            <td className="p-4">{new Date(period.endDate).toLocaleDateString()}</td>
+                                                            <td className="p-4">
+                                                                <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(period.status)}`}>
+                                                                    {period.status}
+                                                                </span>
+                                                            </td>
+                                                            <td className="p-4">{period.createdBy}</td>
+                                                            <td className="p-4">
+                                                                {new Date(period.createdAt).toLocaleDateString()}
+                                                            </td>
+                                                            <td className="p-4 space-x-2">
+                                                                {period.status === 'Draft' && (
+                                                                    <Button
+                                                                        onClick={() => handleStatusChange(period.id, 'Active')}
+                                                                        className="mr-2 bg-green-500 hover:bg-green-600 text-white"
+                                                                        size="sm"
+                                                                        title="Activate Period"
+                                                                    >
+                                                                        <CheckCircle className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                                {period.status === 'Active' && (
+                                                                    <Button
+                                                                        onClick={() => handleStatusChange(period.id, 'Closed')}
+                                                                        className="bg-gray-500 hover:bg-gray-600 text-white"
+                                                                        size="sm"
+                                                                        title="Close Period"
+                                                                    >
+                                                                        <XCircle className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan={8} className="p-4 text-center text-gray-500">
+                                                            No periods found matching your criteria
                                                         </td>
                                                     </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan={8} className="p-4 text-center text-gray-500">
-                                                        No periods found matching your criteria
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                                {/* Pagination */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={Math.ceil(filteredPeriods.length / itemsPerPage)}
-                                    itemsPerPage={itemsPerPage}
-                                    totalItems={filteredPeriods.length}
-                                    onPageChange={handlePageChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
+                                    {/* Pagination */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={Math.ceil(filteredPeriods.length / itemsPerPage)}
+                                        itemsPerPage={itemsPerPage}
+                                        totalItems={filteredPeriods.length}
+                                        onPageChange={handlePageChange}
+                                        onItemsPerPageChange={handleItemsPerPageChange}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
 
                         {/* Create New Period Dialog */}
                         <AlertDialog open={showNewPeriodDialog} onOpenChange={setShowNewPeriodDialog}>
@@ -409,7 +410,7 @@ const PeriodMaster = () => {
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                                     <AlertDialogAction
                                         onClick={handleCreatePeriod}
-                                        className="bg-[#1B6131] hover:bg-[#46B749] text-white"
+                                        className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
                                         disabled={!newPeriod.period || !newPeriod.startDate || !newPeriod.endDate}
                                     >
                                         Create Period

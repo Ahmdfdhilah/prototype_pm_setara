@@ -20,7 +20,6 @@ import {
     MapPin,
     Briefcase,
     Calendar,
-    Users,
     Edit
 } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -39,14 +38,13 @@ const UserDetailPage = () => {
     // Dummy user data
     const userData = {
         id: "USR001",
-        name: "Budi Santoso",
-        email: "budi.santoso@company.com",
+        name: "Daffa Abdurahman",
+        email: "daffa.abdurahman@company.com",
         phone: "+62 812-3456-7890",
         department: "Information Technology",
         position: "Senior Developer",
         joinDate: "15 March 2020",
         status: "Active",
-        reportTo: "Bambang Widodo",
         location: "Jakarta HQ",
         image: null,
         performanceData: {
@@ -55,7 +53,7 @@ const UserDetailPage = () => {
             overallScore: 3.4,
             performanceTrend: [75, 82, 78, 90, 95, 92]
         },
-        roles: ["employee", "manager"]
+        roles: ["employee"]
     };
 
     // Function to render status badge with appropriate color
@@ -99,7 +97,7 @@ const UserDetailPage = () => {
                     system="performance-management"
                 />
 
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
                     <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
                         <Breadcrumb
                             items={[]}
@@ -114,7 +112,7 @@ const UserDetailPage = () => {
                                         {userData.name.split(' ').map(name => name[0]).join('')}
                                     </AvatarFallback>
                                 </Avatar>
-                                <CardTitle className="text-[#1B6131] dark:text-[#46B749]">
+                                <CardTitle className="text-gray-700 dark:text-gray-200 ">
                                     {userData.name}
                                 </CardTitle>
                                 <div className="mt-4 w-full">
@@ -170,14 +168,6 @@ const UserDetailPage = () => {
                                         <div>
                                             <p className="text-xs text-gray-500 dark:text-gray-400">Position</p>
                                             <p className="text-sm">{userData.position}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                        <Users className="h-5 w-5 text-[#1B6131] dark:text-[#46B749] mr-3 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Reports to</p>
-                                            <p className="text-sm">{userData.reportTo}</p>
                                         </div>
                                     </div>
 

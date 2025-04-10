@@ -235,7 +235,7 @@ const MPMTargetsTeamKPI: React.FC = () => {
     const actionButton = (
         <Button
             onClick={() => setIsAddActionPlanDialogOpen(true)}
-            className="w-full sm:w-auto bg-[#1B6131] dark:text-white hover:bg-[#46B749] flex items-center justify-center"
+            className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
         >
             <PlusCircle className="mr-2 h-4 w-4" />
             Add KPI Action Plan
@@ -262,7 +262,7 @@ const MPMTargetsTeamKPI: React.FC = () => {
                     system="performance-management"
                 />
 
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
                     <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
                         <div className="space-y-6 w-full">
                             <Breadcrumb
@@ -335,11 +335,11 @@ const MPMTargetsTeamKPI: React.FC = () => {
                             {/* Main Card */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    <CardTitle className="font-semibold text-gray-700 dark:text-gray-200 flex items-center">
                                         Team KPI Action Plans
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className='m-0 p-0'>
+                                <CardContent className='m-0 p-0 pb-8'>
                                     <div className="overflow-x-auto">
                                         <table className="w-full border-collapse">
                                             <thead className="bg-[#1B6131] text-white">

@@ -41,7 +41,7 @@ function Filtering({
     return (
         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4 flex flex-row justify-between items-center">
-                <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                <CardTitle className="font-semibold text-gray-700 dark:text-gray-200 flex items-center">
                     <Filter className="text-[#1B6131] dark:text-[#46B749] w-5 h-5 mr-2" />
                     Filter Options
                 </CardTitle>

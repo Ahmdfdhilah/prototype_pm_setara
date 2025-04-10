@@ -17,7 +17,6 @@ type UOMType = 'Number' | '%' | 'Days' | 'Kriteria' | 'Number (Ton)';
 type Category = 'Max' | 'Min' | 'On Target';
 type YTDCalculation = 'Accumulative' | 'Average' | 'Last Value';
 type Perspective = 'Financial' | 'Customer' | 'Internal Process' | 'Learning and Growth';
-type PeriodType = 'Monthly' | 'Quarterly' | 'Yearly';
 
 type MPMEntry = {
     id: number;
@@ -46,7 +45,6 @@ const MPMDashboard: React.FC = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [currentRole, setCurrentRole] = useState('admin');
     const [selectedYear, setSelectedYear] = useState('2025');
-    const [selectedPeriodType, setSelectedPeriodType] = useState<PeriodType>('Monthly');
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
     // Search functionality
@@ -102,26 +100,10 @@ const MPMDashboard: React.FC = () => {
         }, {} as Record<Perspective, MPMEntry[]>);
     }, [paginatedData]);
 
-    // Get current period based on selected period type
-    const getCurrentPeriod = () => {
-        const month = new Date().toLocaleString('default', { month: 'short' });
-        switch (selectedPeriodType) {
-            case 'Monthly':
-                return `${month}-${selectedYear.slice(-2)}`;
-            case 'Quarterly':
-                const quarter = Math.floor((new Date().getMonth() + 3) / 3);
-                return `Q${quarter}-${selectedYear.slice(-2)}`;
-            case 'Yearly':
-                return selectedYear;
-            default:
-                return `${month}-${selectedYear.slice(-2)}`;
-        }
-    };
     // Calculate totals
     const totals = useMemo(() => {
-        const currentPeriod = getCurrentPeriod();
         return filteredData.reduce((acc, curr) => {
-            const achievement = curr.achievements[currentPeriod] || 0;
+            const achievement = curr.achievements[selectedYear] || 0;
             const score = (curr.weight * Math.min(achievement, 120) / 100);
             return {
                 weight: acc.weight + curr.weight,
@@ -131,7 +113,7 @@ const MPMDashboard: React.FC = () => {
             weight: 0,
             score: 0,
         });
-    }, [filteredData, selectedYear, selectedPeriodType]);
+    }, [filteredData, selectedYear]);
 
     // Handler for perspective filter
     const handlePerspectiveChange = (value: string) => {
@@ -166,8 +148,6 @@ const MPMDashboard: React.FC = () => {
         setCurrentPage(1); // Reset to first page when items per page changes
     };
 
-    const currentPeriod = getCurrentPeriod();
-
     // Get unique perspectives for filter
     const perspectives = ['All', ...Array.from(new Set(mpmData.map(item => item.perspective)))];
 
@@ -195,7 +175,7 @@ const MPMDashboard: React.FC = () => {
                     system="performance-management"
                 />
 
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
                     <main className='flex-1 px-2 md:px-4 pt-16 pb-12 transition-all duration-300 ease-in-out w-full'>
                         <div className="space-y-6 w-full">
                             <Breadcrumb
@@ -209,11 +189,9 @@ const MPMDashboard: React.FC = () => {
                             <Filtering
                                 handlePeriodChange={setSelectedYear}
                                 selectedPeriod={selectedYear}
-                                handleTypeChange={(value) => setSelectedPeriodType(value as PeriodType)}
-                                selectedType={selectedPeriodType}
                             >
                                 {/* Search Filter */}
-                                <div className="space-y-3 md:col-span-2">
+                                <div className="space-y-3 md:col-span-1">
                                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-200">
                                         <Search className="h-4 w-4 text-[#46B749] dark:text-[#1B6131]" />
                                         <span>Search</span>
@@ -263,95 +241,10 @@ const MPMDashboard: React.FC = () => {
                                 </div>
                             </Filtering>
 
-                            {/* Performance Overview */}
-                            <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                                <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
-                                        Performance Overview - {selectedPeriodType}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm font-medium">
-                                                    Average Achievement
-                                                </span>
-                                                <span className="text-sm font-bold">
-                                                    {filteredData.length > 0 ?
-                                                        (filteredData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / filteredData.length).toFixed(1) + '%' :
-                                                        'N/A'}
-                                                </span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                <div
-                                                    className="bg-[#1B6131] h-2.5 rounded-full"
-                                                    style={{
-                                                        width: filteredData.length > 0 ?
-                                                            `${Math.min(filteredData.reduce((sum, item) => sum + (item.achievements[currentPeriod] || 0), 0) / filteredData.length, 100)}%` :
-                                                            '0%'
-                                                    }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between text-sm">
-                                                <div className="flex items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                                    <span>On Track KPIs</span>
-                                                </div>
-                                                <span>
-                                                    {filteredData.filter(item =>
-                                                        item.achievements[currentPeriod] >= 100
-                                                    ).length}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-sm">
-                                                <div className="flex items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-amber-500 mr-1"></div>
-                                                    <span>At Risk KPIs</span>
-                                                </div>
-                                                <span>
-                                                    {filteredData.filter(item =>
-                                                        item.achievements[currentPeriod] >= 90 &&
-                                                        item.achievements[currentPeriod] < 100
-                                                    ).length}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-sm">
-                                                <div className="flex items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                                    <span>Off Track KPIs</span>
-                                                </div>
-                                                <span>
-                                                    {filteredData.filter(item =>
-                                                        item.achievements[currentPeriod] < 90
-                                                    ).length}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span className="font-medium">Total Weight</span>
-                                                <span>
-                                                    {totals.weight.toFixed(1)}%
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span className="font-medium">Total Score</span>
-                                                <span>
-                                                    {totals.score.toFixed(1)}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
                             {/* MPM Table */}
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
-                                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                                    <CardTitle className="font-semibold text-gray-700 dark:text-gray-200 flex items-center">
                                         MPM Performance Metrics
                                     </CardTitle>
                                 </CardHeader>
@@ -381,7 +274,7 @@ const MPMDashboard: React.FC = () => {
                                                 // Calculate perspective subtotals once
                                                 const perspectiveWeightTotal = items.reduce((sum, item) => sum + item.weight, 0).toFixed(1);
                                                 const perspectiveScoreTotal = items.reduce((sum, item) => {
-                                                    const achievement = item.achievements[currentPeriod] || 0;
+                                                    const achievement = item.achievements[selectedYear] || 0;
                                                     return sum + ((item.weight * Math.min(achievement, 120)) / 100);
                                                 }, 0).toFixed(1);
 
@@ -419,18 +312,18 @@ const MPMDashboard: React.FC = () => {
                                                                         <TableCell>{item.uom}</TableCell>
                                                                         <TableCell>{item.category}</TableCell>
                                                                         <TableCell>
-                                                                            {item.targets[currentPeriod] ?? 'N/A'}
+                                                                            {item.targets[selectedYear] ?? 'N/A'}
                                                                         </TableCell>
                                                                         <TableCell>
-                                                                            {item.actuals[currentPeriod] ?? 'N/A'}
+                                                                            {item.actuals[selectedYear] ?? 'N/A'}
                                                                         </TableCell>
                                                                         <TableCell>
-                                                                            {item.achievements[currentPeriod] ?
-                                                                                `${item.achievements[currentPeriod]}%` : 'N/A'}
+                                                                            {item.achievements[selectedYear] ?
+                                                                                `${item.achievements[selectedYear]}%` : 'N/A'}
                                                                         </TableCell>
                                                                         <TableCell>
-                                                                            {item.achievements[currentPeriod] ?
-                                                                                ((item.weight * Math.min(item.achievements[currentPeriod], 120)) / 100).toFixed(1) : 'N/A'}
+                                                                            {item.achievements[selectedYear] ?
+                                                                                ((item.weight * Math.min(item.achievements[selectedYear], 120)) / 100).toFixed(1) : 'N/A'}
                                                                         </TableCell>
                                                                     </TableRow>
 
@@ -490,7 +383,6 @@ const MPMDashboard: React.FC = () => {
                                         totalItems={filteredData.length}
                                         onPageChange={handlePageChange}
                                         onItemsPerPageChange={handleItemsPerPageChange}
-                                     
                                     />
                                 </CardContent>
                             </Card>

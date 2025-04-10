@@ -369,7 +369,7 @@ const MPMActualList: React.FC = () => {
           system="performance-management"
         />
 
-        <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+        <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
           <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
             <div className="space-y-6 w-full">
               <Breadcrumb
@@ -428,7 +428,7 @@ const MPMActualList: React.FC = () => {
               <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-4">
                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center">
+                    <CardTitle className="font-semibold text-gray-700 dark:text-gray-200 flex items-center">
                       MPM Actuals Table
                     </CardTitle>
                   </div>

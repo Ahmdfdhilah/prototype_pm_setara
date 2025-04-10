@@ -49,7 +49,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 font-montserrat ${isSidebarOpen ? 'lg:ml-72' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300 font-montserrat ${isSidebarOpen ? 'lg:ml-64' : ''}`}>
       <Header
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}

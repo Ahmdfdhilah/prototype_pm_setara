@@ -214,7 +214,7 @@ const BSCEntryPage = () => {
                     system="performance-management"
                 />
 
-                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-72' : 'lg:ml-0'} w-full`}>
+                <div className={`flex flex-col mt-4 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-0'} w-full`}>
                     <main className='flex-1 px-2  md:px-4  pt-16 pb-12 transition-all duration-300 ease-in-out  w-full'>
                         <div className="space-y-6 max-w-full">
                             <Breadcrumb
@@ -284,7 +284,7 @@ const BSCEntryPage = () => {
                             <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md pb-8">
                                 <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex p-0">
+                                        <CardTitle className="text-gray-700 dark:text-gray-200  flex p-0">
                                             KPI Entries
                                         </CardTitle>
                                         <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto justify-start sm:justify-end">
@@ -297,7 +297,7 @@ const BSCEntryPage = () => {
                                             />
                                             <Button
                                                 onClick={() => fileInputRef.current?.click()}
-                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f] w-full sm:w-auto"
                                                 size="sm"
                                             >
                                                 <FileSpreadsheet className="mr-2 h-4 w-4" />
@@ -305,7 +305,7 @@ const BSCEntryPage = () => {
                                             </Button>
                                             <Button
                                                 onClick={handleSaveAll}
-                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f] w-full sm:w-auto"
                                                 size="sm"
                                             >
                                                 <Save className="mr-2 h-4 w-4" />
@@ -313,7 +313,7 @@ const BSCEntryPage = () => {
                                             </Button>
                                             <Button
                                                 onClick={handleOpenCreateDialog}
-                                                className="bg-[#1B6131] hover:bg-[#46B749] text-white w-full sm:w-auto"
+                                                className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f] w-full sm:w-auto"
                                                 size="sm"
                                             >
                                                 <Plus className="mr-2 h-4 w-4" />

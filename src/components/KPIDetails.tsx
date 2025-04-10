@@ -76,7 +76,7 @@ const KPIDetailsCard: React.FC<KPIDetailsProps> = ({
             <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] pb-4">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     <div>
-                        <CardTitle className="text-[#1B6131] dark:text-[#46B749] flex items-center text-xl">
+                        <CardTitle className="font-semibold text-gray-700 dark:text-gray-200 flex items-center text-xl">
                             <Info className="mr-2 h-5 w-5" />
                             {title}
                         </CardTitle>
