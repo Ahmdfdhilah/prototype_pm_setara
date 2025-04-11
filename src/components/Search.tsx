@@ -42,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-  
+
   // Mock navigation data based on your menu structure
   const navigationItems = [
     { id: 'home', title: 'Home', path: '/', type: 'menu', roles: ['admin', 'manager', 'sm_dept', 'employee'] },
@@ -77,12 +77,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Save recent searches to localStorage
   const saveRecentSearch = (query: string) => {
     if (!query.trim()) return;
-    
+
     const updatedSearches = [
       query,
       ...recentSearches.filter(item => item !== query)
     ].slice(0, 5); // Keep only the 5 most recent searches
-    
+
     setRecentSearches(updatedSearches);
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
   };
@@ -92,7 +92,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -139,11 +139,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     setIsLoading(true);
-    
+
     // Filter navigation items based on query and user role
     const filteredNavItems = navigationItems
-      .filter(item => 
-        item.roles.includes(currentRole) && 
+      .filter(item =>
+        item.roles.includes(currentRole) &&
         item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
       )
       .map(item => ({
@@ -153,30 +153,30 @@ const SearchBar: React.FC<SearchBarProps> = ({
         type: 'menu' as const,
         description: `Navigate to ${item.title}`
       }));
-    
+
     // Filter content items
     const filteredContentItems = contentItems
-      .filter(item => 
+      .filter(item =>
         item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
         (item.description && item.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()))
       );
-    
+
     // Combine and sort results
     const combinedResults = [...filteredNavItems, ...filteredContentItems];
-    
+
     // Sort by relevance - exact matches first, then starts with, then includes
     const sortedResults = combinedResults.sort((a, b) => {
       const aTitle = a.title.toLowerCase();
       const bTitle = b.title.toLowerCase();
       const query = debouncedSearchQuery.toLowerCase();
-      
+
       if (aTitle === query && bTitle !== query) return -1;
       if (bTitle === query && aTitle !== query) return 1;
       if (aTitle.startsWith(query) && !bTitle.startsWith(query)) return -1;
       if (bTitle.startsWith(query) && !aTitle.startsWith(query)) return 1;
       return aTitle.localeCompare(bTitle);
     });
-    
+
     setSuggestions(sortedResults);
     setIsLoading(false);
   }, [debouncedSearchQuery, currentRole, isSearchOpen, showSuggestions, recentSearches]);
@@ -184,11 +184,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
+
     onSearch(searchQuery);
     saveRecentSearch(searchQuery);
     setShowSuggestions(false);
-    
+
     if (isMobile) {
       setIsSearchOpen(false);
     }
@@ -211,12 +211,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
       setSearchQuery(suggestion.title);
       onSearch(suggestion.title);
       saveRecentSearch(suggestion.title);
-      
+
       // Navigate to the suggestion's path
       if (suggestion.path) {
         navigate(suggestion.path);
         setShowSuggestions(false);
-        
+
         // Close mobile search if on mobile
         if (isMobile) {
           setIsSearchOpen(false);
@@ -233,19 +233,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
       e.preventDefault();
       setSelectedIndex(prev => (prev < suggestions.length - 1 ? prev + 1 : prev));
     }
-    
+
     // Arrow up
     else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex(prev => (prev > 0 ? prev - 1 : 0));
     }
-    
+
     // Enter to select
     else if (e.key === 'Enter' && selectedIndex >= 0) {
       e.preventDefault();
       handleSuggestionClick(suggestions[selectedIndex]);
     }
-    
+
     // Escape to close
     else if (e.key === 'Escape') {
       setShowSuggestions(false);
@@ -255,13 +255,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Render suggestion item
   const renderSuggestionItem = (suggestion: SearchResult, index: number) => {
     const isSelected = index === selectedIndex;
-    
+
     return (
       <div
         key={suggestion.id}
-        className={`px-4 py-3 cursor-pointer flex items-start gap-3 ${
-          isSelected ? 'bg-gray-100 dark:bg-gray-700' : ''
-        } hover:bg-gray-100 dark:hover:bg-gray-700`}
+        className={`px-4 py-3 cursor-pointer flex items-start gap-3 ${isSelected ? 'bg-gray-100 dark:bg-gray-700' : ''
+          } hover:bg-gray-100 dark:hover:bg-gray-700`}
         onClick={() => handleSuggestionClick(suggestion)}
       >
         {suggestion.type === 'menu' && (
@@ -272,19 +271,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
         {suggestion.type === 'content' && (
           <div className="mt-0.5 flex-shrink-0 w-5 h-5 text-blue-400">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 9L12 16L5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M19 9L12 16L5 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         )}
         {suggestion.type === 'recent' && (
           <div className="mt-0.5 flex-shrink-0 w-5 h-5 text-gray-400">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2"/>
+              <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" />
             </svg>
           </div>
         )}
-        
+
         <div className="flex-1 min-w-0">
           <div className="font-medium text-sm">{suggestion.title}</div>
           {suggestion.description && (
@@ -293,7 +292,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </div>
           )}
         </div>
-        
+
         {isSelected && (
           <div className="flex-shrink-0 self-center text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
             <span className="text-xs">Enter</span>
@@ -307,7 +306,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Mobile search overlay
   if (isMobile && isSearchOpen) {
     return (
-      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex flex-col">
+      <div
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setIsSearchOpen(false);
+            setShowSuggestions(false);
+          }
+        }}
+        className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex flex-col">
         <div className={`bg-white dark:bg-gray-800 p-4 border-b dark:border-gray-700 ${mobileClassName}`}>
           <form onSubmit={handleSearch} className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -333,7 +339,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onClick={handleClear}
                   className="mr-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
-                  <X className="h-4 w-4 text-gray-400" />
                 </button>
               )}
               <button
@@ -349,12 +354,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </div>
           </form>
         </div>
-        
+
         {/* Mobile search suggestions */}
         {showSuggestions && (
-          <div 
+          <div
             ref={suggestionsRef}
             className="flex-1 bg-white dark:bg-gray-800 overflow-y-auto"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setIsSearchOpen(false);
+                setShowSuggestions(false);
+              }
+            }}
           >
             {isLoading ? (
               <div className="flex justify-center items-center py-8">
@@ -362,7 +373,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               </div>
             ) : suggestions.length > 0 ? (
               <div>
-                {suggestions.map((suggestion, index) => 
+                {suggestions.map((suggestion, index) =>
                   renderSuggestionItem(suggestion, index)
                 )}
               </div>
@@ -404,7 +415,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           }}
           className="pl-10 pr-10 py-2 text-sm w-full border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white transition-all duration-200"
         />
-        
+
         {/* Keyboard shortcut indicator */}
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
           {!searchQuery && (
@@ -442,24 +453,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   Recent searches
                 </div>
               )}
-              
+
               {suggestions.map((suggestion, index) => {
                 // Add section headers
                 const currentType = suggestion.type;
-                const prevType = index > 0 ? suggestions[index-1].type : null;
-                
+                const prevType = index > 0 ? suggestions[index - 1].type : null;
+
                 // Only show section header when type changes and properly check type
                 let showHeader = false;
-                
+
                 if (currentType === 'menu' || currentType === 'content') {
                   // Only show header when changing from recent to non-recent or between menu and content
-                  if (index === 0 || 
-                      (prevType === 'recent') || 
-                      (prevType !== currentType && (prevType === 'menu' || prevType === 'content'))) {
+                  if (index === 0 ||
+                    (prevType === 'recent') ||
+                    (prevType !== currentType && (prevType === 'menu' || prevType === 'content'))) {
                     showHeader = true;
                   }
                 }
-                
+
                 return (
                   <div key={suggestion.id}>
                     {showHeader && (
@@ -471,9 +482,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   </div>
                 );
               })}
-              
+
               {/* Search all results footer */}
-              <div 
+              <div
                 className="px-4 py-3 text-center text-sm border-t border-gray-200 dark:border-gray-700 text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer font-medium"
                 onClick={() => {
                   handleSearch(new Event('submit') as any);
@@ -490,7 +501,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             <>
               <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-750 flex justify-between items-center">
                 <span>Recent searches</span>
-                <button 
+                <button
                   className="text-xs text-blue-500 hover:text-blue-700"
                   onClick={() => {
                     setRecentSearches([]);
@@ -501,7 +512,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 </button>
               </div>
               {recentSearches.map((query, index) => (
-                <div 
+                <div
                   key={`recent-${index}`}
                   className="px-4 py-3 cursor-pointer flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => {
@@ -512,8 +523,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 >
                   <div className="flex-shrink-0 w-5 h-5 text-gray-400">
                     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" />
                     </svg>
                   </div>
                   <span className="text-sm">{query}</span>

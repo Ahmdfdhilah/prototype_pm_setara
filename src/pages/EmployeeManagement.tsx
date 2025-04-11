@@ -317,15 +317,20 @@ const EmployeeManagementPage = () => {
 
                         {/* Employee Table */}
                         <Card className="border-[#46B749] dark:border-[#1B6131] shadow-md">
-                            <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419] py-6">
-                                <div className="flex justify-between items-center">
-                                    <CardTitle className="text-gray-700 dark:text-gray-200  text-lg">
-                                        Employee List Table
+                        <CardHeader className="bg-gradient-to-r from-[#f0f9f0] to-[#e6f3e6] dark:from-[#0a2e14] dark:to-[#0a3419]">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <CardTitle className="text-gray-700 dark:text-gray-200  flex p-0">
+                                        Employee List
                                     </CardTitle>
-                                    <Button className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]">
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Employee
-                                    </Button>
+                                    <div className="flex items-center space-x-2">
+                                        <Button
+
+                                            className="bg-[#1B6131] hover:bg-[#144d27] dark:bg-[#46B749] dark:hover:bg-[#3da33f]"
+                                        >
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Create Employee
+                                        </Button>
+                                    </div>
                                 </div>
                             </CardHeader>
                             <CardContent className="p-0 pb-8">
